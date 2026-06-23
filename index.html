@@ -27,9 +27,19 @@
             <img src="foto-raja.jpg" alt="Foto Raja" class="profile-img" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #30363d; object-fit: cover; flex-shrink: 0;">
         </a>
         <div class="profile-info">
-            <h1 style="margin-top: 0; margin-bottom: 10px;">Raja Muhammad Kurnia Setyawan</h1>
-            <!-- User Bio -->
-            <p id="about" style="margin: 0;">Raja Muhammad Kurnia Setyawan adalah seorang <em>Cybersecurity Professional</em> muda dengan spesialisasi dalam <em>Vulnerability Assessment, Penetration Testing (VAPT)</em>, dan arsitektur pertahanan. Di usianya yang ke-21, ia telah memiliki pengalaman pengujian keamanan untuk berbagai sektor krusial, termasuk Perbankan, Pertambangan, dan Infrastruktur Perkotaan. Selain mengeksplorasi sisi <em>Offensive</em> maupun <em>Defensive</em> (SOC), Raja juga aktif berkontribusi dalam mengedukasi dan membangun ekosistem keamanan siber sebagai pendiri komunitas <strong><a href="https://discord.gg/gGSK3DP5ES" target="_blank" style="color: inherit; text-decoration: underline;">Penjelajah CyberSecurity</a></strong>.</p>
+            <h1 style="margin-top: 0; margin-bottom: 5px;">Raja Muhammad Kurnia Setyawan</h1>
+            
+            <!-- Language Toggle -->
+            <div style="margin-bottom: 10px; font-size: 14px;">
+                <a href="#" onclick="toggleBioLang('en'); return false;" id="lang-en" style="font-weight: bold; text-decoration: none; color: inherit;">🇬🇧 EN</a> | 
+                <a href="#" onclick="toggleBioLang('id'); return false;" id="lang-id" style="text-decoration: none; color: #8b949e;">🇮🇩 ID</a>
+            </div>
+
+            <!-- User Bio EN -->
+            <p id="about-en" style="margin: 0;">Raja Muhammad Kurnia Setyawan is a young <em>Cybersecurity Professional</em> specializing in <em>Vulnerability Assessment, Penetration Testing (VAPT)</em>, and defense architecture. At the age of 21, he has experience conducting security testing across crucial sectors, including Banking, Mining, and Urban Infrastructure. Besides exploring both the <em>Offensive</em> and <em>Defensive</em> (SOC) domains, Raja actively contributes to educating and building the cybersecurity ecosystem as the founder of the <strong><a href="https://discord.gg/gGSK3DP5ES" target="_blank" style="color: inherit; text-decoration: underline;">Penjelajah CyberSecurity</a></strong> community.</p>
+            
+            <!-- User Bio ID -->
+            <p id="about-id" style="margin: 0; display: none;">Raja Muhammad Kurnia Setyawan adalah seorang <em>Cybersecurity Professional</em> muda dengan spesialisasi dalam <em>Vulnerability Assessment, Penetration Testing (VAPT)</em>, dan arsitektur pertahanan. Di usianya yang ke-21, ia telah memiliki pengalaman pengujian keamanan untuk berbagai sektor krusial, termasuk Perbankan, Pertambangan, dan Infrastruktur Perkotaan. Selain mengeksplorasi sisi <em>Offensive</em> maupun <em>Defensive</em> (SOC), Raja juga aktif berkontribusi dalam mengedukasi dan membangun ekosistem keamanan siber sebagai pendiri komunitas <strong><a href="https://discord.gg/gGSK3DP5ES" target="_blank" style="color: inherit; text-decoration: underline;">Penjelajah CyberSecurity</a></strong>.</p>
         </div>
     </header>
 
@@ -60,7 +70,7 @@
 
         <!-- Right Column: Sidebar -->
         <aside class="sidebar-area" style="flex: 30%;">
-            <h2 style="margin-top: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;">TOP 10 RECENT</h2>
+            <h2 id="top-recent-title" style="margin-top: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;">TOP 10 RECENT</h2>
             <div class="sidebar-recent">
                 <ul id="recent-container">
                     <!-- Recent posts rendered dynamically via JS -->
@@ -94,6 +104,42 @@
                 if (btn) btn.innerHTML = sunIcon;
             }
         })();
+
+        // Global Lang State
+        window.currentLang = 'en';
+
+        // Bio & UI Language Toggle
+        function toggleBioLang(lang) {
+            window.currentLang = lang;
+            if (lang === 'id') {
+                document.getElementById('about-en').style.display = 'none';
+                document.getElementById('about-id').style.display = 'block';
+                document.getElementById('lang-en').style.fontWeight = 'normal';
+                document.getElementById('lang-en').style.color = '#8b949e';
+                document.getElementById('lang-id').style.fontWeight = 'bold';
+                document.getElementById('lang-id').style.color = 'inherit';
+                
+                // Update UI elements
+                document.getElementById('top-recent-title').innerText = "10 POSTINGAN TERBARU";
+            } else {
+                document.getElementById('about-en').style.display = 'block';
+                document.getElementById('about-id').style.display = 'none';
+                document.getElementById('lang-en').style.fontWeight = 'bold';
+                document.getElementById('lang-en').style.color = 'inherit';
+                document.getElementById('lang-id').style.fontWeight = 'normal';
+                document.getElementById('lang-id').style.color = '#8b949e';
+                
+                // Update UI elements
+                document.getElementById('top-recent-title').innerText = "TOP 10 RECENT";
+            }
+            
+            // Re-render projects to update "LATEST POSTS" and fallback texts
+            if (typeof window.currentCategory !== 'undefined') {
+                renderProjects(window.currentCategory);
+            } else {
+                renderProjects('all');
+            }
+        }
     </script>
 </body>
 </html>
