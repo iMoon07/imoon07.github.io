@@ -145,7 +145,8 @@ if (repoUrl && repoUrl !== '#') {
                 script.setAttribute("data-reactions-enabled", "1");
                 script.setAttribute("data-emit-metadata", "0");
                 script.setAttribute("data-input-position", "bottom");
-                script.setAttribute("data-theme", "preferred_color_scheme");
+                const isLightMode = document.body.classList.contains('light-mode');
+                script.setAttribute("data-theme", isLightMode ? "light" : "dark");
                 script.setAttribute("data-lang", "en");
                 script.crossOrigin = "anonymous";
                 script.async = true;

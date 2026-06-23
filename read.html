@@ -71,6 +71,15 @@
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
             document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
+            
+            // Ubah tema Giscus secara dinamis
+            const iframe = document.querySelector('iframe.giscus-frame');
+            if (iframe) {
+                iframe.contentWindow.postMessage(
+                    { giscus: { setConfig: { theme: isLight ? 'light' : 'dark' } } },
+                    'https://giscus.app'
+                );
+            }
         }
         (function () {
             const savedTheme = localStorage.getItem('theme');
