@@ -133,29 +133,24 @@ if (repoUrl && repoUrl !== '#') {
 
             // Dynamic Giscus Injection
             const giscusWrapper = document.getElementById('giscus-wrapper');
-            if (giscusWrapper && typeof myProjects !== 'undefined') {
-                const projectData = myProjects.find(p => p.rawUrl === repoUrl);
-                if (projectData && projectData.giscus) {
-                    const script = document.createElement('script');
-                    script.src = "https://giscus.app/client.js";
-                    script.setAttribute("data-repo", projectData.giscus.repo);
-                    script.setAttribute("data-repo-id", projectData.giscus.repoId);
-                    script.setAttribute("data-category", "Announcements");
-                    script.setAttribute("data-category-id", projectData.giscus.categoryId);
-                    script.setAttribute("data-mapping", "pathname");
-                    script.setAttribute("data-strict", "0");
-                    script.setAttribute("data-reactions-enabled", "1");
-                    script.setAttribute("data-emit-metadata", "0");
-                    script.setAttribute("data-input-position", "bottom");
-                    script.setAttribute("data-theme", "preferred_color_scheme");
-                    script.setAttribute("data-lang", "en");
-                    script.crossOrigin = "anonymous";
-                    script.async = true;
-                    
-                    giscusWrapper.appendChild(script);
-                } else {
-                    giscusWrapper.innerHTML = "<p style='color: #8b949e; font-style: italic; font-size: 15px;'>Kolom diskusi dinonaktifkan untuk artikel ini.</p>";
-                }
+            if (giscusWrapper) {
+                const script = document.createElement('script');
+                script.src = "https://giscus.app/client.js";
+                script.setAttribute("data-repo", "iMoon07/imoon07.github.io");
+                script.setAttribute("data-repo-id", "R_kgDOPC4SPw");
+                script.setAttribute("data-category", "General");
+                script.setAttribute("data-category-id", "DIC_kwDOPC4SP84C_u9G");
+                script.setAttribute("data-mapping", "pathname");
+                script.setAttribute("data-strict", "0");
+                script.setAttribute("data-reactions-enabled", "1");
+                script.setAttribute("data-emit-metadata", "0");
+                script.setAttribute("data-input-position", "bottom");
+                script.setAttribute("data-theme", "preferred_color_scheme");
+                script.setAttribute("data-lang", "en");
+                script.crossOrigin = "anonymous";
+                script.async = true;
+                
+                giscusWrapper.appendChild(script);
             }
         })
         .catch(err => {
