@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Raja | Cyber Security Architect | Red/Blue/Purple Teaming | Exploit/Malware Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <a href="index.html">&laquo; Back to Project List</a>
+        <button onclick="toggleTheme()" id="theme-btn" class="theme-btn" title="Toggle Theme">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="read-container">
+        <!-- Author Byline -->
+        <div class="article-meta" style="margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 15px;">
+            <img src="foto-raja.jpg" alt="Foto Raja" style="width: 45px !important; height: 45px !important; border-radius: 50% !important; border: 2px solid #30363d !important; object-fit: cover;">
+            <div>
+                <strong style="display: block; color: #c9d1d9;">Raja Muhammad Kurnia Setyawan</strong>
+                <a href="https://github.com/iMoon07" target="_blank" style="font-size: 14px; color: #8b949e; text-decoration: none;">@iMoon07</a>
+            </div>
+        </div>
+
+        <div id="content">Memuat konten...</div>
+
+        <!-- Share & Actions -->
+        <div class="article-actions" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; text-align: center;">
+            <button onclick="shareArticle()" class="share-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                Share This Article
+            </button>
+        </div>
+
+        <!-- Giscus Comments Container -->
+        <div class="giscus-container" style="margin-top: 40px;">
+            <h3 style="margin-bottom: 20px;">Discussion</h3>
+            <div id="giscus-wrapper" class="giscus">
+                <!-- Giscus Script akan di-inject otomatis oleh read.js berdasarkan data.js -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="read.js"></script>
+    <script>
+        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
+        }
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            const isLight = savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches);
+            const btn = document.getElementById('theme-btn');
+            if (isLight) {
+                document.body.classList.add('light-mode');
+                if (btn) btn.innerHTML = moonIcon;
+            } else {
+                if (btn) btn.innerHTML = sunIcon;
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Security Architect | Red/Blue/Purple Teaming | Exploit/Malware Analysis</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Halo, Saya Raja Muhammad Kurnia Setyawan. 21yo self-taught Penetration Tester dengan fokus pada Offensive Security, Vulnerability Assessment & Penetration Testing (VAPT).">
+    <meta name="keywords" content="Raja Muhammad Kurnia Setyawan, Penetration Tester, Cyber Security Architect, Red Teaming, Blue Teaming, Purple Teaming, Exploit Analysis, Malware Analysis, VAPT, Offensive Security, Hacker">
+    <meta name="author" content="Raja Muhammad Kurnia Setyawan">
+    <meta name="robots" content="index, follow">
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Profile Header -->
+    <header class="profile-header" style="display: flex; gap: 30px; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #30363d; padding-bottom: 30px;">
+        <a href="https://www.linkedin.com/in/imoon07/" target="_blank" rel="noopener noreferrer">
+            <img src="foto-raja.jpg" alt="Foto Raja" class="profile-img" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #30363d; object-fit: cover; flex-shrink: 0;">
+        </a>
+        <div class="profile-info">
+            <h1 style="margin-top: 0; margin-bottom: 10px;">Raja Muhammad Kurnia Setyawan</h1>
+            <!-- User Bio -->
+            <p id="about" style="margin: 0;">Raja Muhammad Kurnia Setyawan adalah seorang <em>Cybersecurity Professional</em> muda dengan spesialisasi dalam <em>Vulnerability Assessment, Penetration Testing (VAPT)</em>, dan arsitektur pertahanan. Di usianya yang ke-21, ia telah memiliki pengalaman pengujian keamanan untuk berbagai sektor krusial, termasuk Perbankan, Pertambangan, dan Infrastruktur Perkotaan. Selain mengeksplorasi sisi <em>Offensive</em> maupun <em>Defensive</em> (SOC), Raja juga aktif berkontribusi dalam mengedukasi dan membangun ekosistem keamanan siber sebagai pendiri komunitas <strong><a href="https://discord.gg/gGSK3DP5ES" target="_blank" style="color: inherit; text-decoration: underline;">Penjelajah CyberSecurity</a></strong>.</p>
+        </div>
+    </header>
+
+    <h3 style="margin-top: 30px; margin-bottom: 15px;">Research Categories:</h3>
+    <nav class="main-nav" style="margin-bottom: 30px; border-bottom: 1px solid #30363d; padding-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 20px; line-height: 1.8;">
+        <div>
+            <a href="#" onclick="renderProjects('all'); return false;">[ Home ]</a> |
+            <a href="#" onclick="renderProjects('architect'); return false;">[ Cyber Security Architect ]</a> |
+            <a href="#" onclick="renderProjects('teaming'); return false;">[ Red/Blue/Purple Teaming ]</a> |
+            <a href="#" onclick="renderProjects('malware'); return false;">[ Exploit/Malware Analysis ]</a> |
+            <a href="read.html?url=about-me.md">[ About Me ]</a>
+        </div>
+        <button onclick="toggleTheme()" id="theme-btn" class="theme-btn" title="Toggle Theme" style="flex-shrink: 0; margin-left: -5px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+    
+    <!-- Main Layout -->
+    <div class="main-layout">
+        
+        <!-- Left Column: Projects -->
+        <div class="content-area">
+            <h2 id="cat-title" style="margin-top: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;">LATEST POSTS</h2>
+            <div id="project-container">
+                <!-- Projects rendered dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="sidebar-area" style="flex: 30%;">
+            <h2 style="margin-top: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;">TOP 10 RECENT</h2>
+            <div class="sidebar-recent">
+                <ul id="recent-container">
+                    <!-- Recent posts rendered dynamically via JS -->
+                </ul>
+            </div>
+        </aside>
+        
+    </div>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+    <script>
+        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const isLight = savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches);
+            const btn = document.getElementById('theme-btn');
+            if (isLight) {
+                document.body.classList.add('light-mode');
+                if (btn) btn.innerHTML = moonIcon;
+            } else {
+                if (btn) btn.innerHTML = sunIcon;
+            }
+        })();
+    </script>
+</body>
+</html>

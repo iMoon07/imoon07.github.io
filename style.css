@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+/* ========================================================
+   GLOBAL STYLES
+   ======================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #c9d1d9;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #0d1117;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+h1, h2, h3 { color: #c9d1d9; font-weight: 600; }
+
+/* Links */
+a { color: #58a6ff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+hr { border: 0; border-bottom: 1px solid #30363d; margin: 30px 0; }
+
+/* ========================================================
+   PROFILE HEADER
+   ======================================================== */
+header {
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+img[alt="Foto Raja"] {
+    width: 150px !important;
+    height: 150px !important;
+    border-radius: 50% !important;
+    border: 3px solid #30363d !important;
+    object-fit: cover;
+    display: block;
+}
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+    border: 2px solid #30363d;
+}
+.bio-text h1 { margin: 0 0 5px 0; font-size: 26px; }
+.bio-text p { margin: 0; color: #8b949e; font-size: 14px; line-height: 1.4; }
+#about { color: #c9d1d9; font-family: 'Lora', serif; font-size: 18px; line-height: 1.8; margin-top: 25px; margin-bottom: 25px; text-align: justify; }
+
+nav { margin-bottom: 30px; }
+
+/* ========================================================
+   MAIN LAYOUT & PROJECT CARDS
+   ======================================================== */
+.main-layout {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    align-items: flex-start;
+}
+.content-area { flex: 70%; }
+
+#project-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.kotak-preview {
+    border: none;
+    padding: 0 0 30px 0;
+    background: transparent;
+    border-bottom: 1px solid #30363d;
+}
+.kotak-preview:last-child {
+    border-bottom: none;
+}
+.kotak-preview h2 { 
+    margin-top: 0; 
+    font-size: 1.6em; 
+    margin-bottom: 10px; 
+    line-height: 1.3; 
+}
+.kotak-preview img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+}
+.kotak-preview p { 
+    color: #c9d1d9; 
+    font-family: 'Lora', serif;
+    font-size: 1.15em; 
+    margin-bottom: 15px; 
+    line-height: 1.6;
+}
+.kotak-preview a {
+    font-weight: 600;
+}
+
+/* ========================================================
+   SIDEBAR (RECENT POSTS)
+   ======================================================== */
+.sidebar-recent {
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+.sidebar-recent ul { padding-left: 0; list-style: none; margin: 0; }
+.sidebar-recent li { margin-bottom: 12px; border-bottom: 1px solid #21262d; padding-bottom: 12px; }
+.sidebar-recent li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+/* ========================================================
+   ARTICLE VIEW
+   ======================================================== */
+main.read-container {
+    border: 1px solid #30363d;
+    background-color: #0d1117;
+    border-radius: 6px;
+    padding: 30px 40px;
+    margin-bottom: 30px;
+}
+
+#content { font-family: 'Lora', serif; font-size: 18px; color: #c9d1d9; line-height: 1.9; overflow-wrap: break-word; word-wrap: break-word; }
+#content p { text-align: justify; }
+#content a { word-break: break-all; }
+#content h1, #content h2 { border-bottom: 1px solid #21262d; padding-bottom: 0.3em; margin-bottom: 16px; margin-top: 24px; color: #c9d1d9; }
+#content img { max-width: 100%; box-sizing: content-box; background-color: #0d1117; margin: 15px 0; border: 1px solid #30363d; border-radius: 6px; }
+#content pre { box-sizing: border-box; max-width: 100%; background-color: #161b22; padding: 16px; overflow-x: auto; border-radius: 6px; border: 1px solid #30363d; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; line-height: 1.45; color: #c9d1d9; }
+#content code { background-color: rgba(240,246,252,0.15); padding: 0.2em 0.4em; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; }
+#content pre code { background-color: transparent; padding: 0; }
+#content blockquote { padding: 0 1em; color: #8b949e; border-left: 0.25em solid #30363d; margin: 0 0 16px 0; }
+#content table { display: block; box-sizing: border-box; max-width: 100%; overflow-x: auto; border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+#content table th, #content table td { border: 1px solid #30363d; padding: 6px 13px; }
+#content table tr { background-color: #0d1117; }
+#content table tr:nth-child(2n) { background-color: #161b22; }
+
+/* Article Meta (Author) & Share Button & Giscus */
+.article-meta img { border-color: #30363d !important; }
+.share-btn {
+    background-color: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+.share-btn:hover { background-color: #30363d; border-color: #8b949e; }
+.giscus-container { border-top: 1px solid #30363d; padding-top: 20px; }
+
+/* ========================================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ======================================================== */
+@media (max-width: 768px) {
+    body { padding: 15px 15px; }
+    
+    /* Profile Header */
+    .profile-header { flex-direction: column; text-align: center; gap: 15px !important; padding-bottom: 20px !important; }
+    h1 { font-size: 26px; margin-bottom: 15px; margin-top: 5px; }
+    #content h1 { text-align: left; }
+    #about { font-size: 16px; text-align: justify; line-height: 1.7; }
+    
+    h3 { text-align: center; }
+    
+    /* Navigation */
+    nav.main-nav { 
+        justify-content: center !important; 
+        text-align: center; 
+        flex-direction: column; 
+        gap: 15px !important; 
+    }
+    nav.main-nav div {
+        line-height: 2.2;
+        font-size: 15px;
+    }
+    
+    /* Main Layout */
+    .main-layout { flex-direction: column; gap: 40px; }
+    .content-area, .sidebar-area { width: 100%; flex: auto; }
+    .kotak-preview h2 { font-size: 1.4em; }
+    
+    /* Article View */
+    main.read-container { padding: 20px 15px; }
+    #content { font-size: 16px; line-height: 1.7; }
+}
+
+/* ========================================================
+   THEME TOGGLE BUTTON
+   ======================================================== */
+.theme-btn {
+    background: transparent;
+    border: none;
+    color: #c9d1d9;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.theme-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.theme-btn:active {
+    transform: scale(0.9);
+}
+
+/* ========================================================
+   LIGHT MODE OVERRIDES
+   ======================================================== */
+body.light-mode { background-color: #fafafa; color: #333333; }
+body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #111827; }
+body.light-mode a { color: #2563eb; }
+body.light-mode hr { border-bottom: 1px solid #e5e7eb; }
+body.light-mode nav.main-nav { border-bottom: 1px solid #e5e7eb !important; }
+body.light-mode header { border-bottom: 1px solid #e5e7eb; }
+body.light-mode .profile-header { border-bottom: 1px solid #e5e7eb !important; }
+body.light-mode img[alt="Foto Raja"] { border-color: #e5e7eb !important; }
+body.light-mode .profile-img { border: 2px solid #e5e7eb; }
+body.light-mode .bio-text p { color: #4b5563; }
+body.light-mode #about { color: #333333; }
+body.light-mode .kotak-preview { border-bottom: 1px solid #e5e7eb; }
+body.light-mode .kotak-preview img { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
+body.light-mode .kotak-preview p { color: #4b5563; }
+body.light-mode .sidebar-recent li { border-bottom: 1px solid #e5e7eb; }
+body.light-mode main.read-container { background-color: #fafafa; border: 1px solid #e5e7eb; }
+body.light-mode #content { color: #333333; }
+body.light-mode #content h1, body.light-mode #content h2 { border-bottom: 1px solid #e5e7eb; color: #111827; }
+body.light-mode #content img { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
+body.light-mode #content pre { background-color: #f3f4f6; border: 1px solid #e5e7eb; color: #333333; }
+body.light-mode #content code { background-color: rgba(0,0,0,0.05); }
+body.light-mode #content blockquote { color: #6e7781; border-left-color: #d0d7de; }
+body.light-mode #content table th, body.light-mode #content table td { border-color: #d0d7de; }
+body.light-mode #content table tr { background-color: #ffffff; }
+body.light-mode #content table tr:nth-child(2n) { background-color: #f6f8fa; }
+
+/* Light Mode Overrides for Article Meta & Share */
+body.light-mode .article-meta, body.light-mode .article-actions, body.light-mode .giscus-container { border-color: #e5e7eb !important; }
+body.light-mode .article-meta strong { color: #111827 !important; }
+body.light-mode .article-meta img { border-color: #e5e7eb !important; }
+body.light-mode .share-btn { background-color: #ffffff; color: #24292f; border-color: #d0d7de; }
+body.light-mode .share-btn:hover { background-color: #f3f4f6; border-color: #0969da; }
+body.light-mode .theme-btn { color: #4b5563; }
+body.light-mode .theme-btn:hover { background-color: rgba(0,0,0,0.05); }
