@@ -13,8 +13,8 @@ Things got serious when I joined intensive bootcamps at [Merdeka Siber](https://
 Just for the memories, here are some old YouTube archives from my game server days:
 
 <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/bS23qR3cNNk" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
+  <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <iframe width="350" height="200" src="https://www.youtube.com/embed/bS23qR3cNNk" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Professional Experience
@@ -54,9 +54,9 @@ Through Vulnerability Disclosure Programs (VDP), Penetration Testing, and Bug Bo
 
 I believe the best way to defend a system is to know exactly how to break it. I'm always exploring new offensive techniques to help build stronger defenses.
 
-<div id="dynamic-quote" style="margin-top: 30px; padding: 20px; border-left: 4px solid #58a6ff; background-color: #0d1117; color: #c9d1d9; border-radius: 4px; font-size: 15px; line-height: 1.6;">
+<div id="dynamic-quote">
   <em>"Talk is cheap. Show me the code."</em> <br> — <strong>Linus Torvalds</strong> <br><br>
-  <a href="#" id="change-quote-btn" style="color: #58a6ff; text-decoration: none; font-size: 13px; font-family: monospace;">[ ↻ Change Quote ]</a>
+  <a href="#" id="change-quote-btn">[ ↻ Change Quote ]</a>
 </div>
 
 ## Connect with Me

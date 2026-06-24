@@ -156,7 +156,7 @@ if (repoUrl && repoUrl !== '#') {
                 function renderRandomQuote() {
                     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
                     quoteElement.innerHTML = `<em>"${randomQuote.text}"</em> <br> — <strong>${randomQuote.author}</strong> <br><br>
-                    <a href="#" id="change-quote-btn" style="color: #58a6ff; text-decoration: none; font-size: 13px; font-family: monospace;">[ ↻ Ganti Quote ]</a>`;
+                    <a href="#" id="change-quote-btn">[ ↻ Ganti Quote ]</a>`;
 
                     document.getElementById('change-quote-btn').addEventListener('click', function (e) {
                         e.preventDefault();

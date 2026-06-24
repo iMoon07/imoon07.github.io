@@ -263,3 +263,43 @@ body.light-mode .share-btn { background-color: #ffffff; color: #24292f; border-c
 body.light-mode .share-btn:hover { background-color: #f3f4f6; border-color: #0969da; }
 body.light-mode .theme-btn { color: #4b5563; }
 body.light-mode .theme-btn:hover { background-color: rgba(0,0,0,0.05); }
+
+/* ========================================================
+   DYNAMIC QUOTE BOX
+   ======================================================== */
+#dynamic-quote {
+    margin-top: 30px;
+    padding: 20px;
+    border-left: 4px solid #58a6ff;
+    background-color: #161b22;
+    color: #c9d1d9;
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+#dynamic-quote a {
+    color: #58a6ff;
+    text-decoration: none;
+    font-size: 13px;
+    font-family: monospace;
+}
+
+body.light-mode #dynamic-quote {
+    background-color: #f0f6ff;
+    color: #24292f;
+    border-left-color: #2563eb;
+}
+body.light-mode #dynamic-quote a {
+    color: #2563eb;
+}
+
+/* ========================================================
+   IFRAME (YouTube embed) — theme-aware border
+   ======================================================== */
+#content iframe {
+    border-radius: 8px;
+    border: 1px solid #30363d;
+}
+body.light-mode #content iframe {
+    border-color: #d0d7de;
+}

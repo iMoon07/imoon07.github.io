@@ -13,8 +13,8 @@ Momen titik balik terjadi saat saya mengikuti *bootcamp* intensif di [Merdeka Si
 Sebagai jejak digital masa lalu, berikut adalah arsip dari komunitas server game yang pernah saya ikuti:
 
 <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/bS23qR3cNNk" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
+  <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <iframe width="350" height="200" src="https://www.youtube.com/embed/bS23qR3cNNk" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Pengalaman Profesional
@@ -55,9 +55,9 @@ Daftar organisasi yang telah memvalidasi laporan keamanan saya melalui program V
 
 Bagi saya, cara terbaik untuk memahami cara bertahan (*defense*) adalah dengan mengerti cara membobolnya (*offense*). Saya terus mengeksplorasi teknik *offensive* untuk membangun arsitektur pertahanan yang lebih kuat.
 
-<div id="dynamic-quote" style="margin-top: 30px; padding: 20px; border-left: 4px solid #58a6ff; background-color: #0d1117; color: #c9d1d9; border-radius: 4px; font-size: 15px; line-height: 1.6;">
+<div id="dynamic-quote">
   <em>"Talk is cheap. Show me the code."</em> <br> — <strong>Linus Torvalds</strong> <br><br>
-  <a href="#" id="change-quote-btn" style="color: #58a6ff; text-decoration: none; font-size: 13px; font-family: monospace;">[ ↻ Ganti Quote ]</a>
+  <a href="#" id="change-quote-btn">[ ↻ Ganti Quote ]</a>
 </div>
 
 ## Kontak
