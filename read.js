@@ -1,5 +1,23 @@
 const urlParams = new URLSearchParams(window.location.search);
-const repoUrl = urlParams.get('url');
+const postId = urlParams.get('post');
+const lang = urlParams.get('lang') || 'id';
+
+let repoUrl = urlParams.get('url');
+
+if (postId) {
+    if (postId === 'about-me') {
+        repoUrl = lang === 'en' ? 'about-me.md' : 'about-me-id.md';
+    } else if (typeof myProjects !== 'undefined') {
+        const project = myProjects.find(p => p.id === postId);
+        if (project) {
+            if (lang === 'en') {
+                repoUrl = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl);
+            } else {
+                repoUrl = project.rawUrl;
+            }
+        }
+    }
+}
 
 if (repoUrl && repoUrl !== '#') {
     document.getElementById('content').innerHTML = "<p><i>Fetching data from GitHub...</i></p>";
@@ -12,7 +30,18 @@ if (repoUrl && repoUrl !== '#') {
             text = text.replace(/<img([^>]*?)src=["'](?!http)(.*?)["']/gi, "<img$1src=\"" + basePath + "$2\"");
 
             // Fix relative markdown links biar nggak usah hardcode (Fitur Ajaib)
-            text = text.replace(/(?<!!)\[([^\]]+)\]\((?!http|#|mailto:)(.*?\.md)\)/g, "[$1](read.html?url=" + basePath + "$2)");
+            text = text.replace(/(?<!!)\[([^\]]+)\]\((?!http|#|mailto:)(.*?\.md)\)/g, (match, p1, p2) => {
+                if (postId) {
+                    if (postId === 'about-me') {
+                        if (p2.includes('-id.md')) return `[${p1}](read.html?post=about-me)`;
+                        if (p2.includes('.md')) return `[${p1}](read.html?post=about-me&lang=en)`;
+                    } else {
+                        if (p2.includes('-en.md')) return `[${p1}](read.html?post=${postId}&lang=en)`;
+                        if (p2.includes('-id.md')) return `[${p1}](read.html?post=${postId})`;
+                    }
+                }
+                return `[${p1}](read.html?url=${basePath}${p2})`;
+            });
 
             document.getElementById('content').innerHTML = marked.parse(text);
 

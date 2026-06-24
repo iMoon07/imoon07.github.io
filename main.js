@@ -102,15 +102,14 @@ function renderProjects(kategoriAwal) {
     dataTerfilter.forEach((project) => {
         let title = isId ? project.titleId : project.titleEn;
         let desc = isId ? project.descId : project.descEn;
-        let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
-        let url = isId ? project.rawUrl : (derivedUrlEn || project.rawUrl);
+        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
 
         let kotakHtml = `
             <div class="kotak-preview">
                 <img src="${project.image}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
-                <h2><a href="read.html?url=${url}">${title}</a></h2>
+                <h2><a href="${postUrl}">${title}</a></h2>
                 <p>${desc}</p>
-                <a href="read.html?url=${url}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
+                <a href="${postUrl}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
             </div>
         `;
         projectContainer.innerHTML += kotakHtml;
@@ -129,9 +128,8 @@ async function initMesinOtomatis() {
     myProjects.slice(0, 10).forEach(project => {
         let isId = (window.currentLang === 'id');
         let title = isId ? project.titleId : project.titleEn;
-        let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
-        let url = isId ? project.rawUrl : (derivedUrlEn || project.rawUrl);
-        let listHtml = `<li style="margin-bottom:12px;"><a href="read.html?url=${url}">${title}</a></li>`;
+        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
+        let listHtml = `<li style="margin-bottom:12px;"><a href="${postUrl}">${title}</a></li>`;
         recentContainer.innerHTML += listHtml;
     });
 
