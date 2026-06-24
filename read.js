@@ -1,6 +1,10 @@
 const urlParams = new URLSearchParams(window.location.search);
-const postId = urlParams.get('post');
+let postId = urlParams.get('post');
 const lang = urlParams.get('lang') || 'id';
+
+if (!postId && window.location.pathname.endsWith('about.html')) {
+    postId = 'about-me';
+}
 
 let repoUrl = urlParams.get('url');
 
@@ -148,13 +152,13 @@ if (repoUrl && repoUrl !== '#') {
                     { text: "If you can't explain it to a six year old, you don't understand it yourself.", author: "Albert Einstein" },
                     { text: "The truth is, everyone is going to hurt you. You just got to find the ones worth suffering for.", author: "Bob Marley" }
                 ];
-                
+
                 function renderRandomQuote() {
                     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
                     quoteElement.innerHTML = `<em>"${randomQuote.text}"</em> <br> — <strong>${randomQuote.author}</strong> <br><br>
                     <a href="#" id="change-quote-btn" style="color: #58a6ff; text-decoration: none; font-size: 13px; font-family: monospace;">[ ↻ Ganti Quote ]</a>`;
-                    
-                    document.getElementById('change-quote-btn').addEventListener('click', function(e) {
+
+                    document.getElementById('change-quote-btn').addEventListener('click', function (e) {
                         e.preventDefault();
                         renderRandomQuote();
                     });
@@ -204,7 +208,7 @@ if (repoUrl && repoUrl !== '#') {
                         let termUrl = window.location.origin + window.location.pathname + "?url=" + baseRawUrl;
                         script.setAttribute("data-term", termUrl);
                     }
-                    
+
                     script.setAttribute("data-strict", "0");
                     script.setAttribute("data-reactions-enabled", "1");
                     script.setAttribute("data-emit-metadata", "0");
@@ -214,7 +218,7 @@ if (repoUrl && repoUrl !== '#') {
                     script.setAttribute("data-lang", "en");
                     script.crossOrigin = "anonymous";
                     script.async = true;
-                    
+
                     giscusWrapper.appendChild(script);
                 }
             }
@@ -230,7 +234,7 @@ if (repoUrl && repoUrl !== '#') {
 function shareArticle() {
     const url = window.location.href;
     const title = document.title;
-    
+
     if (navigator.share) {
         navigator.share({
             title: title,
