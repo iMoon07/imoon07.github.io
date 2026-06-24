@@ -11,6 +11,9 @@ if (repoUrl && repoUrl !== '#') {
             text = text.replace(/!\[([^\]]*)\]\((?!http)(.*?)\)/g, "![$1](" + basePath + "$2)");
             text = text.replace(/<img([^>]*?)src=["'](?!http)(.*?)["']/gi, "<img$1src=\"" + basePath + "$2\"");
 
+            // Fix relative markdown links biar nggak usah hardcode (Fitur Ajaib)
+            text = text.replace(/(?<!!)\[([^\]]+)\]\((?!http|#|mailto:)(.*?\.md)\)/g, "[$1](read.html?url=" + basePath + "$2)");
+
             document.getElementById('content').innerHTML = marked.parse(text);
 
             // Dynamic Quote Logic for about-me.md
