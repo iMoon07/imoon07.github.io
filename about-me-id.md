@@ -1,6 +1,6 @@
 # Tentang Kurnia
 
-[🇬🇧 Read in English](read.html?url=about-me.md)
+[🇬🇧 Read in English](about-me.md)
 
 Halo! Saya Raja Muhammad Kurnia Setyawan. Di usia 21 tahun, saya mulai berkarir sebagai **self-taught Penetration Tester** dengan fokus kuat pada *Offensive Security*.
 
