@@ -10,7 +10,7 @@ let repoUrl = urlParams.get('url');
 
 if (postId) {
     if (postId === 'about-me') {
-        repoUrl = lang === 'en' ? 'about-me.md' : 'about-me-id.md';
+        repoUrl = lang === 'en' ? 'content/about-me.md' : 'content/about-me-id.md';
     } else if (typeof myProjects !== 'undefined') {
         const project = myProjects.find(p => p.id === postId);
         if (project) {
