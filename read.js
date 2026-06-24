@@ -140,7 +140,7 @@ if (repoUrl && repoUrl !== '#') {
                 let giscusConfig = null;
 
                 if (repoUrl.includes("about-me")) {
-                    // Konfigurasi khusus halaman About Me (karena tidak masuk myProjects)
+                    // Specific configuration for About Me page (not included in myProjects)
                     giscusConfig = {
                         repo: "iMoon07/imoon07.github.io",
                         repoId: "R_kgDOPC4SPw",
@@ -148,8 +148,11 @@ if (repoUrl && repoUrl !== '#') {
                         categoryId: "DIC_kwDOPC4SP84C_u9G"
                     };
                 } else if (typeof myProjects !== 'undefined') {
-                    // Cari project dari data.js yang URL-nya cocok (baik ID maupun EN)
-                    const project = myProjects.find(p => p.rawUrl === repoUrl || p.rawUrlEn === repoUrl);
+                    // Dynamically resolve project configuration for both localizations (ID and EN)
+                    const project = myProjects.find(p => {
+                        let derivedUrlEn = p.rawUrlEn || (p.rawUrl && p.rawUrl.endsWith('-id.md') ? p.rawUrl.replace('-id.md', '-en.md') : null);
+                        return p.rawUrl === repoUrl || derivedUrlEn === repoUrl;
+                    });
                     if (project && project.giscus) {
                         giscusConfig = project.giscus;
                     }
@@ -163,9 +166,14 @@ if (repoUrl && repoUrl !== '#') {
                     script.setAttribute("data-category", giscusConfig.category);
                     script.setAttribute("data-category-id", giscusConfig.categoryId);
                     if (repoUrl.includes("about-me")) {
-                        script.setAttribute("data-mapping", "pathname"); // Agar komentar lama di About Me balik
+                        script.setAttribute("data-mapping", "pathname"); // Preserve legacy mapping for About Me page
                     } else {
-                        script.setAttribute("data-mapping", "url");      // Agar artikel blog terpisah
+                        script.setAttribute("data-mapping", "specific");
+                        // Synchronize discussion threads across different language versions
+                        // by using the primary localization URL (ID) as the common identifier.
+                        let baseRawUrl = repoUrl.replace('-en.md', '-id.md');
+                        let termUrl = window.location.origin + window.location.pathname + "?url=" + baseRawUrl;
+                        script.setAttribute("data-term", termUrl);
                     }
                     
                     script.setAttribute("data-strict", "0");

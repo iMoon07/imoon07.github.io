@@ -28,7 +28,8 @@ async function fetchProjectData(project) {
     };
 
     const idData = await fetchSingle(project.rawUrl);
-    const enData = project.rawUrlEn ? await fetchSingle(project.rawUrlEn) : null;
+    let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
+    const enData = derivedUrlEn ? await fetchSingle(derivedUrlEn) : null;
 
     if (idData) {
         project.titleId = idData.title;
@@ -101,7 +102,8 @@ function renderProjects(kategoriAwal) {
     dataTerfilter.forEach((project) => {
         let title = isId ? project.titleId : project.titleEn;
         let desc = isId ? project.descId : project.descEn;
-        let url = isId ? project.rawUrl : (project.rawUrlEn || project.rawUrl);
+        let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
+        let url = isId ? project.rawUrl : (derivedUrlEn || project.rawUrl);
 
         let kotakHtml = `
             <div class="kotak-preview">
@@ -127,7 +129,8 @@ async function initMesinOtomatis() {
     myProjects.slice(0, 10).forEach(project => {
         let isId = (window.currentLang === 'id');
         let title = isId ? project.titleId : project.titleEn;
-        let url = isId ? project.rawUrl : (project.rawUrlEn || project.rawUrl);
+        let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
+        let url = isId ? project.rawUrl : (derivedUrlEn || project.rawUrl);
         let listHtml = `<li style="margin-bottom:12px;"><a href="read.html?url=${url}">${title}</a></li>`;
         recentContainer.innerHTML += listHtml;
     });

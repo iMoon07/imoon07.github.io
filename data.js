@@ -2,7 +2,6 @@ const myProjects = [
     {
         category: "architect",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
-        rawUrlEn: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-en.md",
         giscus: {
             repo: "iMoon07/Penjelajah-CyberSecurity",
             repoId: "R_kgDOTDbgbA",
