@@ -148,8 +148,8 @@ if (repoUrl && repoUrl !== '#') {
                         categoryId: "DIC_kwDOPC4SP84C_u9G"
                     };
                 } else if (typeof myProjects !== 'undefined') {
-                    // Cari project dari data.js yang URL-nya cocok
-                    const project = myProjects.find(p => p.rawUrl === repoUrl);
+                    // Cari project dari data.js yang URL-nya cocok (baik ID maupun EN)
+                    const project = myProjects.find(p => p.rawUrl === repoUrl || p.rawUrlEn === repoUrl);
                     if (project && project.giscus) {
                         giscusConfig = project.giscus;
                     }
