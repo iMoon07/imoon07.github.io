@@ -4,11 +4,13 @@
 
 Hi, I'm Raja Muhammad Kurnia Setyawan (@iMoon07). I'm a 21-year-old **Cyber Security Architect** and **Penetration Tester** from Indonesia, specializing in Offensive Security.
 
-My journey started from pure curiosity in local internet cafes—tinkering with games, modifying server logic (C++), and running independent private servers (GTPS). That curiosity eventually led me to a professional career in cybersecurity. 
+My fascination with technology began in local internet cafes—playing games and experimenting with cheats. Even though I didn't fully understand the technical side back then, the curiosity to bypass a system's rules was already growing.
 
-After completing intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), and interning at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), I started my professional career as a Freelance Junior Pentester.
+I also spent a lot of time in the **Growtopia Private Server (GTPS)** community, handling the operational side—from spinning up servers to daily maintenance. I started touching on technical infrastructure tasks, though not full programming (as a programmer friend handled all the heavy C++ coding). Managing these servers sparked my curiosity, eventually leading me to dive seriously into the IT and cybersecurity field.
 
-As a digital footprint, here are some archives from my early days tinkering with game servers:
+The real turning point happened when I completed intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). Equipped with a solid foundation from these programs and an internship at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), I officially started my professional career as a Freelance Junior Pentester.
+
+As a digital footprint, here are some archives from the game server community I used to be a part of:
 
 <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
   <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>

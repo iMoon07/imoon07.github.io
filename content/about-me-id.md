@@ -4,11 +4,13 @@
 
 Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07). Di usia 21 tahun, saya berkarir sebagai **Cyber Security Architect** dan **Penetration Tester** dengan fokus utama pada *Offensive Security*.
 
-Ketertarikan saya pada teknologi dimulai dari warnet—mengoprek game, modifikasi *source code* (C++), dan membangun *private server* independen (Growtopia / GTPS). Rasa penasaran untuk membongkar batasan sistem itulah yang akhirnya membawa saya ke karir profesional di bidang *cybersecurity*.
+Ketertarikan saya pada teknologi dimulai dari warnet—bermain game dan mencoba *cheat*. Meski saat itu belum terlalu paham teknisnya, rasa penasaran untuk mengakali batasan sistem sudah mulai tumbuh.
 
-Setelah lulus dari *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), serta magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), saya memulai karir profesional sebagai Freelance Junior Pentester.
+Dulu saya sempat aktif di komunitas *private server* independen (Growtopia / GTPS) untuk mengurus sisi operasionalnya—mulai dari *setup* (*up*) server hingga pemeliharaan sehari-hari. Saya juga mulai sedikit menyentuh hal-hal teknis infrastruktur, meskipun bukan *full programming* (karena teman saya yang mengeksekusi semua *coding* C++). Pengalaman merawat *server* inilah yang perlahan menumbuhkan ketertarikan saya, hingga akhirnya benar-benar terjun serius ke dunia IT dan *cybersecurity*.
 
-Sebagai jejak digital, berikut adalah arsip dari masa-masa awal saya mengoprek server game:
+Momen titik balik terjadi saat saya mengikuti *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). Berbekal ilmu tersebut dan pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), saya memulai karir profesional sebagai Freelance Junior Pentester.
+
+Sebagai jejak digital masa lalu, berikut adalah arsip dari komunitas server game yang pernah saya ikuti:
 
 <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
   <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
