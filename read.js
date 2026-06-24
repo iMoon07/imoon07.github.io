@@ -134,24 +134,44 @@ if (repoUrl && repoUrl !== '#') {
             // Dynamic Giscus Injection
             const giscusWrapper = document.getElementById('giscus-wrapper');
             if (giscusWrapper) {
-                const script = document.createElement('script');
-                script.src = "https://giscus.app/client.js";
-                script.setAttribute("data-repo", "iMoon07/imoon07.github.io");
-                script.setAttribute("data-repo-id", "R_kgDOPC4SPw");
-                script.setAttribute("data-category", "General");
-                script.setAttribute("data-category-id", "DIC_kwDOPC4SP84C_u9G");
-                script.setAttribute("data-mapping", "pathname");
-                script.setAttribute("data-strict", "0");
-                script.setAttribute("data-reactions-enabled", "1");
-                script.setAttribute("data-emit-metadata", "0");
-                script.setAttribute("data-input-position", "bottom");
-                const isLightMode = document.body.classList.contains('light-mode');
-                script.setAttribute("data-theme", isLightMode ? "light" : "dark");
-                script.setAttribute("data-lang", "en");
-                script.crossOrigin = "anonymous";
-                script.async = true;
-                
-                giscusWrapper.appendChild(script);
+                let giscusConfig = null;
+
+                if (repoUrl.includes("about-me")) {
+                    // Konfigurasi khusus halaman About Me (karena tidak masuk myProjects)
+                    giscusConfig = {
+                        repo: "iMoon07/imoon07.github.io",
+                        repoId: "R_kgDOPC4SPw",
+                        category: "General",
+                        categoryId: "DIC_kwDOPC4SP84C_u9G"
+                    };
+                } else if (typeof myProjects !== 'undefined') {
+                    // Cari project dari data.js yang URL-nya cocok
+                    const project = myProjects.find(p => p.rawUrl === repoUrl);
+                    if (project && project.giscus) {
+                        giscusConfig = project.giscus;
+                    }
+                }
+
+                if (giscusConfig) {
+                    const script = document.createElement('script');
+                    script.src = "https://giscus.app/client.js";
+                    script.setAttribute("data-repo", giscusConfig.repo);
+                    script.setAttribute("data-repo-id", giscusConfig.repoId);
+                    script.setAttribute("data-category", giscusConfig.category);
+                    script.setAttribute("data-category-id", giscusConfig.categoryId);
+                    script.setAttribute("data-mapping", "url");
+                    script.setAttribute("data-strict", "0");
+                    script.setAttribute("data-reactions-enabled", "1");
+                    script.setAttribute("data-emit-metadata", "0");
+                    script.setAttribute("data-input-position", "bottom");
+                    const isLightMode = document.body.classList.contains('light-mode');
+                    script.setAttribute("data-theme", isLightMode ? "light" : "dark");
+                    script.setAttribute("data-lang", "en");
+                    script.crossOrigin = "anonymous";
+                    script.async = true;
+                    
+                    giscusWrapper.appendChild(script);
+                }
             }
         })
         .catch(err => {

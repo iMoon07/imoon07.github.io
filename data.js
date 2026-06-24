@@ -1,4 +1,14 @@
 const myProjects = [
+    {
+        category: "architect",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
+        giscus: {
+            repo: "iMoon07/Penjelajah-CyberSecurity",
+            repoId: "R_kgDOTDbgbA",
+            category: "Q&A",
+            categoryId: "DIC_kwDOTDbgbM4C_xMv"
+        }
+    }
     // Template:
     // {
     //     category: "teaming", // architect, teaming, atau malware
