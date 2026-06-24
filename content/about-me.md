@@ -4,13 +4,13 @@
 
 Hi, I'm Raja Muhammad Kurnia Setyawan (@iMoon07). I'm a 21-year-old **Cyber Security Architect** and **Penetration Tester** from Indonesia, specializing in Offensive Security.
 
-My fascination with technology began in local internet cafes—playing games and experimenting with cheats. Even though I didn't fully understand the technical side back then, the curiosity to bypass a system's rules was already growing.
+My interest in tech started in local internet cafes. I played games and used cheats just for fun. Even though I didn't understand the tech behind it back then, I was always curious about how to break or bypass a system's rules.
 
-I also spent a lot of time in the **Growtopia Private Server (GTPS)** community, handling the operational side—from spinning up servers to daily maintenance. I started touching on technical infrastructure tasks, though not full programming (as a programmer friend handled all the heavy C++ coding). Managing these servers sparked my curiosity, eventually leading me to dive seriously into the IT and cybersecurity field.
+I also hung out a lot in the **Growtopia Private Server (GTPS)** community, helping out with server operations. I managed the servers and handled daily maintenance, while my programmer friend took care of the heavy C++ coding. Managing these game servers was actually what got me hooked on IT and cybersecurity.
 
-The real turning point happened when I completed intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). Equipped with a solid foundation from these programs and an internship at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), I officially started my professional career as a Freelance Junior Pentester.
+Things got serious when I joined intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). After building a solid foundation and finishing an internship at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), I officially started my career as a Freelance Junior Pentester.
 
-As a digital footprint, here are some archives from the game server community I used to be a part of:
+Just for the memories, here are some old YouTube archives from my game server days:
 
 <div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
   <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="GTPS GTIM Archives" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px; border: 1px solid #30363d;"></iframe>
@@ -21,7 +21,7 @@ As a digital footprint, here are some archives from the game server community I 
 
 I specialize in Vulnerability Assessment & Penetration Testing (VAPT), focusing on Web Applications and APIs.
 
-Through Vulnerability Disclosure Programs (VDP), professional Penetration Testing, and Bug Bounties, I have actively tested and secured systems across various critical sectors:
+Through Vulnerability Disclosure Programs (VDP), Penetration Testing, and Bug Bounties, I've had the chance to test and secure systems in several critical sectors:
 - Banking & Financial
 - Urban Infrastructure
 - Government
@@ -52,7 +52,7 @@ Through Vulnerability Disclosure Programs (VDP), professional Penetration Testin
 
 ## Vision
 
-I believe the best way to secure a system is to understand exactly how to break it. I continuously explore offensive techniques to build stronger defensive architectures.
+I believe the best way to defend a system is to know exactly how to break it. I'm always exploring new offensive techniques to help build stronger defenses.
 
 <div id="dynamic-quote" style="margin-top: 30px; padding: 20px; border-left: 4px solid #58a6ff; background-color: #0d1117; color: #c9d1d9; border-radius: 4px; font-size: 15px; line-height: 1.6;">
   <em>"Talk is cheap. Show me the code."</em> <br> — <strong>Linus Torvalds</strong> <br><br>
