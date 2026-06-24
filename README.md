@@ -4,6 +4,8 @@
 
 <h1 id="english">iMoon07 Portfolio & Blog</h1>
 
+![Cyberpunk Banner](assets/cyberpunk-text-banner.png)
+
 Welcome to the source code of my personal portfolio and blog. This repository contains the frontend implementation built using vanilla HTML, CSS, and JavaScript.
 
 The actual markdown articles are stored in a separate repository: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
@@ -34,6 +36,8 @@ MIT License.
 <br><br>
 
 <h1 id="bahasa-indonesia">iMoon07 Portfolio & Blog</h1>
+
+![Cyberpunk Banner](assets/cyberpunk-text-banner.png)
 
 Selamat datang di repositori source code untuk personal portfolio dan blog saya. Proyek ini dibangun menggunakan HTML, CSS, dan JavaScript murni (vanilla).
 
