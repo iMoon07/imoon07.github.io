@@ -162,7 +162,12 @@ if (repoUrl && repoUrl !== '#') {
                     script.setAttribute("data-repo-id", giscusConfig.repoId);
                     script.setAttribute("data-category", giscusConfig.category);
                     script.setAttribute("data-category-id", giscusConfig.categoryId);
-                    script.setAttribute("data-mapping", "url");
+                    if (repoUrl.includes("about-me")) {
+                        script.setAttribute("data-mapping", "pathname"); // Agar komentar lama di About Me balik
+                    } else {
+                        script.setAttribute("data-mapping", "url");      // Agar artikel blog terpisah
+                    }
+                    
                     script.setAttribute("data-strict", "0");
                     script.setAttribute("data-reactions-enabled", "1");
                     script.setAttribute("data-emit-metadata", "0");

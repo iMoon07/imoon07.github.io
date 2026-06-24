@@ -3,46 +3,49 @@ const recentContainer = document.getElementById('recent-container');
 const catTitle = document.getElementById('cat-title');
 
 async function fetchProjectData(project) {
-    if (project.title) return project;
+    if (project.hasFetched) return project;
+    project.hasFetched = true;
 
-    try {
-        const response = await fetch(project.rawUrl);
-        const text = await response.text();
-        
-        const lastModified = response.headers.get('Last-Modified');
-        project.date = lastModified ? new Date(lastModified).getTime() : 0;
+    const fetchSingle = async (url) => {
+        if (!url) return null;
+        try {
+            const response = await fetch(url);
+            const text = await response.text();
+            
+            const lastModified = response.headers.get('Last-Modified');
+            let date = lastModified ? new Date(lastModified).getTime() : 0;
 
-        let titleMatch = text.match(/^#\s+(.+)/m) || text.match(/<h1[^>]*>(.*?)<\/h1>/i);
-        if (titleMatch) {
-            project.title = titleMatch[1].replace(/<[^>]*>?/gm, '').trim();
-        } else {
-            let urlParts = project.rawUrl.split('/');
-            project.title = urlParts.length >= 3 ? urlParts[urlParts.length - 3] : "Project Security";
+            let titleMatch = text.match(/^#\s+(.+)/m) || text.match(/<h1[^>]*>(.*?)<\/h1>/i);
+            let title = titleMatch ? titleMatch[1].replace(/<[^>]*>?/gm, '').trim() : "Project Security";
+
+            let descMatch = text.replace(/^#.*$/gm, '').match(/^[A-Za-z].*$/m);
+            let desc = descMatch ? descMatch[0].substring(0, 150) + "..." : "No description available.";
+
+            return { title, desc, date, text };
+        } catch (err) {
+            return null;
         }
+    };
 
-        let descMatch = text.replace(/^#.*$/gm, '').match(/^[A-Za-z].*$/m);
-        project.desc = descMatch ? descMatch[0].substring(0, 150) + "..." : "No description available.";
+    const idData = await fetchSingle(project.rawUrl);
+    const enData = project.rawUrlEn ? await fetchSingle(project.rawUrlEn) : null;
 
-        // Extract first valid image for preview
+    if (idData) {
+        project.titleId = idData.title;
+        project.descId = idData.desc;
+        project.date = idData.date;
+        
         let foundImgUrl = null;
         let allImages = [];
-        
-        // Extract HTML images
         const htmlImgRegex = /<img[^>]*src=["']([^"']+)["']/gi;
         let match;
-        while ((match = htmlImgRegex.exec(text)) !== null) { allImages.push(match[1]); }
-        
-        // Extract Markdown images
+        while ((match = htmlImgRegex.exec(idData.text)) !== null) { allImages.push(match[1]); }
         const mdImgRegex = /!\[[^\]]*\]\(([^)]+)\)/gi;
-        while ((match = mdImgRegex.exec(text)) !== null) { allImages.push(match[1]); }
+        while ((match = mdImgRegex.exec(idData.text)) !== null) { allImages.push(match[1]); }
 
-        // Find the first image that is not a badge
         for (let img of allImages) {
             let lowerImg = img.toLowerCase();
-            if (!lowerImg.includes('shields.io') && 
-                !lowerImg.includes('badge') && 
-                !lowerImg.includes('actions/workflows') &&
-                !lowerImg.includes('travis-ci')) {
+            if (!lowerImg.includes('shields.io') && !lowerImg.includes('badge') && !lowerImg.includes('actions/workflows') && !lowerImg.includes('travis-ci')) {
                 foundImgUrl = img;
                 break;
             }
@@ -54,15 +57,22 @@ async function fetchProjectData(project) {
         }
         
         const fallbackSvg = (txt) => `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect fill='%23161b22' width='600' height='300'/%3E%3Ctext fill='%23c9d1d9' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24'%3E${encodeURIComponent(txt)}%3C/text%3E%3C/svg%3E`;
-        
-        project.image = foundImgUrl || fallbackSvg(project.title);
-
-    } catch (err) {
-        project.title = project.rawUrl.split('/').pop();
-        project.desc = "Failed to load article automatically.";
-        project.image = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect fill='%23161b22' width='600' height='300'/%3E%3Ctext fill='%23c9d1d9' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24'%3EError%3C/text%3E%3C/svg%3E`;
+        project.image = foundImgUrl || fallbackSvg(project.titleId);
+    } else {
+        project.titleId = "Error";
+        project.descId = "Failed to load.";
         project.date = 0;
+        project.image = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect fill='%23161b22' width='600' height='300'/%3E%3Ctext fill='%23c9d1d9' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24'%3EError%3C/text%3E%3C/svg%3E`;
     }
+
+    if (enData) {
+        project.titleEn = enData.title;
+        project.descEn = enData.desc;
+    } else {
+        project.titleEn = project.titleId;
+        project.descEn = project.descId;
+    }
+
     return project;
 }
 
@@ -89,12 +99,16 @@ function renderProjects(kategoriAwal) {
     }
 
     dataTerfilter.forEach((project) => {
+        let title = isId ? project.titleId : project.titleEn;
+        let desc = isId ? project.descId : project.descEn;
+        let url = isId ? project.rawUrl : (project.rawUrlEn || project.rawUrl);
+
         let kotakHtml = `
             <div class="kotak-preview">
                 <img src="${project.image}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
-                <h2><a href="read.html?url=${project.rawUrl}">${project.title}</a></h2>
-                <p>${project.desc}</p>
-                <a href="read.html?url=${project.rawUrl}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
+                <h2><a href="read.html?url=${url}">${title}</a></h2>
+                <p>${desc}</p>
+                <a href="read.html?url=${url}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
             </div>
         `;
         projectContainer.innerHTML += kotakHtml;
@@ -111,7 +125,10 @@ async function initMesinOtomatis() {
 
     recentContainer.innerHTML = '';
     myProjects.slice(0, 10).forEach(project => {
-        let listHtml = `<li style="margin-bottom:12px;"><a href="read.html?url=${project.rawUrl}">${project.title}</a></li>`;
+        let isId = (window.currentLang === 'id');
+        let title = isId ? project.titleId : project.titleEn;
+        let url = isId ? project.rawUrl : (project.rawUrlEn || project.rawUrl);
+        let listHtml = `<li style="margin-bottom:12px;"><a href="read.html?url=${url}">${title}</a></li>`;
         recentContainer.innerHTML += listHtml;
     });
 
