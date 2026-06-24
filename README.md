@@ -1,8 +1,4 @@
-[English](#english) | [Bahasa Indonesia](#bahasa-indonesia)
-
----
-
-<h1 id="english">iMoon07 Portfolio & Blog</h1>
+# iMoon07 Portfolio & Blog
 
 ![Cyberpunk Banner](assets/cyberpunk-text-banner.png)
 
@@ -33,18 +29,16 @@ If you would like to use this template for your own portfolio or learning purpos
 MIT License.
 
 ---
-<br><br>
 
-<h1 id="bahasa-indonesia">iMoon07 Portfolio & Blog</h1>
-
-![Cyberpunk Banner](assets/cyberpunk-text-banner.png)
+<details>
+<summary>🇮🇩 <b>Baca versi Bahasa Indonesia</b></summary>
+<br>
 
 Selamat datang di repositori source code untuk personal portfolio dan blog saya. Proyek ini dibangun menggunakan HTML, CSS, dan JavaScript murni (vanilla).
 
 Artikel markdown yang ditampilkan di web ini disimpan pada repositori terpisah: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
 
 ## Cara Kerja Sistem
-
 Proyek ini mengambil file markdown secara dinamis dan menampilkannya di browser.
 
 1. **`js/data.js`**: Berisi daftar artikel. Setiap item memiliki metadata dan `rawUrl` yang mengarah ke file `.md` di GitHub.
@@ -53,7 +47,6 @@ Proyek ini mengambil file markdown secara dinamis dan menampilkannya di browser.
 4. **Giscus (Opsional)**: Jika konfigurasi `giscus` ditambahkan pada objek artikel di `js/data.js`, kolom komentar akan aktif di halaman tersebut.
 
 ## Panduan Instalasi
-
 Jika Anda ingin menggunakan template ini untuk portfolio atau sarana belajar:
 
 1. **Fork repositori ini** ke akun GitHub Anda dan ubah namanya menjadi `username.github.io`.
@@ -64,3 +57,4 @@ Jika Anda ingin menggunakan template ini untuk portfolio atau sarana belajar:
 
 ## Lisensi
 MIT License.
+</details>
