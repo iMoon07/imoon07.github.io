@@ -2,45 +2,30 @@
 
 ---
 
-<h1 id="english">iMoon07 Portfolio & Blog Engine</h1>
+<h1 id="english">iMoon07 Portfolio & Blog</h1>
 
-A decoupled, purely static, headless CMS architecture built with vanilla HTML, CSS, and JS. 
+Welcome to the source code of my personal portfolio and blog. This repository contains the frontend implementation built using vanilla HTML, CSS, and JavaScript.
 
-This repository acts strictly as the Frontend Engine. The actual Markdown articles are stored in a separate database repository: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
+The actual markdown articles are stored in a separate repository: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
 
-## Internal Wiring (How The Code Connects)
+## How It Works
 
-To understand this engine, you must understand how the "cables" connect inside the code. 
+This project dynamically fetches markdown files and renders them in the browser.
 
-### 1. The Database Registry (`data.js`)
-This is the single source of truth. It contains an array called `myProjects`.
-- **If you want to ADD a new article:** You add a new JSON object inside the `myProjects` array here.
-- **If you want to CHANGE the Giscus comment repo:** You change the `repo`, `repoId`, and `categoryId` values here.
-- **If you want to TURN ON/OFF Comments per article (Optional, Moderate Complexity):** The code supports individual comment toggling. To turn it **ON**, include the `giscus` JSON block inside the article's object in `data.js`. To turn it **OFF**, simply delete or omit the `giscus` block.
-
-### 2. The Main Page (`index.html` & `main.js`)
-`index.html` builds the shell. `main.js` loops through `data.js` and injects HTML cards into the DOM.
-- **If you want to CHANGE your profile picture, name, or bio:** You edit `index.html` and `about.html` directly.
-- **If you want to CHANGE the design of the article cards:** You edit the `renderProjects()` function inside `main.js`.
-- The "cable": `main.js` generates clickable links formatted as `read.html?post=[ID]&lang=[LANG]`.
-
-### 3. The Markdown Fetcher (`read.html` & `read.js`)
-When a user clicks a card, they are sent to `read.html`. This page is completely empty. `read.js` does the heavy lifting:
-1. It reads the `?post=` and `?lang=` parameters from the URL.
-2. It searches `data.js` for the exact `id`.
-3. It takes the `rawUrl` and executes `fetch(rawUrl)`. Note: It dynamically modifies the URL to fetch either `-en.md` or `-id.md` based on the language state.
-4. It passes the raw markdown string into `marked.parse()`.
-5. It injects the resulting HTML into `<div id="content">`.
-- **How Giscus On/Off Works:** If the `giscus` block exists in `data.js`, `read.js` dynamically creates a `<script>` tag with the Giscus attributes and injects it into the DOM. If the block is missing, the script is skipped, and comments are disabled.
-- **If you want to CHANGE how Markdown is parsed or styled:** You modify `read.js`.
+1. **`data.js`**: Contains the list of articles. Each item includes metadata and a `rawUrl` pointing to a `.md` file on GitHub.
+2. **`main.js`**: Reads `data.js` to display the article cards on the homepage.
+3. **`read.js`**: When an article is clicked, it fetches the markdown from the `rawUrl` and uses `marked.js` to convert it into HTML for reading.
+4. **Giscus (Optional)**: If an article object in `data.js` includes a `giscus` configuration block, the comment section will be enabled for that page.
 
 ## Setup Guide
-1. **Fork this repository** and rename it to `yourusername.github.io`.
-2. **Create a Content Repository** to store your `.md` files. (Note: You must author and write the Markdown articles yourself manually. New to Markdown? [Learn the syntax here](https://www.markdownguide.org/basic-syntax/)).
-3. **Configure GitHub Pages** in your repo Settings -> Pages -> Deploy from `main` branch.
-4. **Update `data.js`:** Add your articles here. The `rawUrl` must point to `https://raw.githubusercontent.com/...` of your Markdown files.
-5. **Update Identity:** Replace `foto-raja.jpg` and modify the hardcoded bio in `index.html` and `about.html`.
-6. **Setup Giscus:** Go to giscus.app to generate your `repoId` and `categoryId`, then map them in `data.js`.
+
+If you would like to use this template for your own portfolio or learning purposes:
+
+1. **Fork this repository** to your GitHub account and rename it to `yourusername.github.io`.
+2. **Enable GitHub Pages**: Go to your repository Settings -> Pages -> Deploy from the `main` branch.
+3. **Create a Content Repository**: Create a separate repository to store your `.md` files. (Learn Markdown syntax [here](https://www.markdownguide.org/basic-syntax/)).
+4. **Update Content**: Open `data.js` in your forked repository and update the `rawUrl` to point to your new markdown files.
+5. **Update Profile**: Modify `index.html` and `about.html` with your own profile information and image.
 
 ## License
 MIT License.
@@ -48,48 +33,30 @@ MIT License.
 ---
 <br><br>
 
-<h1 id="bahasa-indonesia">iMoon07 Portfolio & Mesin Blog</h1>
+<h1 id="bahasa-indonesia">iMoon07 Portfolio & Blog</h1>
 
-Sebuah arsitektur decoupled headless CMS statis yang dibangun murni pakai HTML, CSS, dan JS Vanilla.
+Selamat datang di repositori source code untuk personal portfolio dan blog saya. Proyek ini dibangun menggunakan HTML, CSS, dan JavaScript murni (vanilla).
 
-Repositori ini murni berfungsi sebagai Mesin Frontend. Artikel Markdown aslinya disimpan di repositori database terpisah: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
+Artikel markdown yang ditampilkan di web ini disimpan pada repositori terpisah: [Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
 
-## Alur Kabel Internal (Cara Kerja Kodenya)
+## Cara Kerja Sistem
 
-Biar lu nggak pusing pas ngoprek, ini peta "kabel" yang ngehubungin semua file di sistem ini:
+Proyek ini mengambil file markdown secara dinamis dan menampilkannya di browser.
 
-### 1. Registri Database (`data.js`)
-Ini adalah otak utamanya. Berisi array bernama `myProjects`.
-- **Kalau lu mau NAMBAH artikel baru:** Lu tambahin objek JSON baru ke dalam array `myProjects` di sini.
-- **Kalau lu mau GANTI settingan komentar Giscus:** Lu ganti value `repo`, `repoId`, dan `categoryId` di file ini.
-- **Kalau lu mau ON/OFF Komentar Giscus per artikel (Opsional, Tingkat Keribetan Lumayan):** Sistem ini dukung komentar yang bisa dinyalain/dimatiin buat tiap artikel. Kalau mau **ON**, lu wajib masukin blok kode `giscus` (`repo`, `repoId`, dll) di dalam objek artikel tersebut di `data.js`. Kalau mau **OFF**, lu cukup hapus atau jangan masukin blok `giscus`-nya.
+1. **`data.js`**: Berisi daftar artikel. Setiap item memiliki metadata dan `rawUrl` yang mengarah ke file `.md` di GitHub.
+2. **`main.js`**: Membaca `data.js` untuk menampilkan daftar artikel di halaman utama.
+3. **`read.js`**: Saat artikel diklik, script ini akan mengambil teks markdown dari `rawUrl` dan menggunakan `marked.js` untuk mengubahnya menjadi HTML agar bisa dibaca.
+4. **Giscus (Opsional)**: Jika konfigurasi `giscus` ditambahkan pada objek artikel di `data.js`, kolom komentar akan aktif di halaman tersebut.
 
-### 2. Halaman Utama (`index.html` & `main.js`)
-`index.html` bikin kerangkanya. `main.js` ngebaca `data.js` lalu nyetak kotak-kotak (cards) artikel ke layar.
-- **Kalau lu mau GANTI foto profil, nama, atau bio:** Lu ubah langsung di dalam file `index.html` dan `about.html`.
-- **Kalau lu mau GANTI desain kotak artikel (Card UI):** Lu ubah kode HTML di dalam fungsi `renderProjects()` yang ada di `main.js`.
-- Kabel penghubungnya: `main.js` bakal nge-generate link buat tiap artikel dengan format `read.html?post=[ID]&lang=[LANG]`.
+## Panduan Instalasi
 
-### 3. Mesin Fetching Markdown (`read.html` & `read.js`)
-Pas lu klik salah satu artikel, lu bakal dilempar ke `read.html`. Halaman ini aslinya KOSONG MELOMPONG. File `read.js` yang kerja keras:
-1. Dia ngebaca parameter `?post=` dan `?lang=` dari URL atas.
-2. Dia nyari data artikel yang cocok di dalam `data.js`.
-3. Dia ngambil `rawUrl` dan ngejalani fungsi `fetch(rawUrl)`. Script ini pinter, dia bakal otomatis nyari akhiran `-en.md` atau `-id.md` tergantung bahasa yang dipilih.
-4. Teks Markdown mentah yang berhasil didownload bakal dilempar ke library `marked.parse()`.
-5. Hasil akhirnya (HTML) disuntik paksa masuk ke dalam `<div id="content">`.
-- **Cara Kerja On/Off Giscus:** Kalau blok `giscus` terdeteksi di `data.js`, `read.js` bakal ngerakit tag `<script>` secara dinamis lalu nyuntikinnya ke halaman. Kalau bloknya dihapus/nggak ada, kode bakal di-skip dan kolom komentar otomatis mati.
-- **Kalau lu mau GANTI cara render Markdown atau nambah fitur syntax highlighting:** Lu modifikasi file `read.js` ini.
+Jika Anda ingin menggunakan template ini untuk portfolio atau sarana belajar:
 
-## Panduan Setup (Buat Kang Ngoprek)
-
-Setup-nya emang sedikit manual dan agak ribet, tapi disitulah seninya kan xD.
-
-1. **Fork repositori ini** dan ubah namanya jadi `username-lu.github.io`.
-2. **Bikin Repositori Konten** terpisah buat nyimpen file `.md` lu. (Catatan: Lu tetep harus mikir dan ngetik tulisan Markdown lu sendiri secara manual. Belum bisa Markdown? [Pelajari sintaksnya di sini](https://www.markdownguide.org/basic-syntax/)).
-3. **Aktifkan GitHub Pages** di Settings -> Pages -> Deploy dari branch `main`.
-4. **Edit `data.js`:** Tambahin list artikel lu di sini. Pastikan `rawUrl` ngarah ke link `https://raw.githubusercontent.com/...` dari file Markdown lu.
-5. **Ganti Identitas:** Hapus `foto-raja.jpg` dan edit bio di `index.html` sama `about.html`.
-6. **Pasang Giscus:** Buka giscus.app buat dapetin `repoId` dan `categoryId` lu, terus masukin ke `data.js`.
+1. **Fork repositori ini** ke akun GitHub Anda dan ubah namanya menjadi `username.github.io`.
+2. **Aktifkan GitHub Pages**: Masuk ke Settings -> Pages -> pilih Deploy dari branch `main`.
+3. **Buat Repositori Konten**: Buat repositori terpisah khusus untuk menyimpan file `.md` Anda. (Pelajari Markdown [di sini](https://www.markdownguide.org/basic-syntax/)).
+4. **Perbarui Konten**: Buka `data.js` dan ubah link `rawUrl` agar mengarah ke file markdown Anda.
+5. **Perbarui Profil**: Edit `index.html` dan `about.html` untuk mengganti informasi profil dan foto Anda.
 
 ## Lisensi
 MIT License.
