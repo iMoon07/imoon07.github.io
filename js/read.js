@@ -23,6 +23,28 @@ if (postId) {
     }
 }
 
+// Fitur Language Switcher Otomatis
+const langSwitcher = document.getElementById('lang-switcher');
+if (langSwitcher && postId) {
+    let hasTranslation = false;
+    if (postId === 'about-me') {
+        hasTranslation = true;
+    } else if (typeof myProjects !== 'undefined') {
+        const project = myProjects.find(p => p.id === postId);
+        if (project && (project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md')))) {
+            hasTranslation = true;
+        }
+    }
+
+    if (hasTranslation) {
+        langSwitcher.innerHTML = `
+            <a href="?post=${postId}&lang=en" style="text-decoration: none; font-weight: ${lang === 'en' ? 'bold' : 'normal'}; color: ${lang === 'en' ? '#58a6ff' : '#8b949e'};">🇬🇧 EN</a>
+            <span style="color: #30363d;">|</span>
+            <a href="?post=${postId}&lang=id" style="text-decoration: none; font-weight: ${lang === 'id' ? 'bold' : 'normal'}; color: ${lang === 'id' ? '#58a6ff' : '#8b949e'};">🇮🇩 ID</a>
+        `;
+    }
+}
+
 if (repoUrl && repoUrl !== '#') {
     document.getElementById('content').innerHTML = "<p><i>Fetching data from GitHub...</i></p>";
     fetch(repoUrl)
