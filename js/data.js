@@ -4,7 +4,13 @@ const myProjects = [
         category: "teaming",
         publishedDate: "2026-06-25",
         lastEditedDate: "2026-06-25",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md",
+        giscus: {
+            repo: "iMoon07/Penjelajah-CyberSecurity",
+            repoId: "R_kgDOTDbgbA",
+            category: "Q&A",
+            categoryId: "DIC_kwDOTDbgbM4C_xMv"
+        }
     },
     {
         id: "owasp-lab-toolkit",
