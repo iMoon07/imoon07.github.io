@@ -1,7 +1,16 @@
 const myProjects = [
     {
+        id: "command-injection-reverse-shell",
+        category: "teaming",
+        publishedDate: "2026-06-25",
+        lastEditedDate: "2026-06-25",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
+    },
+    {
         id: "owasp-lab-toolkit",
         category: "architect",
+        publishedDate: "2026-06-24",
+        lastEditedDate: "2026-06-24",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
         giscus: {
             repo: "iMoon07/Penjelajah-CyberSecurity",
@@ -9,15 +18,12 @@ const myProjects = [
             category: "Q&A",
             categoryId: "DIC_kwDOTDbgbM4C_xMv"
         }
-    },
-    {
-        id: "command-injection-reverse-shell",
-        category: "teaming",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
     }
     // Template:
     // {
     //     category: "teaming", // architect, teaming, atau malware
+    //     publishedDate: "YYYY-MM-DD",
+    //     lastEditedDate: "YYYY-MM-DD",
     //     rawUrl: "https://raw.githubusercontent.com/Username/Repo/main/README.md",
     //     giscus: {
     //         repo: "Username/Repo",

@@ -34,7 +34,13 @@ async function fetchProjectData(project) {
     if (idData) {
         project.titleId = idData.title;
         project.descId = idData.desc;
-        project.date = idData.date;
+        project.sortDate = project.publishedDate ? new Date(project.publishedDate).getTime() : idData.date;
+        
+        let formatterEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        project.displayDateEn = project.publishedDate ? formatterEn.format(new Date(project.publishedDate)) : "Unknown Date";
+        let formatterId = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        project.displayDateId = project.publishedDate ? formatterId.format(new Date(project.publishedDate)) : "Tanggal Tidak Diketahui";
+
         
         let foundImgUrl = null;
         let allImages = [];
@@ -62,7 +68,9 @@ async function fetchProjectData(project) {
     } else {
         project.titleId = "Error";
         project.descId = "Failed to load.";
-        project.date = 0;
+        project.sortDate = 0;
+        project.displayDateEn = "Unknown Date";
+        project.displayDateId = "Tanggal Tidak Diketahui";
         project.image = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'%3E%3Crect fill='%23161b22' width='600' height='300'/%3E%3Ctext fill='%23c9d1d9' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24'%3EError%3C/text%3E%3C/svg%3E`;
     }
 
@@ -107,7 +115,11 @@ function renderProjects(kategoriAwal) {
         let kotakHtml = `
             <div class="kotak-preview">
                 <img src="${project.image}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
-                <h2><a href="${postUrl}">${title}</a></h2>
+                <div style="font-size: 13px; color: #8b949e; margin-top: 12px; display: flex; align-items: center; gap: 6px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    ${isId ? project.displayDateId : project.displayDateEn}
+                </div>
+                <h2 style="margin-top: 8px;"><a href="${postUrl}">${title}</a></h2>
                 <p>${desc}</p>
                 <a href="${postUrl}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
             </div>
@@ -121,6 +133,8 @@ async function initMesinOtomatis() {
     recentContainer.innerHTML = "<li><i>Loading...</i></li>";
 
     await Promise.all(myProjects.map(p => fetchProjectData(p)));
+
+    myProjects.sort((a, b) => b.sortDate - a.sortDate);
 
     recentContainer.innerHTML = '';
     myProjects.slice(0, 10).forEach(project => {

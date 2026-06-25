@@ -14,6 +14,23 @@ if (postId) {
     } else if (typeof myProjects !== 'undefined') {
         const project = myProjects.find(p => p.id === postId);
         if (project) {
+            const dateContainer = document.getElementById('article-date-container');
+            if (dateContainer && project.publishedDate) {
+                let formatterEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                let formatterId = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                
+                let pubStr = lang === 'en' ? formatterEn.format(new Date(project.publishedDate)) : formatterId.format(new Date(project.publishedDate));
+                let htmlStr = `<div style="margin-bottom: 2px;">${lang === 'en' ? 'Posted:' : 'Diposting:'} <strong>${pubStr}</strong></div>`;
+                
+                if (project.lastEditedDate && project.lastEditedDate !== project.publishedDate) {
+                    let editStr = lang === 'en' ? formatterEn.format(new Date(project.lastEditedDate)) : formatterId.format(new Date(project.lastEditedDate));
+                    htmlStr += `<div>${lang === 'en' ? 'Last edited:' : 'Terakhir diedit:'} ${editStr}</div>`;
+                }
+                
+                dateContainer.innerHTML = htmlStr;
+                dateContainer.style.display = 'block';
+            }
+
             if (lang === 'en') {
                 repoUrl = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl);
             } else {
@@ -198,16 +215,8 @@ if (repoUrl && repoUrl !== '#') {
                     script.setAttribute("data-repo-id", giscusConfig.repoId);
                     script.setAttribute("data-category", giscusConfig.category);
                     script.setAttribute("data-category-id", giscusConfig.categoryId);
-                    if (repoUrl.includes("about-me")) {
-                        script.setAttribute("data-mapping", "pathname"); // Preserve legacy mapping for About Me page
-                    } else {
-                        script.setAttribute("data-mapping", "specific");
-                        // Synchronize discussion threads across different language versions
-                        // by using the primary localization URL (ID) as the common identifier.
-                        let baseRawUrl = repoUrl.replace('-en.md', '-id.md');
-                        let termUrl = window.location.origin + window.location.pathname + "?url=" + baseRawUrl;
-                        script.setAttribute("data-term", termUrl);
-                    }
+                    script.setAttribute("data-mapping", "specific");
+                    script.setAttribute("data-term", postId || "General-Discussion");
 
                     script.setAttribute("data-strict", "0");
                     script.setAttribute("data-reactions-enabled", "1");
