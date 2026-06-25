@@ -9,6 +9,11 @@ const myProjects = [
             category: "Q&A",
             categoryId: "DIC_kwDOTDbgbM4C_xMv"
         }
+    },
+    {
+        id: "command-injection-reverse-shell",
+        category: "teaming",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
     }
     // Template:
     // {
