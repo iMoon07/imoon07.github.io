@@ -122,8 +122,6 @@ async function initMesinOtomatis() {
 
     await Promise.all(myProjects.map(p => fetchProjectData(p)));
 
-    myProjects.sort((a, b) => b.date - a.date);
-
     recentContainer.innerHTML = '';
     myProjects.slice(0, 10).forEach(project => {
         let isId = (window.currentLang === 'id');
