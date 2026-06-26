@@ -200,7 +200,7 @@ if (repoUrl && repoUrl !== '#') {
                 } else if (typeof myProjects !== 'undefined') {
                     // Dynamically resolve project configuration for both localizations (ID and EN)
                     const project = myProjects.find(p => {
-                        let derivedUrlEn = p.rawUrlEn || (p.rawUrl && p.rawUrl.endsWith('-id.md') ? p.rawUrl.replace('-id.md', '-en.md') : null);
+                        let derivedUrlEn = p.rawUrlEn || (p.rawUrl ? (p.rawUrl.endsWith('-id.md') ? p.rawUrl.replace('-id.md', '-en.md') : p.rawUrl.replace('.md', '-en.md')) : null);
                         return p.rawUrl === repoUrl || derivedUrlEn === repoUrl;
                     });
                     if (project && project.giscus) {
