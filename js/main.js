@@ -28,7 +28,7 @@ async function fetchProjectData(project) {
     };
 
     const idData = await fetchSingle(project.rawUrl);
-    let derivedUrlEn = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : null);
+    let derivedUrlEn = project.rawUrlEn || (project.rawUrl ? (project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl.replace('.md', '-en.md')) : null);
     const enData = derivedUrlEn ? await fetchSingle(derivedUrlEn) : null;
 
     if (idData) {
