@@ -24,6 +24,19 @@ const myProjects = [
             category: "Q&A",
             categoryId: "DIC_kwDOTDbgbM4C_xMv"
         }
+    },
+    {
+        id: "reverse-shell-server-side",
+        category: "perspectives",
+        publishedDate: "2026-06-26",
+        lastEditedDate: "2026-06-26",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/BLUE-TEAM/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md",
+        giscus: {
+            repo: "iMoon07/Penjelajah-CyberSecurity",
+            repoId: "R_kgDOTDbgbA",
+            category: "Q&A",
+            categoryId: "DIC_kwDOTDbgbM4C_xMv"
+        }
     }
     // Template tambah artikel baru:
     // {
