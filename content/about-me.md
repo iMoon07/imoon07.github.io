@@ -2,9 +2,9 @@
 
 [🇮🇩 Baca dalam Bahasa Indonesia](about-me-id.md)
 
-Hi! I'm Raja Muhammad Kurnia Setyawan (@iMoon07).
+Hi! I'm Raja Muhammad Kurnia Setyawan (@iMoon07), currently active as a *Freelance Junior Pentester* at Merdeka Siber.
 
-My professional career started after graduating from intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). With that knowledge and my internship experience at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), I am now active as a *Freelance Junior Pentester* at Merdeka Siber.
+My foundation in cybersecurity was built through intensive bootcamps at [Merdeka Siber](https://merdekasiber.com) and [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), along with an internship at [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id).
 
 ## Professional Experience
 
