@@ -19,12 +19,12 @@ if (postId) {
                 let formatterEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                 let formatterId = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
                 
-                let pubStr = formatterEn.format(new Date(project.publishedDate));
-                let htmlStr = `<div style="margin-bottom: 2px;">Posted: <strong>${pubStr}</strong></div>`;
+                let pubStr = lang === 'en' ? formatterEn.format(new Date(project.publishedDate)) : formatterId.format(new Date(project.publishedDate));
+                let htmlStr = `<div style="margin-bottom: 2px;">${lang === 'en' ? 'Posted:' : 'Diposting:'} <strong>${pubStr}</strong></div>`;
                 
                 if (project.lastEditedDate && project.lastEditedDate !== project.publishedDate) {
-                    let editStr = formatterEn.format(new Date(project.lastEditedDate));
-                    htmlStr += `<div>Last edited: ${editStr}</div>`;
+                    let editStr = lang === 'en' ? formatterEn.format(new Date(project.lastEditedDate)) : formatterId.format(new Date(project.lastEditedDate));
+                    htmlStr += `<div>${lang === 'en' ? 'Last edited:' : 'Terakhir diedit:'} ${editStr}</div>`;
                 }
                 
                 dateContainer.innerHTML = htmlStr;
