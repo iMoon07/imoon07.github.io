@@ -4,7 +4,7 @@ const myProjects = [
         category: "perspectives",
         publishedDate: "2026-06-25",
         lastEditedDate: "2026-06-25",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/RED-TEAM/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/RED-TEAM/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md?v=1",
         giscus: {
             repo: "iMoon07/Penjelajah-CyberSecurity",
             repoId: "R_kgDOTDbgbA",
@@ -17,7 +17,7 @@ const myProjects = [
         category: "architecture",
         publishedDate: "2026-06-24",
         lastEditedDate: "2026-06-24",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architect/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md?v=1",
         giscus: {
             repo: "iMoon07/Penjelajah-CyberSecurity",
             repoId: "R_kgDOTDbgbA",
@@ -30,7 +30,7 @@ const myProjects = [
         category: "perspectives",
         publishedDate: "2026-06-26",
         lastEditedDate: "2026-06-26",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/BLUE-TEAM/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Teaming/BLUE-TEAM/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md?v=1",
         giscus: {
             repo: "iMoon07/Penjelajah-CyberSecurity",
             repoId: "R_kgDOTDbgbA",
