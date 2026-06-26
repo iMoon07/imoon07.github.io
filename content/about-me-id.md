@@ -2,34 +2,19 @@
 
 [🇬🇧 Read in English](about-me.md)
 
-Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07). Di usia 21 tahun, saya berkarir sebagai **Cyber Security Architect** dan **Penetration Tester** dengan fokus utama pada *Offensive Security*.
+Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07).
 
-Ketertarikan saya pada teknologi dimulai dari warnet—bermain game dan mencoba *cheat*. Meski saat itu belum terlalu paham teknisnya, rasa penasaran untuk mengakali batasan sistem sudah mulai tumbuh.
-
-Dulu saya sempat aktif di komunitas *private server* independen (Growtopia / GTPS) untuk mengurus sisi operasionalnya—mulai dari *setup* (*up*) server hingga pemeliharaan sehari-hari. Saya juga mulai sedikit menyentuh hal-hal teknis infrastruktur, meskipun bukan *full programming* (karena teman saya yang mengeksekusi semua *coding* C++). Pengalaman merawat *server* inilah yang perlahan menumbuhkan ketertarikan saya, hingga akhirnya benar-benar terjun serius ke dunia IT dan *cybersecurity*.
-
-Momen titik balik terjadi saat saya mengikuti *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). Berbekal ilmu tersebut dan pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), saya memulai karir profesional sebagai Freelance Junior Pentester.
-
-Sebagai jejak digital masa lalu, berikut adalah arsip dari komunitas server game yang pernah saya ikuti:
-
-<div style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/0wT6EUCdt8g" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  <iframe width="350" height="200" src="https://www.youtube.com/embed/bS23qR3cNNk" title="Arsip GTPS GTIM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+Karir profesional saya dimulai setelah lulus dari *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/). Berbekal ilmu tersebut dan pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id), saya kini aktif sebagai *Freelance Junior Pentester* di Merdeka Siber.
 
 ## Pengalaman Profesional
 
 Saya memiliki spesialisasi dalam Vulnerability Assessment & Penetration Testing (VAPT), dengan fokus pada pengujian keamanan Web Application dan API.
 
-Melalui jalur Vulnerability Disclosure Program (VDP), Penetration Testing profesional, dan Bug Bounty, saya telah menguji dan mengamankan berbagai sistem di sektor-sektor krusial:
-- Perbankan & Finansial
-- Infrastruktur Perkotaan
-- Pemerintahan
-- Pariwisata
-- Manufaktur & Energi
+Saya juga aktif di Vulnerability Disclosure Program (VDP), dan Bug Bounty.
 
 **Hall of Fame / Validasi Temuan:** 
-Daftar organisasi yang telah memvalidasi laporan keamanan saya melalui program Vulnerability Disclosure Program (VDP):
+
+Daftar organisasi yang telah memberikan recognition melalui program Vulnerability Disclosure Program (VDP):
 - [Pemerintah Provinsi DKI Jakarta](https://www.linkedin.com/posts/activity-7433113030709649408-WkYV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 - [PT Transportasi Jakarta (Transjakarta)](https://www.linkedin.com/posts/activity-7348893442699096064-bbHf?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 - [PT Bank Rakyat Indonesia (Persero) Tbk.](https://www.linkedin.com/posts/activity-7466035669841244160-FvhX?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
@@ -45,15 +30,12 @@ Daftar organisasi yang telah memvalidasi laporan keamanan saya melalui program V
 
 | Kategori | Spesifikasi & Tools |
 | :--- | :--- |
-| **Pentest & Scanners** | Burp Suite (Enterprise/Professional) |
+| **Pentest & Scanners** | Burp Suite |
 | **SecOps & Observability** | Wazuh, Suricata, ModSecurity, Graylog, Grafana, Prometheus |
-| **Server & Cloud** | LAMP/LEMP Stacks, DigitalOcean, Cloudflare, OpenBSD |
+| **Server & Cloud** | LAMP/LEMP/WAMP/WIMP Stacks, DigitalOcean, Cloudflare |
 | **OS & Virtualization** | Windows, Keluarga OS Linux (Debian & RHEL-based), VMware Workstation Pro |
 | **Framework & Standar** | ISSAF, OWASP Top 10, CIS Benchmarks |
-
-## Visi & Misi
-
-Bagi saya, cara terbaik untuk memahami cara bertahan (*defense*) adalah dengan mengerti cara membobolnya (*offense*). Saya terus mengeksplorasi teknik *offensive* untuk membangun arsitektur pertahanan yang lebih kuat.
+---
 
 <div id="dynamic-quote">
   <em>"Talk is cheap. Show me the code."</em> <br> — <strong>Linus Torvalds</strong> <br><br>
@@ -63,4 +45,4 @@ Bagi saya, cara terbaik untuk memahami cara bertahan (*defense*) adalah dengan m
 ## Kontak
 - **LinkedIn**: [Raja Muhammad Kurnia Setyawan](https://www.linkedin.com/in/imoon07/)
 - **Discord**: [Penjelajah CyberSecurity](https://discord.gg/gGSK3DP5ES)
-- **Saweria**: [Support my coffee ☕](https://saweria.co/Rajaaaaa07)
+- **Linktree**: [Linktree](https://linktr.ee/Rajaaaaa07_)
