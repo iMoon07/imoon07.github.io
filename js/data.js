@@ -1,17 +1,17 @@
 const myProjects = [
     {
         id: "command-injection-reverse-shell",
-        category: "experiments",
+        category: "investigations",
         publishedDate: "2026-06-25",
         lastEditedDate: "2026-06-25",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/COMMAND-INJECTION-REVERSE-SHELL/command-injection-reverse-shell-id.md"
     },
     {
         id: "owasp-lab-toolkit",
-        category: "architecture",
+        category: "experiments",
         publishedDate: "2026-06-24",
         lastEditedDate: "2026-06-24",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Architecture/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md"
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md"
     },
     {
         id: "reverse-shell-server-side",
