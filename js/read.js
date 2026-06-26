@@ -32,7 +32,7 @@ if (postId) {
             }
 
             if (lang === 'en') {
-                repoUrl = project.rawUrlEn || (project.rawUrl && project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl);
+                repoUrl = project.rawUrlEn || (project.rawUrl ? (project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl.replace('.md', '-en.md')) : project.rawUrl);
             } else {
                 repoUrl = project.rawUrl;
             }
