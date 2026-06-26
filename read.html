@@ -10,7 +10,7 @@
     <link rel="icon" type="image/jpeg" href="assets/foto-raja.jpg">
     <meta property="og:type" content="article">
     <meta property="og:title" content="iMoon07 - Penjelajah CyberSecurity | Write-ups & Research">
-    <meta property="og:description" content="Catatan ngelab dan eksplorasi dari seorang Cyber Security Architect / Penetration Tester.">
+    <meta property="og:description" content="Notes and explorations from a Cyber Security Architect / Penetration Tester.">
     <meta property="og:image" content="https://imoon07.github.io/assets/cyberpunk-text-banner.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1920">
@@ -54,11 +54,11 @@
                 </div>
             </div>
             <div id="article-date-container" style="text-align: right; font-size: 13px; color: #8b949e; display: none;">
-                <!-- Akan diisi via JS -->
+                <!-- Filled via JS -->
             </div>
         </div>
 
-        <div id="content">Memuat konten...</div>
+        <div id="content">Loading content...</div>
 
         <!-- Share & Actions -->
         <div class="article-actions" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; text-align: center;">
@@ -72,7 +72,7 @@
         <div class="giscus-container" style="margin-top: 40px;">
             <h3 style="margin-bottom: 20px;">Discussion</h3>
             <div id="giscus-wrapper" class="giscus">
-                <!-- Giscus Script akan di-inject otomatis oleh read.js berdasarkan data.js -->
+                <!-- Giscus Script injected automatically -->
             </div>
         </div>
     </main>
@@ -90,7 +90,7 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
             document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
             
-            // Ubah tema Giscus secara dinamis
+            // Update Giscus theme dynamically
             const iframe = document.querySelector('iframe.giscus-frame');
             if (iframe) {
                 iframe.contentWindow.postMessage(

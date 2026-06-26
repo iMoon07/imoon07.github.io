@@ -19,12 +19,12 @@ if (postId) {
                 let formatterEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                 let formatterId = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
                 
-                let pubStr = lang === 'en' ? formatterEn.format(new Date(project.publishedDate)) : formatterId.format(new Date(project.publishedDate));
-                let htmlStr = `<div style="margin-bottom: 2px;">${lang === 'en' ? 'Posted:' : 'Diposting:'} <strong>${pubStr}</strong></div>`;
+                let pubStr = formatterEn.format(new Date(project.publishedDate));
+                let htmlStr = `<div style="margin-bottom: 2px;">Posted: <strong>${pubStr}</strong></div>`;
                 
                 if (project.lastEditedDate && project.lastEditedDate !== project.publishedDate) {
-                    let editStr = lang === 'en' ? formatterEn.format(new Date(project.lastEditedDate)) : formatterId.format(new Date(project.lastEditedDate));
-                    htmlStr += `<div>${lang === 'en' ? 'Last edited:' : 'Terakhir diedit:'} ${editStr}</div>`;
+                    let editStr = formatterEn.format(new Date(project.lastEditedDate));
+                    htmlStr += `<div>Last edited: ${editStr}</div>`;
                 }
                 
                 dateContainer.innerHTML = htmlStr;
@@ -50,7 +50,7 @@ if (repoUrl && repoUrl !== '#') {
             text = text.replace(/!\[([^\]]*)\]\((?!http)(.*?)\)/g, "![$1](" + basePath + "$2)");
             text = text.replace(/<img([^>]*?)src=["'](?!http)(.*?)["']/gi, "<img$1src=\"" + basePath + "$2\"");
 
-            // Fix relative markdown links biar nggak usah hardcode (Fitur Ajaib)
+            // Fix relative markdown links dynamically to avoid hardcoding
             text = text.replace(/(?<!!)\[([^\]]+)\]\((?!http|#|mailto:)(.*?\.md)\)/g, (match, p1, p2) => {
                 if (postId) {
                     if (postId === 'about-me') {
@@ -173,7 +173,7 @@ if (repoUrl && repoUrl !== '#') {
                 function renderRandomQuote() {
                     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
                     quoteElement.innerHTML = `<em>"${randomQuote.text}"</em> <br> — <strong>${randomQuote.author}</strong> <br><br>
-                    <a href="#" id="change-quote-btn">[ ↻ Ganti Quote ]</a>`;
+                    <a href="#" id="change-quote-btn">[ ↻ Change Quote ]</a>`;
 
                     document.getElementById('change-quote-btn').addEventListener('click', function (e) {
                         e.preventDefault();
@@ -203,8 +203,13 @@ if (repoUrl && repoUrl !== '#') {
                         let derivedUrlEn = p.rawUrlEn || (p.rawUrl ? (p.rawUrl.endsWith('-id.md') ? p.rawUrl.replace('-id.md', '-en.md') : p.rawUrl.replace('.md', '-en.md')) : null);
                         return p.rawUrl === repoUrl || derivedUrlEn === repoUrl;
                     });
-                    if (project && project.giscus) {
-                        giscusConfig = project.giscus;
+                    if (project) {
+                        giscusConfig = project.giscus || {
+                            repo: "iMoon07/Penjelajah-CyberSecurity",
+                            repoId: "R_kgDOTDbgbA",
+                            category: "Q&A",
+                            categoryId: "DIC_kwDOTDbgbM4C_xMv"
+                        };
                     }
                 }
 
@@ -233,13 +238,13 @@ if (repoUrl && repoUrl !== '#') {
             }
         })
         .catch(err => {
-            document.getElementById('content').innerHTML = "<p>Gagal memuat artikel.</p>";
+            document.getElementById('content').innerHTML = "<p>Failed to load the article.</p>";
         });
 } else {
-    document.getElementById('content').innerHTML = "<h1>Error 404</h1><p>Artikel tidak ditemukan.</p>";
+    document.getElementById('content').innerHTML = "<h1>Error 404</h1><p>Article not found.</p>";
 }
 
-// Fitur Share Artikel
+// Article Share Feature
 function shareArticle() {
     const url = window.location.href;
     const title = document.title;
@@ -251,9 +256,9 @@ function shareArticle() {
         }).catch(err => console.log('Share error:', err));
     } else {
         navigator.clipboard.writeText(url).then(() => {
-            alert("Link artikel berhasil disalin ke clipboard!");
+            alert("Article link successfully copied to clipboard!");
         }).catch(err => {
-            alert("Gagal menyalin link: " + url);
+            alert("Failed to copy link: " + url);
         });
     }
 }

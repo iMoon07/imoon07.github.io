@@ -85,50 +85,50 @@ async function fetchProjectData(project) {
     return project;
 }
 
-function renderProjects(kategoriAwal) {
-    window.currentCategory = kategoriAwal;
+function renderProjects(initialCategory) {
+    window.currentCategory = initialCategory;
     projectContainer.innerHTML = '';
     
     const isId = (window.currentLang === 'id');
     
-    if (kategoriAwal === 'all') catTitle.innerText = isId ? "POSTINGAN TERBARU" : "LATEST POSTS";
-    else if (kategoriAwal === 'architecture') catTitle.innerText = "Security Architecture";
-    else if (kategoriAwal === 'perspectives') catTitle.innerText = "Perspectives (Red / Blue / Purple lens)";
-    else if (kategoriAwal === 'research') catTitle.innerText = "Writeups / Research";
+    if (initialCategory === 'all') catTitle.innerText = "LATEST POSTS";
+    else if (initialCategory === 'architecture') catTitle.innerText = "Security Architecture";
+    else if (initialCategory === 'investigations') catTitle.innerText = "Investigations";
+    else if (initialCategory === 'experiments') catTitle.innerText = "Experiments";
 
-    let dataTerfilter = myProjects;
-    if (kategoriAwal !== 'all') {
-        dataTerfilter = dataTerfilter.filter(project => project.category === kategoriAwal);
+
+    let filteredData = myProjects;
+    if (initialCategory !== 'all') {
+        filteredData = filteredData.filter(project => project.category === initialCategory);
     }
 
-    if (dataTerfilter.length === 0) {
-        let noDataText = isId ? "Belum ada tulisan di kategori ini." : "No articles in this category yet.";
-        projectContainer.innerHTML = `<p><i>${noDataText}</i></p>`;
+    if (filteredData.length === 0) {
+        projectContainer.innerHTML = `<p><i>No articles in this category yet.</i></p>`;
         return;
     }
 
-    dataTerfilter.forEach((project) => {
-        let title = isId ? project.titleId : project.titleEn;
-        let desc = isId ? project.descId : project.descEn;
-        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
+    filteredData.forEach((project) => {
+        let title = project.titleEn;
+        let desc = project.descEn;
+        let postUrl = `read.html?post=${project.id}&lang=en`;
 
-        let kotakHtml = `
+        let cardHtml = `
             <div class="kotak-preview">
                 <img src="${project.image}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
                 <div style="font-size: 13px; color: #8b949e; margin-top: 12px; display: flex; align-items: center; gap: 6px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    ${isId ? project.displayDateId : project.displayDateEn}
+                    ${project.displayDateEn}
                 </div>
                 <h2 style="margin-top: 8px;"><a href="${postUrl}">${title}</a></h2>
                 <p>${desc}</p>
-                <a href="${postUrl}">${isId ? "Baca Selengkapnya..." : "Continue Reading..."}</a>
+                <a href="${postUrl}">Continue Reading...</a>
             </div>
         `;
-        projectContainer.innerHTML += kotakHtml;
+        projectContainer.innerHTML += cardHtml;
     });
 }
 
-async function initMesinOtomatis() {
+async function initEngine() {
     projectContainer.innerHTML = "<p><i>Loading data...</i></p>";
     recentContainer.innerHTML = "<li><i>Loading...</i></li>";
 
@@ -138,9 +138,8 @@ async function initMesinOtomatis() {
 
     recentContainer.innerHTML = '';
     myProjects.slice(0, 10).forEach(project => {
-        let isId = (window.currentLang === 'id');
-        let title = isId ? project.titleId : project.titleEn;
-        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
+        let title = project.titleEn;
+        let postUrl = `read.html?post=${project.id}&lang=en`;
         let listHtml = `<li style="margin-bottom:12px;"><a href="${postUrl}">${title}</a></li>`;
         recentContainer.innerHTML += listHtml;
     });
@@ -149,4 +148,4 @@ async function initMesinOtomatis() {
 }
 
 // Initialize application
-initMesinOtomatis();
+initEngine();
