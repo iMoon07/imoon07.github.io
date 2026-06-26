@@ -19,7 +19,7 @@ async function fetchProjectData(project) {
             let title = titleMatch ? titleMatch[1].replace(/<[^>]*>?/gm, '').trim() : "Project Security";
 
             let descMatch = text.replace(/^#.*$/gm, '').match(/^[A-Za-z].*$/m);
-            let desc = descMatch ? descMatch[0].substring(0, 150) + "..." : "No description available.";
+            let desc = descMatch ? descMatch[0].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').substring(0, 150) + "..." : "No description available.";
 
             return { title, desc, date, text };
         } catch (err) {
