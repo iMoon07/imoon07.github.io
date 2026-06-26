@@ -127,6 +127,15 @@ function renderProjects(initialCategory) {
         `;
         projectContainer.innerHTML += cardHtml;
     });
+    
+    // Also update recent posts sidebar based on language
+    recentContainer.innerHTML = '';
+    myProjects.slice(0, 10).forEach(project => {
+        let title = isId ? project.titleId : project.titleEn;
+        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
+        let listHtml = `<li style="margin-bottom:12px;"><a href="${postUrl}">${title}</a></li>`;
+        recentContainer.innerHTML += listHtml;
+    });
 }
 
 async function initEngine() {
@@ -136,15 +145,6 @@ async function initEngine() {
     await Promise.all(myProjects.map(p => fetchProjectData(p)));
 
     myProjects.sort((a, b) => b.sortDate - a.sortDate);
-
-    recentContainer.innerHTML = '';
-    myProjects.slice(0, 10).forEach(project => {
-        let isId = (window.currentLang === 'id');
-        let title = isId ? project.titleId : project.titleEn;
-        let postUrl = `read.html?post=${project.id}${isId ? '' : '&lang=en'}`;
-        let listHtml = `<li style="margin-bottom:12px;"><a href="${postUrl}">${title}</a></li>`;
-        recentContainer.innerHTML += listHtml;
-    });
 
     renderProjects('all');
 }
