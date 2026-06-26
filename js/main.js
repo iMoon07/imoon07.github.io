@@ -92,9 +92,9 @@ function renderProjects(kategoriAwal) {
     const isId = (window.currentLang === 'id');
     
     if (kategoriAwal === 'all') catTitle.innerText = isId ? "POSTINGAN TERBARU" : "LATEST POSTS";
-    else if (kategoriAwal === 'architect') catTitle.innerText = "Cyber Security Architect";
-    else if (kategoriAwal === 'teaming') catTitle.innerText = "Red/Blue/Purple Teaming";
-    else if (kategoriAwal === 'malware') catTitle.innerText = "Exploit/Malware Analysis";
+    else if (kategoriAwal === 'architecture') catTitle.innerText = "Security Architecture";
+    else if (kategoriAwal === 'perspectives') catTitle.innerText = "Perspectives (Red / Blue / Purple lens)";
+    else if (kategoriAwal === 'research') catTitle.innerText = "Writeups / Research";
 
     let dataTerfilter = myProjects;
     if (kategoriAwal !== 'all') {
