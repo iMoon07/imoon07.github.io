@@ -14,8 +14,6 @@ Saya berfokus pada Vulnerability Assessment & Penetration Testing (VAPT), khusus
 
 Saya juga aktif dalam Vulnerability Disclosure Program (VDP) dan Bug Bounty.
 
-Fondasi *cybersecurity* saya dibangun melalui *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), serta pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id).
-
 ## Pengalaman Profesional
 
 Saya memiliki spesialisasi dalam Vulnerability Assessment & Penetration Testing (VAPT), dengan fokus pada pengujian keamanan Web Application dan API.
