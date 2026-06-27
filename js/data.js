@@ -21,7 +21,7 @@ const myProjects = [
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md"
     },
     {
-        id: "post-exploitation-enumeration",
+        id: "post-exploitation-enum",
         category: "investigations",
         publishedDate: "2026-06-27",
         lastEditedDate: "2026-06-27",
