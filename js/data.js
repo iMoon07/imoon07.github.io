@@ -25,7 +25,7 @@ const myProjects = [
         category: "investigations",
         publishedDate: "2026-06-27",
         lastEditedDate: "2026-06-27",
-        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-ENUMERATION/post-exploitation-enumeration-id.md"
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-ENUMERATION/post-exploitation-enum-id.md"
     }
     // Template for adding a new article manually:
     // {
