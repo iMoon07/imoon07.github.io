@@ -10,12 +10,6 @@ Fondasi cybersecurity saya dibangun melalui bootcamp intensif di [Merdeka Siber]
 
 ## Pengalaman Profesional
 
-Saya berfokus pada Vulnerability Assessment & Penetration Testing (VAPT), khususnya pada pengujian keamanan aplikasi web dan API.
-
-Saya juga aktif dalam Vulnerability Disclosure Program (VDP) dan Bug Bounty.
-
-## Pengalaman Profesional
-
 Saya memiliki spesialisasi dalam Vulnerability Assessment & Penetration Testing (VAPT), dengan fokus pada pengujian keamanan Web Application dan API.
 
 Saya juga aktif di Vulnerability Disclosure Program (VDP), dan Bug Bounty.
