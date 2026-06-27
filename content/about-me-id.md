@@ -2,7 +2,17 @@
 
 [🇬🇧 Read in English](about-me.md)
 
-Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07), saat ini saya aktif sebagai *Freelance Junior Pentester* di Merdeka Siber.
+Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07), seorang Cybersecurity Practitioner dari Indonesia yang berfokus pada Vulnerability Assessment, Penetration Testing (VAPT), serta eksplorasi awal konsep security architecture melalui hands-on lab dan penelitian mandiri.
+
+Fondasi cybersecurity saya dibangun melalui bootcamp intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), serta pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id).
+
+---
+
+## Pengalaman Profesional
+
+Saya berfokus pada Vulnerability Assessment & Penetration Testing (VAPT), khususnya pada pengujian keamanan aplikasi web dan API.
+
+Saya juga aktif dalam Vulnerability Disclosure Program (VDP) dan Bug Bounty.
 
 Fondasi *cybersecurity* saya dibangun melalui *bootcamp* intensif di [Merdeka Siber](https://merdekasiber.com) dan [Cyber Sentinel Secure](https://cybersentinelsecure.asia/), serta pengalaman magang di [PT. Teknologi Server Indonesia (xcode.co.id)](https://xcode.co.id).
 
