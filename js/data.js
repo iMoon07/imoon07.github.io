@@ -21,12 +21,20 @@ const myProjects = [
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md"
     },
     {
-        id: "post-exploitation-enumeration",
+        id: "post-exploitation-enum",
         category: "investigations",
         publishedDate: "2026-06-27",
         lastEditedDate: "2026-06-27",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-ENUMERATION/post-exploitation-enum-id.md"
+    },
+    {
+        id: "post-exploitation-filesystemexplore",
+        category: "investigations",
+        publishedDate: "2026-06-29",
+        lastEditedDate: "2026-06-29",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-FILE-SYSTEM-EXPLORE/post-exploitation-filesystemexplore-id.md"
     }
+    
     // Template for adding a new article manually:
     // {
     //     id: "unique-article-id",
