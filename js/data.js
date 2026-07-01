@@ -33,6 +33,13 @@ const myProjects = [
         publishedDate: "2026-06-29",
         lastEditedDate: "2026-06-29",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-FILE-SYSTEM-EXPLORE/post-exploitation-filesystemexplore-id.md"
+    },
+    {
+        id: "moonai-toolkit",
+        category: "experiments",
+        publishedDate: "2026-07-01",
+        lastEditedDate: "2026-07-01",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/MoonAI-TOOLKIT/moon-ecosystem-id.md"
     }
     
     // Template for adding a new article manually:
