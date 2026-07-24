@@ -40,6 +40,13 @@ const myProjects = [
         publishedDate: "2026-07-01",
         lastEditedDate: "2026-07-01",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/MoonAI-TOOLKIT/moon-ecosystem-id.md"
+    },
+    {
+        id: "post-exploitation-priv-enum",
+        category: "investigations",
+        publishedDate: "2026-07-24",
+        lastEditedDate: "2026-07-24",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PRIVILEGE-ENUMERATION/post-exploitation-priv-enum-id.md"
     }
     
     // Template for adding a new article manually:
