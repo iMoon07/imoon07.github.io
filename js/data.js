@@ -47,8 +47,15 @@ const myProjects = [
         publishedDate: "2026-07-24",
         lastEditedDate: "2026-07-24",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PRIVILEGE-ENUMERATION/post-exploitation-priv-enum-id.md"
-    }
-    
+    },
+    {
+        id: "post-exploitation-priv-esca-copyfail",
+        category: "investigations",
+        publishedDate: "2026-07-26",
+        lastEditedDate: "2026-07-26",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PRIVILEGE-ESCALATION/post-exploitation-priv-esca-copyfail-id.md"
+    },
+
     // Template for adding a new article manually:
     // {
     //     id: "unique-article-id",
