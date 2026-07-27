@@ -55,7 +55,13 @@ const myProjects = [
         lastEditedDate: "2026-07-26",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PRIVILEGE-ESCALATION/post-exploitation-priv-esca-copyfail-id.md"
     },
-
+    {
+        id: "post-exploitation-persistence-panix",
+        category: "investigations",
+        publishedDate: "2026-07-28",
+        lastEditedDate: "2026-07-28",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PERSISTENT/post-exploitation-persistence-id.md"
+    },
     // Template for adding a new article manually:
     // {
     //     id: "unique-article-id",
