@@ -69,6 +69,13 @@ const myProjects = [
         lastEditedDate: "2026-07-29",
         rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-FOOTHOLD/post-exploitation-foothold-id.md"
     },
+    {
+        id: "post-exploitation-pivoting",
+        category: "investigations",
+        publishedDate: "2026-08-02",
+        lastEditedDate: "2026-08-02",
+        rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/POST-EXPLOITATION-PIVOTING/post-exploitation-pivoting-id.md"
+    },
     // Template for adding a new article manually:
     // {
     //     id: "unique-article-id",
