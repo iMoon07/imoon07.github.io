@@ -15,7 +15,7 @@ const myProjects = [
   },
   {
   id: "reverse-shell-server-side",
-  category: "experiments",
+  category: "investigations",
   publishedDate: "2026-06-26",
   lastEditedDate: "2026-06-26",
   rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Investigations/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md"
