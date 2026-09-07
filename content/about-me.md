@@ -2,6 +2,8 @@
 
 [🇮🇩 Read in Indonesian](about-me-id.md)
 
+﷽
+
 Hi! I'm Raja Muhammad Kurnia Setyawan (@iMoon07), a Programmer from Indonesia focused on Cybersecurity.
 
 ---
