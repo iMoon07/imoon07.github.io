@@ -1,6 +1,6 @@
 # About Kurnia
 
-[🇮🇩 Baca dalam Bahasa Indonesia](README.md)
+[🇮🇩 Baca dalam Bahasa Indonesia](about-me-id.md)
 
 ﷽
 
