@@ -65,6 +65,3 @@ Terbuka untuk **freelance project, penetration testing, vulnerability assessment
 
 * **Email**: `kurniatamvan13@gmail.com`
 * **LinkedIn**: [Raja Muhammad Kurnia Setyawan](https://www.linkedin.com/in/imoon07/)
-* **Discord**: [Penjelajah CyberSecurity](https://discord.gg/gGSK3DP5ES)
-* **Linktree**: [Linktree](https://linktr.ee/Rajaaaaa07_)
-
