@@ -48,7 +48,7 @@ Daftar instansi yang telah memberikan recognition melalui program Vulnerability 
 Mengisi waktu luang sebagai **Guest Speaker** dalam beberapa kegiatan komunitas dan universitas untuk berbagi terkait cybersecurity.
 
 * **Debug Life Indonesia** — Sharing Session, *Anatomy Brute Force Attack on Windows* — 2026
-* **Coding Ceria — Sharing Session — Praktik Setup LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, Setup OpenBSD & PF Firewall — 2026
+* **Coding Ceria** — Sharing Session — Praktik Setup LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, Setup OpenBSD & PF Firewall — 2026
 * **Codelines Universitas Negeri Semarang — DevXperience 2025** — Sharing Session, *Attack & Defend Simulation with Wazuh* dan *SOC Analyst* — 2025
 * **Coding Ceria** — Sharing Session, praktik SIEM menggunakan Wazuh — 2025
 
