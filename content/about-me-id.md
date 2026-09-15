@@ -8,39 +8,24 @@ Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07), seorang Programmer dari Ind
 
 ---
 
-## Pekerjaan
+## Log Activity
 
-Pekerjaan saat ini sebagai Pentester (Freelance) di PT Merdeka Siber Teknologi, melakukan Vulnerability Assesment & Penetration Testing (VAPT) di beberapa proyek (Based Learning).
+Saat ini saya terlibat sebagai penguji aplikasi(freelance pentester) mengerjakan beberapa proyek keamanan siber.
 
-**Projects** 
-**Pentester — PT Merdeka Siber Teknologi**  
-*Jan 2025 – Present*  
+**Vulnerability Assessment & Penetration Testing (VAPT) — PT Merdeka Siber Teknologi**
 
-- **Heavy Equipment & Mining** *(Oct 2025 – Present)*  
-  - Scopes: Web, Mobile  
-  - Approach: Greybox  
+* Heavy Equipment & Mining National — **Oct 2025 – Present** — Web, Mobile — Greybox
+* National Tourism — **Jul 2025** — Web — Greybox
+* Automotive Manufacturing National — **Jan 2025 – Mar 2025** — Web, API — Blackbox
 
-- **Urban Development** *(Oct 2025 – Jun 2026)*  
-  - Scopes: Web, Mobile (Android)  
-  - Approach: Blackbox  
+**Vulnerability Assessment & Penetration Testing (VAPT) — LPRO**
 
-- **Banking/Financial Services** *(Dec 2025 – Jun 2026)*  
-  - Scopes: Web, API  
-  - Approach: Blackbox  
+* Real Estate National — **Oct 2025 – Jun 2026** — Web, Mobile — Blackbox — **Private**
+* Banking / Financial Services National — **Dec 2025 – Jun 2026** — Web, API — Blackbox — **Private**
 
-- **National Tourism** *(Jul 2025)*  
-  - Scopes: Web  
-  - Approach: Greybox  
+**Framework:** ISSAF, OWASP WSTG v4, OWASP Top 10
 
-- **Automotive Manufacturing** *(Jan 2025 – Mar 2025)*  
-  - Scopes: Web, API  
-  - Approach: Blackbox  
-
-**Frameworks use:** ISSAF, WSTG - v4.2, OWASP Top 10 (2017, 2019 API, 2021).
-
-Selain itu, saya juga aktif melaporkan temuan keamanan secara sukarela di berbagai platform dan secara khusus pada instansi pemerintahan Indonesia.
-
-## Hall of Fame
+Selain itu, saya juga sempat aktif melaporkan temuan keamanan secara sukarela di berbagai platform dan secara khusus pada instansi pemerintahan Indonesia.
 
 Daftar instansi yang telah memberikan recognition melalui program Vulnerability Disclosure Program (VDP):
 
@@ -59,6 +44,13 @@ Daftar instansi yang telah memberikan recognition melalui program Vulnerability 
 
 ### Internasional
 - [Prague Airport (Republik Ceko)](https://www.linkedin.com/posts/activity-7465700663864352768-PGK6?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
+
+Mengisi waktu luang sebagai **Guest Speaker** dalam beberapa kegiatan komunitas dan universitas untuk berbagi terkait cybersecurity.
+
+* **Debug Life Indonesia** — Sharing Session, *Anatomy Brute Force Attack on Windows* — 2026
+* **Coding Ceria — Sharing Session — Praktik Setup LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, Setup OpenBSD & PF Firewall — 2026
+* **Codelines Universitas Negeri Semarang — DevXperience 2025** — Sharing Session, *Attack & Defend Simulation with Wazuh* dan *SOC Analyst* — 2025
+* **Coding Ceria** — Sharing Session, praktik SIEM menggunakan Wazuh — 2025
 
 ---
 
