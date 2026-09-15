@@ -1,60 +1,40 @@
 # About Kurnia
 
-[🇮🇩 Read in Indonesian](about-me-id.md)
+[🇮🇩 Baca dalam Bahasa Indonesia](README.md)
 
 ﷽
 
-Hi! I'm Raja Muhammad Kurnia Setyawan (@iMoon07), a Programmer from Indonesia focused on Cybersecurity.
+Hello! I’m Raja Muhammad Kurnia Setyawan (@iMoon07), a Programmer from Indonesia focused on Cybersecurity.
 
 ---
 
-## Work
+## Log Activity
 
-Currently working as a **Freelance Pentester at PT Merdeka Siber Teknologi**, performing Vulnerability Assessment & Penetration Testing (VAPT) on several projects (Based Learning).
+I am currently involved as a **freelance pentester**, working on several cybersecurity projects.
 
-**Projects**
-**Pentester — PT Merdeka Siber Teknologi**
-*Jan 2025 – Present*
+**Vulnerability Assessment & Penetration Testing (VAPT) — PT Merdeka Siber Teknologi**
 
-* **Heavy Equipment & Mining** *(Oct 2025 – Present)*
+* Heavy Equipment & Mining National — **Oct 2025 – Present** — Web, Mobile — Greybox
+* National Tourism — **Jul 2025** — Web — Greybox
+* Automotive Manufacturing National — **Jan 2025 – Mar 2025** — Web, API — Blackbox
 
-  * Scopes: Web, Mobile
-  * Approach: Greybox
+**Vulnerability Assessment & Penetration Testing (VAPT) — LPRO**
 
-* **Urban Development** *(Oct 2025 – Jun 2026)*
+* Real Estate National — **Oct 2025 – Jun 2026** — Web, Mobile — Blackbox — **Private**
+* Banking / Financial Services National — **Dec 2025 – Jun 2026** — Web, API — Blackbox — **Private**
 
-  * Scopes: Web, Mobile (Android)
-  * Approach: Blackbox
+**Framework:** ISSAF, OWASP WSTG v4, OWASP Top 10
 
-* **Banking/Financial Services** *(Dec 2025 – Jun 2026)*
+In addition, I have been actively reporting security findings voluntarily across various platforms, particularly to Indonesian government institutions.
 
-  * Scopes: Web, API
-  * Approach: Blackbox
+The following institutions have provided recognition through their Vulnerability Disclosure Programs (VDP):
 
-* **National Tourism** *(Jul 2025)*
+### Indonesian Government
 
-  * Scopes: Web
-  * Approach: Greybox
-
-* **Automotive Manufacturing** *(Jan 2025 – Mar 2025)*
-
-  * Scopes: Web, API
-  * Approach: Blackbox
-
-**Frameworks Used:** ISSAF, WSTG v4.2, OWASP Top 10 (2017, 2019 API, 2021).
-
-In addition, I actively report security findings voluntarily across various platforms, particularly to government institutions in Indonesia.
-
-## Hall of Fame
-
-List of organizations that have provided recognition through Vulnerability Disclosure Programs (VDP):
-
-### Government of Indonesia
-
-* [Provincial Government of DKI Jakarta](https://www.linkedin.com/posts/activity-7433113030709649408-WkYV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
+* [DKI Jakarta Provincial Government](https://www.linkedin.com/posts/activity-7433113030709649408-WkYV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 * [Indonesian Broadcasting Commission (KPI)](https://www.linkedin.com/posts/activity-7339176579442356226-XoKJ?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 * [Pasuruan City Government (PASTA)](https://www.linkedin.com/posts/activity-7302654026049839105-fHM4?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
-* [Kutai Kartanegara Regency (KUKARKAB)](https://www.linkedin.com/posts/activity-7345806802023763968-uFMh?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
+* [Kutai Kartanegara Regency Government (KUKARKAB)](https://www.linkedin.com/posts/activity-7345806802023763968-uFMh?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 * [Bengkulu City Government](https://www.linkedin.com/posts/activity-7441123450053664768-UrAK?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 * [Magelang City Government](https://www.linkedin.com/posts/activity-7457331234659008512-_zeX?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 
@@ -62,11 +42,18 @@ List of organizations that have provided recognition through Vulnerability Discl
 
 * [PT Transportasi Jakarta (Transjakarta)](https://www.linkedin.com/posts/activity-7348893442699096064-bbHf?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 * [PT Bank Rakyat Indonesia (Persero) Tbk.](https://www.linkedin.com/posts/activity-7466035669841244160-FvhX?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
-* [Detikcom](https://www.linkedin.com/posts/activity-7449021113176850432-TGoa?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
+* [Detikcom](https://www.linkedin.com/posts/activity-7449021113176854768-TGoa?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
 
 ### International
 
 * [Prague Airport (Czech Republic)](https://www.linkedin.com/posts/activity-7465700663864352768-PGK6?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEHIF4YBuPZmmtQhhFIjP5iQWuycOOozXoo)
+
+I spend my free time as a **Guest Speaker** in several community and university activities, sharing knowledge related to cybersecurity.
+
+* **Debug Life Indonesia** — Sharing Session, *Anatomy of Brute Force Attack on Windows* — 2026
+* **Coding Ceria** — Sharing Session, hands-on setup of LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, OpenBSD & PF Firewall Setup — 2026
+* **Codelines, Universitas Negeri Semarang — DevXperience 2025** — Sharing Session, *Attack & Defend Simulation with Wazuh* and *SOC Analyst* — 2025
+* **Coding Ceria** — Sharing Session, hands-on SIEM practice using Wazuh — 2025
 
 ---
 
@@ -77,7 +64,7 @@ List of organizations that have provided recognition through Vulnerability Discl
 
 ## Contact
 
-Open to **freelance projects, penetration testing, vulnerability assessment, and cybersecurity opportunities**.
+Open to **freelance projects, penetration testing, vulnerability assessment, and job opportunities in Cybersecurity**.
 
 * **Email**: `kurniatamvan13@gmail.com`
 * **LinkedIn**: [Raja Muhammad Kurnia Setyawan](https://www.linkedin.com/in/imoon07/)
