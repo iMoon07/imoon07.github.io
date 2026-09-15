@@ -10,7 +10,7 @@ Halo! Saya Raja Muhammad Kurnia Setyawan (@iMoon07), seorang Programmer dari Ind
 
 ## Log Activity
 
-Saat ini saya terlibat sebagai penguji aplikasi(freelance pentester) mengerjakan beberapa proyek keamanan siber.
+Saat ini saya terlibat sebagai penguji aplikasi (freelance pentester) mengerjakan beberapa proyek keamanan siber.
 
 **Vulnerability Assessment & Penetration Testing (VAPT) — PT Merdeka Siber Teknologi**
 
