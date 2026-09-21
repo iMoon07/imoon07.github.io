@@ -7,13 +7,6 @@ const myProjects = [
   rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md"
   },
   {
-  id: "moonai-toolkit",
-  category: "experiments",
-  publishedDate: "2026-07-01",
-  lastEditedDate: "2026-07-01",
-  rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/MoonAI-TOOLKIT/moon-ecosystem-id.md"
-  },
-  {
     id: "linux-attack-chain",
     category: "experiments",
     publishedDate: "2026-09-02",
