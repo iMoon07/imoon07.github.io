@@ -89,6 +89,20 @@ const myProjects = [
     publishedDate: "2026-09-26",
     lastEditedDate: "2026-09-26",
     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/WEBSHELL-REVERSE-SHELL/webshell-reverse-shell-id.md"
+  },
+  {
+    id: "linux-enumeration-investigation",
+    category: "experiments",
+    publishedDate: "2026-09-26",
+    lastEditedDate: "2026-09-26",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LINUX-ENUMERATION-INVESTIGATION/linux-enumeration-investigation-id.md"
+  },
+  {
+    id: "reverse-shell-detection",
+    category: "experiments",
+    publishedDate: "2026-09-26",
+    lastEditedDate: "2026-09-26",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md"
   }
 
   // Template for adding a new article manually:
