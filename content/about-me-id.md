@@ -61,7 +61,7 @@ Mengisi waktu luang sebagai **Guest Speaker** dalam beberapa kegiatan komunitas 
 
 ## Kontak
 
-Terbuka untuk **freelance project, penetration testing, vulnerability assessment, dan peluang kerja di bidang Cyber Security**.
+Terbuka untuk **freelance project, penetration testing, vulnerability assessment, dan konsultasi di bidang Cyber Security**.
 
 * **Email**: `kurniatamvan13@gmail.com`
 * **LinkedIn**: [Raja Muhammad Kurnia Setyawan](https://www.linkedin.com/in/imoon07/)
