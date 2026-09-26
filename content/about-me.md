@@ -64,7 +64,7 @@ I spend my free time as a **Guest Speaker** in several community and university 
 
 ## Contact
 
-Open to **freelance projects, penetration testing, vulnerability assessment, and job opportunities in Cybersecurity**.
+Open to **freelance projects, penetration testing, vulnerability assessment, and consultation in Cybersecurity**.
 
 * **Email**: `kurniatamvan13@gmail.com`
 * **LinkedIn**: [Raja Muhammad Kurnia Setyawan](https://www.linkedin.com/in/imoon07/)
