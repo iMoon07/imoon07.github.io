@@ -110,5 +110,12 @@ const myProjects = [
     publishedDate: "2026-09-28",
     lastEditedDate: "2026-09-28",
     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/network-hacking-basic/network-hacking-basic-id.md"
+  },
+  {
+    id: "trace-network-basic",
+    category: "experiments",
+    publishedDate: "2026-09-28",
+    lastEditedDate: "2026-09-28",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/trace-network-basic/trace-network-basic-id.md"
   }
 ];
