@@ -109,6 +109,6 @@ const myProjects = [
     category: "experiments",
     publishedDate: "2026-09-28",
     lastEditedDate: "2026-09-28",
-    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/network-hacking-basic/network-hacking-basic-en.md"
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/network-hacking-basic/network-hacking-basic-id.md"
   }
 ];
