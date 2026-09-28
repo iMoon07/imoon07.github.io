@@ -103,5 +103,12 @@ const myProjects = [
     publishedDate: "2026-09-24",
     lastEditedDate: "2026-09-26",
     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/WEBSHELL-REVERSE-SHELL/webshell-reverse-shell-id.md"
+  },
+  {
+    id: "network-hacking-basic",
+    category: "experiments",
+    publishedDate: "2026-09-28",
+    lastEditedDate: "2026-09-28",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/network-hacking-basic/network-hacking-basic-en.md"
   }
 ];
