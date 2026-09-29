@@ -117,5 +117,12 @@ const myProjects = [
     publishedDate: "2026-09-29",
     lastEditedDate: "2026-09-29",
     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/trace-network-basic/trace-network-basic-id.md"
+  },
+  {
+    id: "proxy-network-basic",
+    category: "experiments",
+    publishedDate: "2026-09-30",
+    lastEditedDate: "2026-09-30",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/proxy-network-basic/build-tcp-udp-proxy-lab-id.md"
   }
 ];
