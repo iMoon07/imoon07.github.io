@@ -124,5 +124,12 @@ const myProjects = [
     publishedDate: "2026-09-30",
     lastEditedDate: "2026-09-30",
     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/proxy-network-basic/build-tcp-udp-proxy-lab-id.md"
+  },
+  {
+    id: "ssh-client-server-python",
+    category: "experiments",
+    publishedDate: "2026-10-01",
+    lastEditedDate: "2026-10-01",
+    rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/ssh-network-basic/ssh-client-server-python-id.md"
   }
 ];
