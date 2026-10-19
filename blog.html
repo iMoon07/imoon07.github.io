@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raja Muhammad Kurnia Setyawan</title>
+    
+    <!-- Favicon & Social Share Image -->
+    <link rel="icon" type="image/jpeg" href="assets/logos.png">
+    <meta property="og:title" content="Programmer">
+    <meta property="og:description" content="Notes and explorations from a Programmer Cool">
+    <meta property="og:image" content="https://imoon07.github.io/assets/logos.png">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Hi, I am Raja Muhammad Kurnia Setyawan (iMoon07). 21yo exploring Program, System, Networking, Cryptography, Information - Data. Personal portfolio and blog with cybersecurity, hacking, pentest, programming notes.">
+    <meta name="author" content="Raja Muhammad Kurnia Setyawan">
+    <meta name="robots" content="index, follow">
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Profile Header -->
+    <header class="profile-header" style="display: flex; gap: 30px; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #30363d; padding-bottom: 30px;">
+        <a href="https://www.linkedin.com/in/imoon07/" target="_blank" rel="noopener noreferrer">
+            <img src="assets/foto-raja.jpg" alt="Foto Raja" class="profile-img" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #30363d; object-fit: cover; flex-shrink: 0;">
+        </a>
+        <div class="profile-info">
+            <h1 style="margin-top: 0; margin-bottom: 5px;">Raja Muhammad Kurnia Setyawan</h1>
+            
+            <!-- Language Toggle -->
+            <div style="margin-bottom: 10px; font-size: 14px;">
+                <a href="#" onclick="toggleBioLang('en'); return false;" id="lang-en" style="font-weight: bold; text-decoration: none; color: inherit;">🇬🇧 EN</a> | 
+                <a href="#" onclick="toggleBioLang('id'); return false;" id="lang-id" style="text-decoration: none; color: #8b949e;">🇮🇩 ID</a>
+            </div>
+            
+    <!-- About EN -->
+    <p id="about-en" style="margin: 0;">
+    Welcome! I'm Raja Muhammad Kurnia Setyawan (iMoon07) — interest in Program, System, Networking, Cryptography, Information - Data.
+    <br><br>
+    This site is my personal log of notes and experiments — documenting what I learn, build, and explore.
+    </p>
+    
+    <!-- About ID -->
+    <p id="about-id" style="margin: 0; display: none;">
+    Selamat datang! Saya Raja Muhammad Kurnia Setyawan (iMoon07) — Tertarik Explore tentang Program, System, Networking, Cryptography, Information - Data
+    <br><br>
+    Website ini adalah catatan pribadi berisi pembelajaran, eksperimen, dan eksplorasi saya.
+    </p>
+</header>
+
+    <h3 style="margin-top: 30px; margin-bottom: 15px;">Categories:</h3>
+    <nav class="main-nav" style="margin-bottom: 30px; border-bottom: 1px solid #30363d; padding-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 20px; line-height: 1.8;">   
+    <div>
+        <a href="#" onclick="renderProjects('all'); return false;">Home</a> |
+        <a href="#" onclick="renderProjects('experiments'); return false;">Experiments</a> |
+        <a href="read.html?post=about-me">About</a>
+    </div>
+        <button onclick="toggleTheme()" id="theme-btn" class="theme-btn" title="Toggle Theme" style="flex-shrink: 0; margin-left: -5px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </nav>
+
+    <h3 style="margin-top: 30px; margin-bottom: 15px;">Tags:</h3>
+    <nav class="main-nav" style="margin-bottom: 30px; border-bottom: 1px solid #30363d; padding-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; gap: 20px; line-height: 1.8;" id="tag-nav-container">
+        <!-- Tags rendered dynamically via JS -->
+    </nav>
+    
+    <!-- Main Layout -->
+    <div class="main-layout">
+        
+        <!-- Left Column: Projects -->
+        <div class="content-area" style="width: 100%;">
+            <h2 id="cat-title" style="margin-top: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;">LATEST POSTS</h2>
+            <div id="project-container">
+                <!-- Projects rendered dynamically via JS -->
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const isLight = savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches);
+            const btn = document.getElementById('theme-btn');
+            if (isLight) {
+                document.body.classList.add('light-mode');
+                if (btn) btn.innerHTML = moonIcon;
+            } else {
+                if (btn) btn.innerHTML = sunIcon;
+            }
+        })();
+
+        // Global Lang State
+        window.currentLang = 'en';
+
+        // Bio & UI Language Toggle
+        function toggleBioLang(lang) {
+            window.currentLang = lang;
+            if (lang === 'id') {
+                document.getElementById('about-en').style.display = 'none';
+                document.getElementById('about-id').style.display = 'block';
+                document.getElementById('lang-en').style.fontWeight = 'normal';
+                document.getElementById('lang-en').style.color = '#8b949e';
+                document.getElementById('lang-id').style.fontWeight = 'bold';
+                document.getElementById('lang-id').style.color = 'inherit';
+
+            } else {
+                document.getElementById('about-en').style.display = 'block';
+                document.getElementById('about-id').style.display = 'none';
+                document.getElementById('lang-en').style.fontWeight = 'bold';
+                document.getElementById('lang-en').style.color = 'inherit';
+                document.getElementById('lang-id').style.fontWeight = 'normal';
+                document.getElementById('lang-id').style.color = '#8b949e';
+
+            }
+            
+            // Re-render projects to update "LATEST POSTS" and fallback texts
+            if (typeof window.currentCategory !== 'undefined') {
+                renderProjects(window.currentCategory);
+            } else {
+                renderProjects('all');
+            }
+        }
+    </script>
+</body>
+</html>

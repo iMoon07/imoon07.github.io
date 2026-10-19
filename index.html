@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080808">
+    <meta name="description" content="iMoon07 — Security, systems, and code.">
+    <title>iMoon07</title>
+
+    <link rel="stylesheet" href="css/home.css">
+</head>
+
+<body>
+    <div class="site">
+        <main class="stage">
+            <!-- HOME -->
+            <section
+                class="page entering"
+                id="homePage"
+                aria-labelledby="homeTitle"
+            >
+                <figure class="home-art">
+                    <img
+                        id="artwork"
+                        src="assets/logos.png"
+                        alt="iMoon07 cyberspace artwork"
+                        fetchpriority="high"
+                        decoding="async"
+                    >
+                </figure>
+
+                <div class="home-copy">
+                    <h1 id="homeTitle">Exploring cyberspace.</h1>
+                    <p>Security, systems, and code.</p>
+                </div>
+            </section>
+
+            <!-- ABOUT -->
+            <section
+                class="page"
+                id="aboutPage"
+                aria-label="About Kurnia"
+                hidden
+            >
+                <div class="about-layout">
+                    <figure class="portrait" id="portrait">
+                        <div class="portrait-stage">
+                            <img
+                                src="assets/foto-raja.jpg"
+                                alt="Raja Muhammad Kurnia Setyawan"
+                                decoding="async"
+                            >
+
+                            <div class="portrait-cover" aria-hidden="true">
+                                <span class="cover-name">iMoon07</span>
+                                <span class="cover-caption">
+                                    Security / Indonesia
+                                </span>
+                            </div>
+                        </div>
+
+                        <figcaption class="portrait-footer">
+                            <span>@iMoon07</span>
+
+                            <button
+                                class="photo-toggle"
+                                id="photoToggle"
+                                type="button"
+                                aria-label="Hide profile photo"
+                            >
+                                Hide photo
+                            </button>
+                        </figcaption>
+                    </figure>
+
+                    <div class="about-content">
+                        <div
+                            class="tabs"
+                            role="tablist"
+                            aria-label="About sections"
+                        >
+                            <button
+                                class="tab"
+                                id="tabProfile"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="panelProfile"
+                                tabindex="0"
+                                type="button"
+                            >
+                                Profile
+                            </button>
+
+                            <button
+                                class="tab"
+                                id="tabExperience"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panelExperience"
+                                tabindex="-1"
+                                type="button"
+                            >
+                                Experience
+                            </button>
+
+                            <button
+                                class="tab"
+                                id="tabWork"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panelWork"
+                                tabindex="-1"
+                                type="button"
+                            >
+                                Selected work
+                            </button>
+
+                            <button
+                                class="tab"
+                                id="tabCommunity"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panelCommunity"
+                                tabindex="-1"
+                                type="button"
+                            >
+                                Community
+                            </button>
+                        </div>
+
+                        <div class="panel-viewport" id="panelViewport">
+                            <!-- PROFILE -->
+                            <section
+                                class="panel active"
+                                id="panelProfile"
+                                role="tabpanel"
+                                aria-labelledby="tabProfile"
+                                tabindex="0"
+                            >
+                                <h1 class="panel-title">
+                                    Hi, I’m Kurnia.<br>
+                                    <span>I work in security.</span>
+                                </h1>
+
+                                <p>
+                                    <strong>Raja Muhammad Kurnia Setyawan</strong>,
+                                    known as @iMoon07. A programmer and freelance
+                                    penetration tester from Indonesia.
+                                </p>
+
+                                <dl class="facts">
+                                    <div class="fact">
+                                        <dt>Focus</dt>
+                                        <dd>Web, mobile, and API security</dd>
+                                    </div>
+
+                                    <div class="fact">
+                                        <dt>Work</dt>
+                                        <dd>
+                                            Vulnerability assessment
+                                            & penetration testing
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </section>
+
+                            <!-- EXPERIENCE -->
+                            <section
+                                class="panel"
+                                id="panelExperience"
+                                role="tabpanel"
+                                aria-labelledby="tabExperience"
+                                tabindex="0"
+                                hidden
+                            >
+                                <div
+                                    class="subview active"
+                                    id="experienceList"
+                                >
+                                    <h2 class="panel-title">
+                                        Security.<br>
+                                        <span>In practice.</span>
+                                    </h2>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-experience="merdeka"
+                                        aria-controls="merdekaDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">
+                                                Merdeka Siber
+                                            </span>
+                                            <span class="experience-description">
+                                                Junior Penetration Tester
+                                            </span>
+                                            <span class="experience-description">
+                                                Jan 2025 – Present
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="experience-arrow"
+                                            aria-hidden="true"
+                                        >→</span>
+                                    </button>
+
+                                    <div class="experience-entry">
+                                        <div>
+                                            <span class="experience-name">
+                                                Xcode
+                                            </span>
+                                            <span class="experience-description">
+                                                Junior Penetration Tester
+                                                & Junior SOC Analyst
+                                            </span>
+                                            <span class="experience-description">
+                                                Sep – Dec 2025
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-experience="lpro"
+                                        aria-controls="lproDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">
+                                                Private — LPRO
+                                            </span>
+                                            <span class="experience-description">
+                                                VAPT · Banking & real estate
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="experience-arrow"
+                                            aria-hidden="true"
+                                        >→</span>
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="subview"
+                                    id="merdekaDetail"
+                                    hidden
+                                >
+                                    <button
+                                        class="back-button"
+                                        type="button"
+                                        data-back-experience
+                                    >
+                                        ← Experience
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">
+                                        PT. Merdeka Siber Teknologi
+                                    </h2>
+
+                                    <div class="entry">
+                                        <h3>
+                                            Heavy Equipment & Mining National
+                                        </h3>
+                                        <p>Oct 2025 · Completed</p>
+                                        <p class="entry-meta">
+                                            Web & Mobile · Greybox
+                                        </p>
+                                    </div>
+
+                                    <div class="entry">
+                                        <h3>National Tourism</h3>
+                                        <p>Jul 2025 · Completed</p>
+                                        <p class="entry-meta">
+                                            Web · Greybox
+                                        </p>
+                                    </div>
+
+                                    <div class="entry">
+                                        <h3>
+                                            Automotive Manufacturing National
+                                        </h3>
+                                        <p>Jan – Mar 2025 · Completed</p>
+                                        <p class="entry-meta">
+                                            Web & API · Blackbox
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="subview"
+                                    id="lproDetail"
+                                    hidden
+                                >
+                                    <button
+                                        class="back-button"
+                                        type="button"
+                                        data-back-experience
+                                    >
+                                        ← Experience
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">
+                                        Private — LPRO
+                                    </h2>
+
+                                    <div class="entry">
+                                        <h3>
+                                            Banking / Financial Services
+                                        </h3>
+                                        <p>Dec 2025 – Jun 2026 · Completed</p>
+                                        <p class="entry-meta">
+                                            Web & API · Blackbox
+                                        </p>
+                                    </div>
+
+                                    <div class="entry">
+                                        <h3>Real Estate</h3>
+                                        <p>Oct 2025 · Completed</p>
+                                        <p class="entry-meta">
+                                            Web & Mobile · Blackbox
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- SELECTED WORK -->
+                            <section
+                                class="panel"
+                                id="panelWork"
+                                role="tabpanel"
+                                aria-labelledby="tabWork"
+                                tabindex="0"
+                                hidden
+                            >
+                                <h2 class="panel-title">
+                                    Build.<br>
+                                    <span>Explore. Document.</span>
+                                </h2>
+
+                                <div class="entry">
+                                    <h3>OWASP-Lab-Toolkit</h3>
+                                    <p>
+                                        A Bash toolkit for deploying a web
+                                        vulnerability lab on Ubuntu Server.
+                                    </p>
+
+                                    <a
+                                        class="project-link"
+                                        href="https://github.com/iMoon07/OWASP-Lab-Toolkit"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View toolkit ↗
+                                    </a>
+                                </div>
+
+                                <div class="entry">
+                                    <h3>Linux Syscall Table</h3>
+                                    <p>
+                                        An x86_64 Linux syscall reference.
+                                    </p>
+
+                                    <a
+                                        class="project-link"
+                                        href="project/syscall/linux-x86-64/index.html"
+                                    >
+                                        Open reference ↗
+                                    </a>
+                                </div>
+                            </section>
+
+                            <!-- COMMUNITY -->
+                            <section
+                                class="panel"
+                                id="panelCommunity"
+                                role="tabpanel"
+                                aria-labelledby="tabCommunity"
+                                tabindex="0"
+                                hidden
+                            >
+                                <h2 class="panel-title">
+                                    Learn.<br>
+                                    <span>Then share.</span>
+                                </h2>
+
+                                <div class="entry">
+                                    <h3>Debug Life Indonesia</h3>
+                                    <p>
+                                        Windows brute-force activity,
+                                        logs & Wazuh detection · 2026
+                                    </p>
+                                </div>
+
+                                <div class="entry">
+                                    <h3>
+                                        Codelines — Universitas Negeri Semarang
+                                    </h3>
+                                    <p>
+                                        DevXperience: attack–defend with
+                                        Wazuh & SOC learning · 2025
+                                    </p>
+                                </div>
+
+                                <div class="entry">
+                                    <h3>Coding Ceria</h3>
+                                    <p>
+                                        Hands-on Wazuh, Linux infrastructure
+                                        & security labs · 2025–2026
+                                    </p>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="panel-controls">
+                            <span
+                                class="counter"
+                                id="panelCounter"
+                                aria-live="polite"
+                            >
+                                01 / 04
+                            </span>
+
+                            <div class="arrow-buttons">
+                                <button
+                                    class="arrow-button"
+                                    id="previousPanel"
+                                    type="button"
+                                    aria-label="Previous About section"
+                                >
+                                    ←
+                                </button>
+
+                                <button
+                                    class="arrow-button"
+                                    id="nextPanel"
+                                    type="button"
+                                    aria-label="Next About section"
+                                >
+                                    →
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-row">
+                            <div
+                                class="social-links"
+                                aria-label="Contact links"
+                            >
+                                <a
+                                    class="social-link"
+                                    href="mailto:kurniatamvan13@gmail.com"
+                                    aria-label="Email Kurnia"
+                                    title="Email"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <rect
+                                            x="3" y="5"
+                                            width="18" height="14"
+                                            rx="3"
+                                        />
+                                        <path d="m4 7 8 6 8-6"/>
+                                    </svg>
+                                </a>
+
+                                <a
+                                    class="social-link"
+                                    href="https://www.linkedin.com/in/imoon07/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Kurnia on LinkedIn"
+                                    title="LinkedIn"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M5.4 3.5a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8ZM3.8 9h3.3v11H3.8V9Zm5.5 0h3.2v1.5h.1c.5-.9 1.6-1.8 3.3-1.8 3.5 0 4.2 2.2 4.2 5.1V20h-3.3v-5.5c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V20H9.3V9Z"/>
+                                    </svg>
+                                </a>
+
+                                <a
+                                    class="social-link"
+                                    href="https://github.com/iMoon07"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="iMoon07 on GitHub"
+                                    title="GitHub"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/>
+                                    </svg>
+                                </a>
+
+                                <a
+                                    class="social-link"
+                                    href="https://medium.com/@kurniatamvan13"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Kurnia on Medium"
+                                    title="Medium"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <ellipse
+                                            cx="7" cy="12"
+                                            rx="6" ry="6"
+                                        />
+                                        <ellipse
+                                            cx="17" cy="12"
+                                            rx="3" ry="5.7"
+                                        />
+                                        <ellipse
+                                            cx="22" cy="12"
+                                            rx="1" ry="5"
+                                        />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <span class="contact-note">
+                                Open to VAPT & consulting.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="navigation" aria-label="Main navigation">
+            <a
+                class="nav-item"
+                href="#home"
+                data-page="home"
+                aria-current="page"
+            >
+                Home
+                <span class="nav-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="nav-item" href="blog.html">
+                Blog
+                <span class="nav-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+                class="nav-item"
+                href="#about"
+                data-page="about"
+            >
+                About
+                <span class="nav-arrow" aria-hidden="true">↗</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/home.js"></script>
+</body>
+</html>
