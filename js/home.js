@@ -280,6 +280,71 @@
                     });
                 });
 
+            /* COMMUNITY DETAILS */
+
+            const communityViews = {
+                list: document.getElementById('communityList'),
+                codelines: document.getElementById('codelinesDetail'),
+                codingceria: document.getElementById('codingceriaDetail')
+            };
+
+            const communityButtons = Array.from(
+                document.querySelectorAll('[data-open-community]')
+            );
+
+            let communityOpener = null;
+
+            function showCommunity(name) {
+                Object.entries(communityViews)
+                    .forEach(([key, view]) => {
+                        const active = key === name;
+
+                        view.hidden = !active;
+                        view.classList.remove('active');
+
+                        if (active) {
+                            void view.offsetWidth;
+                            view.classList.add('active');
+                        }
+                    });
+
+                communityButtons.forEach(button => {
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(
+                            button.dataset.openCommunity === name
+                        )
+                    );
+                });
+            }
+
+            communityButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    communityOpener = button;
+
+                    const name = button.dataset.openCommunity;
+
+                    showCommunity(name);
+
+                    communityViews[name]
+                        .querySelector('h2')
+                        .focus({ preventScroll: true });
+                });
+            });
+
+            document.querySelectorAll('[data-back-community]')
+                .forEach(button => {
+                    button.addEventListener('click', () => {
+                        showCommunity('list');
+
+                        if (communityOpener) {
+                            communityOpener.focus({
+                                preventScroll: true
+                            });
+                        }
+                    });
+                });
+
             /* TOUCH SWIPE */
 
             let touchStart = null;

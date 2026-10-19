@@ -374,13 +374,21 @@
             line-height: 1.65;
         }
 
-        .experience-arrow {
-            color: #adc5d7;
-            font-size: 23px;
-            transition: transform .25s var(--ease);
+        .nav-arrow,
+.experience-arrow {
+            display: inline-block;
+            vertical-align: middle;
+            color: inherit;
+            font-size: inherit;
         }
 
-        button.experience-entry:hover .experience-arrow {
+        .nav-arrow svg,
+        .experience-arrow svg {
+            display: block;
+            color: inherit;
+        }
+
+        button.experience-entry:hover .experience-arrow svg {
             transform: translateX(5px);
         }
 
@@ -443,6 +451,11 @@
             font-size: 16px;
         }
 
+        .project-link svg {
+            flex-shrink: 0;
+            color: inherit;
+        }
+
         .project-link:hover {
             text-decoration: underline;
             text-underline-offset: 5px;
@@ -480,8 +493,12 @@
             border-radius: 50%;
             background: transparent;
             color: var(--text);
-            font-size: 21px;
             transition: background .2s, transform .2s;
+        }
+
+        .arrow-button svg {
+            display: block;
+            color: inherit;
         }
 
         .arrow-button:hover {
@@ -749,8 +766,9 @@
                 font-size: 24px;
             }
 
-            .nav-arrow {
-                font-size: 18px;
+            .nav-arrow svg {
+                width: 18px;
+                height: 18px;
             }
         }
 
@@ -850,3 +868,6 @@
                 scroll-behavior: auto !important;
             }
         }
+
+.session-details > summary { list-style: none; }
+.session-details > summary::-webkit-details-marker { display: none; }
