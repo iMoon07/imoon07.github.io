@@ -14,14 +14,14 @@ I currently work as a **freelance penetration tester**, handling cybersecurity p
 
 **VAPT — PT Merdeka Siber Teknologi**
 
-- Heavy Equipment & Mining National (Oct 2025 – Present) — Web, Mobile — Greybox  
-- National Tourism (Jul 2025) — Web — Greybox  
-- Automotive Manufacturing National (Jan 2025 – Mar 2025) — Web, API — Blackbox  
+- Heavy Equipment & Mining National (Oct 2025 – Present) — Web, Mobile — Greybox
+- National Tourism (Jul 2025) — Web — Greybox
+- Automotive Manufacturing National (Jan 2025 – Mar 2025) — Web, API — Blackbox
 
 **VAPT — LPRO**
 
-- Real Estate National (Oct 2025 – Jun 2026) — Web, Mobile — Blackbox — *Private*  
-- Banking / Financial Services National (Dec 2025 – Jun 2026) — Web, API — Blackbox — *Private*  
+- Real Estate National (Oct 2025) — Web, Mobile — Blackbox — *Private*
+- Banking / Financial Services National (Dec 2025 – Jun 2026) — Web, API — Blackbox — *Private*
 
 My approach to assessing vulnerabilities is based on industry-recognized methodologies and frameworks: **ISSAF, OWASP WSTG v4, and OWASP Top 10**.
 
@@ -29,10 +29,10 @@ My approach to assessing vulnerabilities is based on industry-recognized methodo
 
 Outside of work, I occasionally serve as a **Guest Speaker** at communities and universities **across Indonesia**, sharing stories and practices in cybersecurity.
 
-- **Debug Life Indonesia** — Sharing Session, *Anatomy Brute Force Attack on Windows* — 2026  
-- **Coding Ceria** — Sharing Session — Hands-on: LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, OpenBSD & PF Firewall Setup — 2026  
-- **Codelines Universitas Negeri Semarang — DevXperience 2025** — Sharing Session, *Attack & Defend Simulation with Wazuh* and *SOC Analyst* — 2025  
-- **Coding Ceria** — Sharing Session, hands-on SIEM using Wazuh — 2025  
+- **Debug Life Indonesia** — Sharing Session, *Anatomy Brute Force Attack on Windows* — 2026
+- **Coding Ceria** — Sharing Session — Hands-on: LAMP + Cloudflare, ModSecurity, Wazuh SIEM, Multi-Layer Database with Oracle, OpenBSD & PF Firewall Setup — 2025–2026
+- **Codelines Universitas Negeri Semarang — DevXperience 2025** — Sharing Session, *Attack & Defend Simulation with Wazuh* and *SOC Analyst* — 2025
+- **Coding Ceria** — Sharing Session, hands-on SIEM using Wazuh — 2025
 
 ---
 
