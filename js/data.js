@@ -27,7 +27,6 @@
 //   berbarengan dan tidak berguna sebagai tanggal publish.
 // lastEditedDate = TIDAK perlu diisi. Tanggal "diperbarui" diambil otomatis
 //   dari commit terakhir file di GitHub, lengkap dengan link commit-nya.
-
 const myProjects = [
   {
     id: "blog-post-template",
@@ -47,5 +46,16 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
     repoUrl: "https://github.com/iMoon07/Penjelajah-CyberSecurity",
+  },
+
+  {
+    id: "lynx",
+    category: "experiments",
+    tags: ["lamp", "waf-owasp-crs", "qemu-kvm", "anubis", "cloudflare"],
+    publishedDate: "2026-10-21",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/linux-exposure-network-experiment-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
   },
 ];
