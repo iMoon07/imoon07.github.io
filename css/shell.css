@@ -1,0 +1,225 @@
+/* =============================================================================
+   KERANGKA HALAMAN BERSAMA / SHARED PAGE SHELL
+   Kanvas halaman, navigasi bawah, dan animasi perpindahan halaman.
+   The page canvas, the bottom navigation, and the page transition motion.
+
+   Dipakai oleh index.html, blog.html, about.html, dan read.html.
+   Shared by index.html, blog.html, about.html, and read.html.
+   ============================================================================= */
+
+:root {
+    color-scheme: dark;
+    --bg: #080808;
+    --text: #e5e7e9;
+    --muted: #a9afb5;
+    --line: #292d31;
+    --accent: #b8cddc;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --motion-enter: .55s;
+    --motion-leave: .18s;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------- page canvas
+   Kanvas yang memuat seluruh isi halaman.
+   The canvas that holds the whole page. */
+
+.site {
+    width: min(1500px, 100%);
+    min-height: 100vh;
+    min-height: 100svh;
+    margin-inline: auto;
+    padding: 20px clamp(20px, 4vw, 64px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------------------------------------------------------------- main navigation
+   Navigasi bawah yang menempel.
+   The sticky bottom navigation. */
+
+.navigation {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+}
+
+.nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 78px;
+    padding: 18px clamp(12px, 2.4vw, 36px);
+    color: var(--muted);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: clamp(23px, 2.7vw, 36px);
+    line-height: 1.2;
+    letter-spacing: -.04em;
+}
+
+.nav-item:first-child {
+    padding-left: 0;
+}
+
+.nav-item:last-child {
+    padding-right: 0;
+}
+
+.nav-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 2px;
+    background: #c7d3dc;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .4s var(--ease);
+}
+
+.nav-item[aria-current="page"] {
+    color: var(--text);
+}
+
+.nav-item[aria-current="page"]::before {
+    transform: scaleX(1);
+}
+
+.nav-arrow {
+    color: #929da6;
+    font-size: 22px;
+    transition: transform .3s var(--ease);
+}
+
+.nav-arrow svg {
+    display: block;
+    color: inherit;
+}
+
+@media (hover: hover) {
+    .nav-item:hover {
+        color: var(--text);
+    }
+
+    .nav-item:hover .nav-arrow {
+        transform: translate(4px, -4px);
+    }
+}
+
+/* ---------------------------------------------------------------- page motion
+   Animasi keluar-masuk antar halaman.
+   The leave and enter animation between pages.
+
+   Keyframe, durasi, dan easing yang sama untuk setiap perpindahan.
+   The same keyframes, duration, and easing for every page swap. */
+
+.page-enter {
+    animation: enter var(--motion-enter) var(--ease) both;
+}
+
+.page-pending {
+    opacity: 0;
+}
+
+.page-leave {
+    animation: leave var(--motion-leave) ease both;
+    pointer-events: none;
+}
+
+@keyframes enter {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes leave {
+    to {
+        opacity: 0;
+    }
+}
+
+/* ---------------------------------------------------------------- mobile
+   Penyesuaian navigasi untuk ponsel.
+   Navigation adjustments for phones. */
+
+@media (max-width: 700px) {
+    .site {
+        padding: 12px 20px;
+    }
+
+    .nav-item {
+        min-height: 64px;
+        padding: 15px 12px;
+        font-size: 24px;
+    }
+
+    .nav-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 400px) {
+    .site {
+        padding-inline: 14px;
+    }
+
+    .nav-item {
+        min-height: 58px;
+        padding: 12px 6px;
+        font-size: 20px;
+        gap: 6px;
+    }
+
+    .nav-arrow {
+        font-size: 18px;
+    }
+
+    .nav-arrow svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 360px) {
+    .site {
+        padding-inline: 12px;
+    }
+
+    .nav-item {
+        min-height: 54px;
+        padding: 10px 4px;
+        font-size: 18px;
+        gap: 4px;
+    }
+}
+
+
+/* ---------------------------------------------------------------- reduced motion
+   Matikan animasi kalau pengguna memintanya.
+   Turn the motion off when the user asks for it. */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -1,18 +1,14 @@
-:root {
-            color-scheme: dark;
-            --bg: #080808;
-            --text: #e5e7e9;
-            --muted: #a9afb5;
-            --line: #292d31;
-            --accent: #b8cddc;
-            --ease: cubic-bezier(.22, 1, .36, 1);
-        }
+/* =============================================================================
+   HALAMAN HOME & ABOUT / HOME AND ABOUT PAGES
+   Panggung halaman, panel home, slider pengalaman, panel komunitas, dan
+   breakpoint.
+   The page stage, the home panels, the experience slider, the community
+   panels, and the breakpoints.
 
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
+   Markup ada di index.html, transisi halaman di js/home.js.
+   Markup lives in index.html, page transitions in js/home.js.
+   ============================================================================= */
+html,
         body {
             margin: 0;
             background: var(--bg);
@@ -51,17 +47,9 @@
             display: none !important;
         }
 
-        .site {
-            width: min(1500px, 100%);
-            min-height: 100vh;
-            min-height: 100svh;
-            margin-inline: auto;
-            padding: 20px clamp(20px, 4vw, 64px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* PAGE STAGE */
+        /* ------------------------------------------------------------ page stage
+           Panggung yang memuat home dan about.
+           The stage that holds the home and about pages. */
 
         .stage {
             flex: 1;
@@ -76,15 +64,17 @@
         }
 
         .page.entering {
-            animation: enter .55s var(--ease) both;
+            animation: enter var(--motion-enter) var(--ease) both;
         }
 
         .page.leaving {
-            animation: leave .18s ease both;
+            animation: leave var(--motion-leave) ease both;
             pointer-events: none;
         }
 
-        /* HOME */
+        /* ------------------------------------------------------------ home
+           Panel utama halaman home.
+           The main home page panel. */
 
         .home-art {
             display: grid;
@@ -112,23 +102,42 @@
 
         .home-copy h1 {
             margin: 0;
-            font-size: clamp(30px, 4vw, 58px);
-            line-height: 1.15;
+            font-size: clamp(28px, 3.8vw, 52px);
+            line-height: 1.2;
             font-weight: 400;
-            letter-spacing: -.055em;
+            letter-spacing: -.05em;
+            min-height: 1.2em;
+            transition: opacity 0.2s ease;
+        }
+
+        .home-copy h1.typing::after {
+            content: "▋";
+            color: var(--accent);
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
         }
 
         .home-copy p {
             margin: 0;
             color: var(--muted);
-            font-size: 17px;
+            font-size: 16px;
             line-height: 1.6;
+            min-height: 1.4em;
+            transition: opacity 0.25s ease;
         }
 
-        /* ABOUT */
+        /* ------------------------------------------------------------ about
+           Panel halaman about.
+           The about page panel. */
 
         .about-layout {
-            width: min(1240px, 100%);
+            width: 100%;
             margin-inline: auto;
             padding: 26px 0 36px;
             display: grid;
@@ -141,7 +150,9 @@
             min-width: 0;
         }
 
-        /* FULL PORTRAIT */
+        /* ------------------------------------------------------------ full portrait
+           Potret layar penuh di balik tirai.
+           The full screen portrait behind the curtain. */
 
         .portrait {
             width: min(410px, 100%);
@@ -233,7 +244,9 @@
             border-color: #71818e;
         }
 
-        /* ABOUT TABS */
+        /* ------------------------------------------------------------ about tabs
+           Tab pengalaman dan komunitas.
+           The experience and community tabs. */
 
         .tabs {
             display: flex;
@@ -339,7 +352,9 @@
             line-height: 1.7;
         }
 
-        /* EXPERIENCE */
+        /* ------------------------------------------------------------ experience
+           Daftar pengalaman.
+           The experience list. */
 
         .experience-entry {
             width: 100%;
@@ -374,19 +389,18 @@
             line-height: 1.65;
         }
 
-        .nav-arrow,
-.experience-arrow {
+        .experience-arrow {
             display: inline-block;
             vertical-align: middle;
             color: inherit;
             font-size: inherit;
         }
 
-        .nav-arrow svg,
         .experience-arrow svg {
             display: block;
             color: inherit;
         }
+
 
         button.experience-entry:hover .experience-arrow svg {
             transform: translateX(5px);
@@ -461,7 +475,9 @@
             text-underline-offset: 5px;
         }
 
-        /* PANEL CONTROLS */
+        /* ------------------------------------------------------------ panel controls
+           Kontrol slide dan panel.
+           Slide and panel controls. */
 
         .panel-controls {
             display: flex;
@@ -509,7 +525,9 @@
             transform: scale(.94);
         }
 
-        /* CONTACTS */
+        /* ------------------------------------------------------------ contacts
+           Daftar kontak dan sosial.
+           The contact and social list. */
 
         .contact-row {
             display: flex;
@@ -553,81 +571,11 @@
             line-height: 1.6;
         }
 
-        /* MAIN NAVIGATION */
-
-        .navigation {
-            flex-shrink: 0;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            border-top: 1px solid var(--line);
-        }
-
-        .nav-item {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            min-height: 78px;
-            padding: 18px clamp(12px, 2.4vw, 36px);
-            color: var(--muted);
-            font-size: clamp(23px, 2.7vw, 36px);
-            line-height: 1.2;
-            letter-spacing: -.04em;
-        }
-
-        .nav-item:first-child {
-            padding-left: 0;
-        }
-
-        .nav-item:last-child {
-            padding-right: 0;
-        }
-
-        .nav-item::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: -1px;
-            height: 2px;
-            background: #c7d3dc;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform .4s var(--ease);
-        }
-
-        .nav-item[aria-current="page"] {
-            color: var(--text);
-        }
-
-        .nav-item[aria-current="page"]::before {
-            transform: scaleX(1);
-        }
-
-        .nav-arrow {
-            color: #929da6;
-            font-size: 22px;
-            transition: transform .3s var(--ease);
-        }
-
-        @media (hover: hover) {
-            .nav-item:hover {
-                color: var(--text);
-            }
-
-            .nav-item:hover .nav-arrow {
-                transform: translate(4px, -4px);
-            }
-        }
-
-        /* MOBILE */
+        /* ------------------------------------------------------------ mobile
+           Penyesuaian untuk ponsel.
+           Phone adjustments. */
 
         @media (max-width: 700px) {
-            .site {
-                padding: 12px 20px;
-            }
-
             .home-art img {
                 max-height: none;
             }
@@ -759,20 +707,11 @@
             .contact-row {
                 margin-top: 12px;
             }
-
-            .nav-item {
-                min-height: 64px;
-                padding: 15px 12px;
-                font-size: 24px;
-            }
-
-            .nav-arrow svg {
-                width: 18px;
-                height: 18px;
-            }
         }
 
-        /* SHORT DESKTOP SCREENS */
+        /* ------------------------------------------------------------ short desktop screens
+           Layar desktop pendek.
+           Short desktop screens. */
 
         @media (max-height: 700px) and (min-width: 701px) {
             .about-layout {
@@ -804,46 +743,15 @@
                 margin-top: 12px;
                 padding-top: 12px;
             }
-
-            .nav-item {
-                min-height: 64px;
-            }
         }
 
         @media (max-width: 360px) {
-            .site {
-                padding-inline: 16px;
-            }
-
             .tabs {
                 column-gap: 12px;
             }
 
             .tab {
                 font-size: 12px;
-            }
-
-            .nav-item {
-                font-size: 22px;
-            }
-        }
-
-        @keyframes enter {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes leave {
-            to {
-                opacity: 0;
-                transform: translateY(-7px);
             }
         }
 
@@ -859,15 +767,5 @@
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation: none !important;
-                transition: none !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-.session-details > summary { list-style: none; }
-.session-details > summary::-webkit-details-marker { display: none; }
+        .session-details > summary { list-style: none; }
+        .session-details > summary::-webkit-details-marker { display: none; }

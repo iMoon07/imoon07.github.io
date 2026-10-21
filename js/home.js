@@ -1,3 +1,13 @@
+/* =============================================================================
+   NAVIGASI HALAMAN / PAGE NAVIGATION
+   Home dan About berbagi satu dokumen: perpindahan halaman, slider pengalaman,
+   panel komunitas, dan gestur sentuh.
+   Home and About share a single document: page transitions, the experience
+   slider, the community panels, and touch gestures.
+
+   Markup ada di index.html, gaya bersama di css/home.css.
+   Markup lives in index.html, shared styles in css/home.css.
+   ============================================================================= */
 (() => {
             'use strict';
 
@@ -79,11 +89,15 @@
                         )
                         : document.getElementById('homeTitle');
 
-                    if (name === 'home') {
-                        target.setAttribute('tabindex', '-1');
-                    }
+if (name === 'home') {
+                    target.setAttribute('tabindex', '-1');
+                    startTypewriter();
+                    startSubtitle();
+                } else {
+                    stopTypewriter();
+                }
 
-                    target.focus({ preventScroll: true });
+                target.focus({ preventScroll: true });
                 }
             }
 
@@ -106,6 +120,33 @@
                 });
             });
 
+            /* ------------------------------------------------------------ cross page navigation
+               Transisi antar halaman home dan about.
+               Transitions between the home and about pages. */
+
+            const externalLinks = document.querySelectorAll(
+                '.navigation .nav-item[href$=".html"]'
+            );
+
+            async function navigateTo(url) {
+                const outgoing = pages[activePage];
+
+                outgoing.classList.remove('entering');
+                outgoing.classList.add('leaving');
+
+                await wait(reducedMotion.matches ? 0 : 180);
+
+                window.location.href = url;
+            }
+
+            externalLinks.forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+
+                    navigateTo(link.getAttribute('href'));
+                });
+            });
+
             window.addEventListener('hashchange', () => {
                 showPage(
                     location.hash === '#about'
@@ -114,7 +155,9 @@
                 );
             });
 
-            /* ABOUT SLIDER */
+            /* ------------------------------------------------------------ about slider
+               Slider pengalaman: satu panel aktif, transisi halus.
+               Experience slider: one active panel, smooth transition. */
 
             const tabs = Array.from(
                 document.querySelectorAll('.tab')
@@ -215,7 +258,9 @@
                     selectPanel(selectedPanel + 1);
                 });
 
-            /* EXPERIENCE DETAILS */
+            /* ------------------------------------------------------------ experience details
+               Detail pengalaman: isi panel sesuai pilihan.
+               Experience details: fill the panel according to the selection. */
 
             const experienceViews = {
                 list: document.getElementById('experienceList'),
@@ -280,7 +325,9 @@
                     });
                 });
 
-            /* COMMUNITY DETAILS */
+            /* ------------------------------------------------------------ community details
+               Detail komunitas: isi panel sesuai pilihan.
+               Community details: fill the panel according to the selection. */
 
             const communityViews = {
                 list: document.getElementById('communityList'),
@@ -345,7 +392,9 @@
                     });
                 });
 
-            /* TOUCH SWIPE */
+            /* ------------------------------------------------------------ touch swipe
+               Gestur geser untuk berpindah panel di layar sentuh.
+               Swipe gestures to move between panels on touch screens. */
 
             let touchStart = null;
 
@@ -391,7 +440,9 @@
                 touchStart = null;
             }, { passive: true });
 
-            /* PORTRAIT CURTAIN */
+            /* ------------------------------------------------------------ portrait curtain
+               Tirai potret: animasi buka-tutup untuk halaman about.
+               Portrait curtain: the open-close animation for the about page. */
 
             const portrait = document.getElementById('portrait');
             const photoToggle = document.getElementById('photoToggle');
@@ -411,7 +462,9 @@
                 );
             });
 
-            /* LOCAL ARTWORK FALLBACK */
+            /* ------------------------------------------------------------ local artwork fallback
+               Cadangan gambar lokal kalau aset eksternal gagal dimuat.
+               Local artwork fallback when an external asset fails to load. */
 
             document.getElementById('artwork')
                 .addEventListener('error', event => {
@@ -423,9 +476,164 @@
                     image.src = 'assets/logos.jpg';
                 });
 
-            /* INITIAL ROUTE */
+            /* ------------------------------------------------------------ typewriter
+               Teks interaktif di halaman home yang mengetik secara otomatis.
+               Interactive typing text on the home page. */
 
-            if (location.hash === '#about') {
-                showPage('about', false);
+            const typewriterPhrases = [
+                "Exploring cyberspace.",
+                "Securing the digital world.",
+                "Building resilient systems.",
+                "Testing. Learning. Advancing.",
+                "Coding with purpose.",
+                "Protecting what matters.",
+                "Alhamdulillah.",
+                "Learning with purpose.",
+                "Sharing for the benefit of others.",
+                "Stay curious. Keep exploring.",
+                "Thank you for being here.",
+                "Assalamu’alaikum."
+            ];
+
+            const subtitlePhrases = [
+                "Try. Push. Improve.",
+                "Learn. Build. Ship.",
+                "Find. Fix. Share.",
+                "Explore. Document. Grow.",
+                "Secure. Harden. Repeat.",
+                "All praise be to Allah.",
+                "May knowledge bring benefit.",
+                "Enjoy the journey.",
+                "Thank you for visiting."
+            ];
+
+            let typewriterTimer = null;
+            let subtitleTimer = null;
+            let typewriterState = {
+                phraseIndex: 0,
+                charIndex: 0,
+                isDeleting: false
+            };
+
+            function startTypewriter() {
+                const title = document.getElementById('homeTitle');
+                if (!title) return;
+
+                stopTypewriter();
+
+                typewriterState = {
+                    phraseIndex: 0,
+                    charIndex: 0,
+                    isDeleting: false
+                };
+
+                if (reducedMotion.matches) {
+                    title.textContent = typewriterPhrases[0];
+                    title.classList.add('typing');
+                    typewriterTimer = setInterval(() => {
+                        typewriterState.phraseIndex = (typewriterState.phraseIndex + 1) % typewriterPhrases.length;
+                        title.textContent = typewriterPhrases[typewriterState.phraseIndex];
+                    }, 3000);
+                    return;
+                }
+
+                title.textContent = '';
+                title.classList.add('typing');
+
+                const tick = () => {
+                    const phrase = typewriterPhrases[typewriterState.phraseIndex];
+
+                    if (typewriterState.isDeleting) {
+                        title.textContent = phrase.substring(0, typewriterState.charIndex);
+                        typewriterState.charIndex--;
+                    } else {
+                        title.textContent = phrase.substring(0, typewriterState.charIndex + 1);
+                        typewriterState.charIndex++;
+                    }
+
+                    let delay = 100;
+
+                    if (!typewriterState.isDeleting && typewriterState.charIndex === phrase.length) {
+                        delay = 2000;
+                        typewriterState.isDeleting = true;
+                    } else if (typewriterState.isDeleting && typewriterState.charIndex === 0) {
+                        typewriterState.isDeleting = false;
+                        typewriterState.phraseIndex = (typewriterState.phraseIndex + 1) % typewriterPhrases.length;
+                        delay = 500;
+                    } else if (typewriterState.isDeleting) {
+                        delay = 50;
+                    }
+
+                    typewriterTimer = setTimeout(tick, delay);
+                };
+
+                typewriterTimer = setTimeout(tick, 500);
             }
+
+            function startSubtitle() {
+                const subtitle = document.querySelector('.home-copy p');
+                if (!subtitle) return;
+
+                if (subtitleTimer) {
+                    clearInterval(subtitleTimer);
+                }
+
+                let index = 0;
+                subtitle.textContent = subtitlePhrases[0];
+
+                subtitleTimer = setInterval(() => {
+                    index = (index + 1) % subtitlePhrases.length;
+                    subtitle.style.opacity = '0';
+
+                    setTimeout(() => {
+                        subtitle.textContent = subtitlePhrases[index];
+                        subtitle.style.opacity = '1';
+                    }, 250);
+                }, 4000);
+            }
+
+            function stopTypewriter() {
+                if (typewriterTimer) {
+                    clearTimeout(typewriterTimer);
+                    typewriterTimer = null;
+                }
+                if (subtitleTimer) {
+                    clearInterval(subtitleTimer);
+                    subtitleTimer = null;
+                }
+                const title = document.getElementById('homeTitle');
+                const subtitle = document.querySelector('.home-copy p');
+                if (title) {
+                    title.classList.remove('typing');
+                }
+                if (subtitle) {
+                    subtitle.textContent = subtitlePhrases[0];
+                    subtitle.style.opacity = '1';
+                }
+            }
+
+            /* ------------------------------------------------------------ initial route
+               Tentukan halaman awal dari hash dan pasang navigasi.
+               Resolve the initial page from the hash and set up navigation. */
+
+            function initialRoute() {
+                const target = location.hash === '#about' ? 'about' : 'home';
+
+                Object.values(pages).forEach(page => {
+                    page.hidden = page !== pages[target];
+                    page.classList.remove('entering', 'leaving');
+                });
+
+                activePage = target;
+                updateNavigation(target);
+
+                pages[target].classList.add('entering');
+
+                if (target === 'home') {
+                    startTypewriter();
+                    startSubtitle();
+                }
+            }
+
+            initialRoute();
         })();

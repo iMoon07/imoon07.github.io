@@ -1,0 +1,2262 @@
+/* =============================================================================
+   PENGALAMAN MEMBACA ARTIKEL / ARTICLE READING EXPERIENCE
+   Seluruh gaya halaman artikel: kerangka, tipografi, blok konten, dan
+   breakpoint.
+   Every style of the article page: layout, typography, content blocks, and
+   breakpoints.
+
+   Hanya untuk read.html. Gaya umum halaman ada di css/style.css dan
+   css/shell.css.
+   Only for read.html. Shared page styles live in css/style.css and
+   css/shell.css.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------- page base
+   Latar, warna teks, dan dasar halaman artikel.
+   Background, text colours, and the article page base.
+
+   Sistem tipografi sendiri: hanya system font, satu aksen, pemisah rambut.
+   Its own typographic system: system fonts only, one accent, hairline
+   separators. */
+
+html {
+    scroll-behavior: smooth;
+}
+
+.article-page {
+    --article-measure: 68ch;
+    --code-bg: #0b0e11;
+    --code-head: #0f1317;
+    --code-border: #23282e;
+    --code-muted: #6b737a;
+    --code-text: #d6dde3;
+    --callout-note: #58a6ff;
+    --callout-tip: #3fb950;
+    --callout-warning: #d29922;
+    --callout-danger: #f85149;
+
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.article-page .site {
+    width: min(1080px, 100%);
+}
+
+.article-page .site > .article-layout {
+    flex: 1 0 auto;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---------------------------------------------------------------- focus
+   Cincin fokus keyboard yang konsisten di seluruh situs.
+   A consistent keyboard focus ring across the whole site. */
+
+.article-page a:focus-visible,
+.article-page button:focus-visible {
+    outline: 2px solid #9fbccc;
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------- loading + error states
+   Skeleton saat memuat dan pesan error artikel.
+   Loading skeleton and the article error message. */
+
+.article-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 8px;
+}
+
+.article-skeleton span {
+    display: block;
+    height: 14px;
+    border-radius: 3px;
+    background: #12161a;
+    animation: article-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.article-skeleton span:nth-child(1) { width: 92%; }
+.article-skeleton span:nth-child(2) { width: 78%; }
+.article-skeleton span:nth-child(3) { width: 86%; }
+.article-skeleton span:nth-child(4) { width: 64%; }
+.article-skeleton span:nth-child(5) { width: 71%; }
+
+@keyframes article-skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .45; }
+}
+
+.article-error {
+    margin: 0 0 .8em;
+    color: #dfe4e8;
+    font-size: 18px;
+}
+
+.article-error-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.article-error-hint a {
+    color: #a9c6d8;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(169, 198, 216, .3);
+}
+
+/* ---------------------------------------------------------------- discussion
+   Area komentar Giscus.
+   The Giscus comment area. */
+
+.article-discussion {
+    margin-top: 56px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+}
+
+.discussion-title {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- reading progress
+   Garis progres di paling atas layar.
+   The progress bar pinned to the top of the screen. */
+
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    width: 100%;
+    height: 2px;
+    background: transparent;
+    pointer-events: none;
+}
+
+.reading-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #9fbccc, #cfe0ec);
+    transition: width .08s linear;
+}
+
+/* ---------------------------------------------------------------- top bar
+   Bilah atas: tombol kembali, judul, dan tombol aksi.
+   Top bar: back button, title, and action buttons. */
+
+.article-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+}
+
+.article-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    letter-spacing: .02em;
+    text-decoration: none;
+    transition: color .2s;
+}
+
+.article-back:hover {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.article-back svg {
+    transition: transform .25s var(--ease);
+}
+
+.article-back:hover svg {
+    transform: translateX(-3px);
+}
+
+.article-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.article-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+}
+
+.article-icon-btn:hover {
+    color: var(--text);
+    border-color: #4a5157;
+}
+
+.article-icon-btn.is-done {
+    color: var(--callout-tip, #3fb950);
+    border-color: #2c4a35;
+}
+
+.toc-toggle {
+    display: none;
+}
+
+/* ---------------------------------------------------------------- entrance
+   Animasi masuk halaman artikel dan navigasi.
+   Entrance animation for the article page and its navigation.
+
+   Satu angkat pendek untuk halaman, satu fade untuk konten, stagger
+   pelan untuk daftar isi. Tidak memantul, tidak mengulang.
+   One short lift for the page, one fade for the content, a quiet stagger
+   for the table of contents. Nothing bounces, nothing loops. */
+
+@keyframes article-rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes article-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.article-bar {
+    animation: article-fade .4s var(--ease) backwards;
+}
+
+.article-column {
+    animation: article-rise .5s var(--ease) backwards;
+}
+
+.is-revealed .article-title {
+    animation: article-rise .45s var(--ease) backwards;
+}
+
+.is-revealed .article-lede {
+    animation: article-fade .4s .05s var(--ease) backwards;
+}
+
+.is-revealed .article-meta {
+    animation: article-fade .4s .09s var(--ease) backwards;
+}
+
+.is-revealed .article-tags {
+    animation: article-fade .4s .12s var(--ease) backwards;
+}
+
+.is-revealed .prose {
+    animation: article-fade .45s .05s var(--ease) backwards;
+}
+
+.is-revealed .article-end {
+    animation: article-fade .4s .1s var(--ease) backwards;
+}
+
+.is-revealed .article-discussion {
+    animation: article-fade .4s .14s var(--ease) backwards;
+}
+
+.is-revealed .toc-inner {
+    animation: article-fade .35s .1s var(--ease) backwards;
+}
+
+.is-revealed #toc-list li {
+    animation: article-fade .3s calc(.12s + var(--i, 0) * 22ms) var(--ease) backwards;
+}
+
+.title-skeleton {
+    display: block;
+    width: min(420px, 88%);
+    height: .58em;
+    border-radius: 4px;
+    background: #12161a;
+    animation: article-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .article-bar,
+    .article-column,
+    .is-revealed .article-title,
+    .is-revealed .article-lede,
+    .is-revealed .article-meta,
+    .is-revealed .article-tags,
+    .is-revealed .prose,
+    .is-revealed .article-end,
+    .is-revealed .article-discussion,
+    .is-revealed .toc-inner,
+    .is-revealed #toc-list li {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    .toc,
+    .toc-drawer-panel {
+        scroll-behavior: auto;
+    }
+}
+
+/* ---------------------------------------------------------------- layout
+   Grid halaman: kolom artikel dan rail daftar isi.
+   Page grid: the article column and the table of contents rail. */
+
+.article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+    padding: 0 0 40px;
+}
+
+.article-column {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------------- header
+   Kepala artikel: judul, lede, tag, dan metadata.
+   Article header: title, lede, tags, and metadata. */
+
+.article-header {
+    padding: 40px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 34px;
+}
+
+.article-kicker {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.article-kicker .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #454c53;
+}
+
+.article-kicker #article-category {
+    color: #cfd6db;
+}
+
+/* The hidden attribute must win over the layout rules below */
+.article-page [hidden] {
+    display: none !important;
+}
+
+.article-title {
+    max-width: 22ch;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(32px, 4.6vw, 54px);
+    line-height: 1.08;
+    font-weight: 400;
+    letter-spacing: -.045em;
+    text-wrap: balance;
+}
+
+.article-lede {
+    max-width: 60ch;
+    margin: 20px 0 0;
+    color: #c2c9cf;
+    font-size: clamp(17px, 1.5vw, 19px);
+    line-height: 1.65;
+}
+
+.article-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    margin-top: 26px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.article-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: opacity .2s;
+}
+
+.article-author:hover {
+    opacity: .78;
+    text-decoration: none;
+}
+
+.article-author img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    box-shadow: 0 0 0 3px rgba(159, 188, 204, .07);
+}
+
+.article-author strong {
+    display: block;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.25;
+}
+
+.article-author span {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.article-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.article-meta-item svg {
+    color: #6b737a;
+}
+
+.article-commit {
+    padding: 2px 7px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: #8fa8b8;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    text-decoration: none;
+    transition: color .18s, border-color .18s;
+}
+
+.article-commit:hover {
+    color: #cfe0ec;
+    border-color: #3d444b;
+    text-decoration: none;
+}
+
+.article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 22px;
+}
+
+.article-tag {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-decoration: none;
+    transition: color .2s, border-color .2s;
+}
+
+.article-tag:hover {
+    color: var(--text);
+    border-color: #4a5157;
+    text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- prose
+   Tipografi isi artikel: paragraf, heading, kutipan, daftar.
+   Article body typography: paragraphs, headings, quotes, lists. */
+
+.prose {
+    max-width: var(--article-measure);
+    color: #cdd4da;
+    font-size: 18px;
+    line-height: 1.78;
+    overflow-wrap: break-word;
+}
+
+.prose > *:first-child {
+    margin-top: 0;
+}
+
+.prose p {
+    margin: 0 0 1.35em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+    position: relative;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: -.028em;
+    line-height: 1.25;
+    scroll-margin-top: 96px;
+}
+
+.prose h1 {
+    margin: 2.2em 0 .7em;
+    font-size: 1.85em;
+}
+
+.prose h2 {
+    margin: 2.4em 0 .8em;
+    font-size: 1.42em;
+    padding-bottom: .35em;
+    border-bottom: 1px solid var(--line);
+}
+
+.prose h3 {
+    margin: 2em 0 .7em;
+    font-size: 1.16em;
+}
+
+.prose h4 {
+    margin: 1.8em 0 .6em;
+    font-size: 1.02em;
+    color: #dfe4e8;
+}
+
+.prose h5,
+.prose h6 {
+    margin: 1.6em 0 .5em;
+    font-size: .95em;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+.prose ul,
+.prose ol {
+    margin: 0 0 1.35em;
+    padding-left: 1.35em;
+}
+
+.prose li {
+    margin-bottom: .45em;
+}
+
+.prose li::marker {
+    color: #6b737a;
+}
+
+.prose li > ul,
+.prose li > ol {
+    margin: .45em 0 .3em;
+}
+
+.prose a {
+    color: #a9c6d8;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(169, 198, 216, .3);
+    transition: color .18s, border-color .18s;
+}
+
+.prose a:hover {
+    color: #dce9f2;
+    border-color: #dce9f2;
+}
+
+.prose strong {
+    color: #e6ebef;
+    font-weight: 600;
+}
+
+.prose hr {
+    height: 1px;
+    margin: 3em 0;
+    border: 0;
+    background: var(--line);
+}
+
+.prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #0d1117;
+}
+
+.prose blockquote {
+    margin: 1.6em 0;
+    padding: 2px 0 2px 20px;
+    border-left: 2px solid #333a41;
+    color: #9aa3ab;
+}
+
+.prose blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------- inline code
+   Gaya kode sebaris di dalam paragraf.
+   Inline code styling inside paragraphs. */
+
+.prose :not(pre) > code {
+    padding: .15em .38em;
+    border: 1px solid #22272d;
+    border-radius: 4px;
+    background: #12161a;
+    color: #d7e3ec;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .855em;
+    word-break: break-word;
+}
+
+/* ---------------------------------------------------------------- tables
+   Tabel artikel, termasuk versi lebar yang di-scroll lokal.
+   Article tables, including wide ones that scroll locally. */
+
+.table-wrap {
+    margin: 1.7em 0;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .92em;
+}
+
+.prose th,
+.prose td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+}
+
+.prose thead th {
+    position: sticky;
+    top: 0;
+    background: #101418;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: .02em;
+}
+
+.prose tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.prose tbody tr:hover {
+    background: #0d1114;
+}
+
+/* ---------------------------------------------------------------- task list
+   Daftar centang: kotak isian dan teks yang bisa diklik.
+   Checklist: the boxes and the clickable item text. */
+
+.prose li.task-list-item {
+    list-style: none;
+    margin-left: -1.35em;
+    padding-left: .2em;
+}
+
+.prose li.task-list-item input[type="checkbox"] {
+    margin-right: .55em;
+    accent-color: #9fbccc;
+    vertical-align: middle;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.prose li.task-list-item input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.prose li.task-list-item .task-label {
+    cursor: pointer;
+}
+
+.prose li.task-list-item:has(input:checked) .task-label {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(139, 148, 158, .55);
+}
+
+/* ---------------------------------------------------------------- inline tokens
+   Sorotan, subscript, dan superscript.
+   Highlight, subscript, and superscript. */
+
+.prose mark {
+    padding: .05em .3em;
+    border-radius: 3px;
+    background: rgba(184, 205, 220, .16);
+    color: #eaf2f8;
+}
+
+.prose sub,
+.prose sup {
+    font-size: .72em;
+    line-height: 0;
+}
+
+.prose kbd {
+    display: inline-block;
+    padding: .12em .45em;
+    border: 1px solid #2f353b;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: #12161a;
+    color: #cdd6dd;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .82em;
+}
+
+/* ---------------------------------------------------------------- definition list
+   Istilah dan penjelasannya.
+   Terms and their descriptions. */
+
+.prose .definition-list {
+    margin: 1.5em 0;
+    padding: 0;
+}
+
+.prose .definition-list dt {
+    margin-top: 1em;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.prose .definition-list dd {
+    margin: .3em 0 0;
+    padding-left: 1.1em;
+    border-left: 1px solid var(--line);
+    color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- footnotes
+   Daftar catatan kaki di akhir artikel.
+   The footnote list at the end of the article. */
+
+.prose .footnotes {
+    margin-top: 2.6em;
+    padding-top: 1.4em;
+    border-top: 1px solid var(--line);
+    font-size: .92em;
+}
+
+.prose .footnotes-title {
+    margin: 0 0 .8em;
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.prose .footnotes ol {
+    margin: 0;
+    padding-left: 1.3em;
+}
+
+.prose .footnotes li {
+    margin-bottom: .5em;
+    color: var(--muted);
+}
+
+.prose .footnotes p {
+    margin: 0;
+}
+
+.footnote-ref {
+    font-size: .7em;
+    line-height: 0;
+}
+
+.footnote-ref a {
+    padding: 0 .15em;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.footnote-ref a:hover {
+    text-decoration: underline;
+}
+
+.footnote-backref {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- math
+   Matematika sebaris dan blok, gaya KaTeX.
+   Inline and block maths, styled for KaTeX. */
+
+.prose .math-inline {
+    padding: .05em .25em;
+    border-radius: 3px;
+    background: #0d1117;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .92em;
+}
+
+.prose .math-block {
+    margin: 1.5em 0;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #0d1117;
+    overflow-x: auto;
+    text-align: center;
+}
+
+.prose .katex {
+    font-size: 1.05em;
+}
+
+.prose .katex-display {
+    margin: 0;
+}
+
+/* ---------------------------------------------------------------- mermaid diagram
+   Wadah diagram Mermaid yang sudah dirender jadi SVG.
+   The Mermaid diagram container, already rendered to SVG. */
+
+.mermaid-block {
+    margin: 1.7em 0;
+    padding: 18px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #0d1117;
+    overflow-x: auto;
+    text-align: center;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--muted);
+}
+
+.mermaid-block svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---------------------------------------------------------------- youtube card
+   Kartu video: thumbnail, tombol play, dan pilihan menonton.
+   Video card: thumbnail, play button, and the watching options.
+
+   Tanpa kotak: thumbnail sendiri yang jadi titik fokus, metadata dan
+   pilihan menonton duduk di bawahnya seperti daftar artikel.
+   No box: the thumbnail is the focal point, the metadata and the watching
+   options sit under it like the article list. */
+
+.video-card {
+    margin: 1.9em 0;
+}
+
+.video-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #05070a;
+    overflow: hidden;
+}
+
+.video-frame.is-playing {
+    aspect-ratio: auto;
+    height: 0;
+    padding-bottom: 56.25%;
+}
+
+.video-frame.is-playing iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.video-thumb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .82;
+    transition: opacity .25s;
+}
+
+.video-card:hover .video-thumb {
+    opacity: 1;
+}
+
+.video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border: 1px solid rgba(234, 242, 248, .18);
+    border-radius: 50%;
+    background: rgba(10, 12, 15, .55);
+    color: #eaf2f8;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background-color .2s, border-color .2s, transform .2s var(--ease);
+}
+
+.video-play:hover {
+    background: rgba(184, 205, 220, .22);
+    border-color: rgba(184, 205, 220, .4);
+    transform: translate(-50%, -50%) scale(1.06);
+}
+
+.video-play:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.video-meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding: 12px 2px 0;
+}
+
+.video-title {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.video-source {
+    flex: none;
+    color: #6b737a;
+    font-size: 12px;
+    letter-spacing: .04em;
+    transition: color .2s;
+}
+
+.video-card:hover .video-source {
+    color: #8b949c;
+}
+
+.video-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+}
+
+.video-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 12.5px;
+    letter-spacing: .02em;
+    line-height: 1.6;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+.video-action svg {
+    flex: none;
+    opacity: .75;
+    transition: opacity .2s, transform .2s var(--ease);
+}
+
+.video-action:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.video-action:hover svg {
+    opacity: 1;
+    transform: translate(1px, -1px);
+}
+
+.video-action.is-active {
+    color: var(--accent);
+    cursor: default;
+}
+
+.video-action:disabled {
+    color: #4d565e;
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.video-action:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.prose iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #05070a;
+}
+
+/* ---------------------------------------------------------------- heading anchors
+   Ikon tautan pada setiap heading.
+   The anchor icon on every heading. */
+
+.heading-anchor {
+    position: absolute;
+    left: -1.1em;
+    top: 0;
+    width: 1em;
+    color: #454c53;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity .18s, color .18s;
+}
+
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.heading-anchor:focus-visible {
+    opacity: 1;
+}
+
+.heading-anchor:hover {
+    color: #8f9aa3;
+}
+
+/* ---------------------------------------------------------------- callouts
+   Blokquote bergaya: note, warning, important.
+   Styled blockquotes: note, warning, important. */
+
+.callout {
+    position: relative;
+    margin: 1.7em 0;
+    padding: 16px 18px 16px 46px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--callout-note);
+    border-radius: 4px;
+    background: #0e1215;
+    font-size: .95em;
+}
+
+.callout > :last-child {
+    margin-bottom: 0;
+}
+
+.callout-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: .82em;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.callout-title svg {
+    color: var(--callout-note);
+}
+
+.callout p {
+    margin-bottom: .8em;
+}
+
+.callout-note {
+    border-left-color: var(--callout-note);
+}
+
+.callout-tip {
+    border-left-color: var(--callout-tip);
+}
+
+.callout-tip .callout-title svg {
+    color: var(--callout-tip);
+}
+
+.callout-warning {
+    border-left-color: var(--callout-warning);
+}
+
+.callout-warning .callout-title svg {
+    color: var(--callout-warning);
+}
+
+.callout-danger {
+    border-left-color: var(--callout-danger);
+}
+
+.callout-danger .callout-title svg {
+    color: var(--callout-danger);
+}
+
+/* ---------------------------------------------------------------- code block
+   Blok kode: kepala, nomor baris, tombol, dan syntax color.
+   Code block: header, line numbers, buttons, and syntax colours. */
+
+.code-block {
+    position: relative;
+    margin: 1.8em 0;
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    background: var(--code-bg);
+    overflow: hidden;
+}
+
+.code-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 38px;
+    padding: 6px 10px 6px 14px;
+    border-bottom: 1px solid var(--code-border);
+    background: var(--code-head);
+}
+
+.code-lang {
+    color: #8b949e;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.code-file {
+    color: #6b737a;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.code-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.code-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: #7d868d;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color .18s, background-color .18s, border-color .18s;
+}
+
+.code-btn:hover {
+    color: var(--text);
+    background: #171c21;
+    border-color: #262c33;
+}
+
+.code-btn:focus-visible {
+    outline: 2px solid #9fbccc;
+    outline-offset: 2px;
+}
+
+.code-btn.is-done {
+    color: #3fb950;
+}
+
+.code-scroll {
+    position: relative;
+    max-height: min(70vh, 720px);
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+.code-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.code-scroll::-webkit-scrollbar-thumb {
+    background: #262c33;
+    border-radius: 99px;
+    border: 2px solid var(--code-bg);
+}
+
+.code-scroll::-webkit-scrollbar-thumb:hover {
+    background: #39414a;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 14px 0;
+    background: transparent;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.62;
+    tab-size: 4;
+}
+
+.code-block code {
+    display: block;
+    padding: 0;
+    background: transparent;
+    color: var(--code-text);
+    font-family: inherit;
+    font-size: inherit;
+    white-space: pre;
+}
+
+.code-line {
+    display: block;
+    padding: 0 18px 0 0;
+    min-height: 1.62em;
+}
+
+.code-line:hover {
+    background: rgba(159, 188, 204, .07);
+}
+
+.code-line.is-active {
+    background: rgba(159, 188, 204, .12);
+    box-shadow: inset 2px 0 0 #9fbccc;
+}
+
+.code-num {
+    display: inline-block;
+    width: 46px;
+    padding-right: 16px;
+    color: #454c53;
+    text-align: right;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.code-num a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.code-num a:hover {
+    color: #8b949e;
+}
+
+.code-txt {
+    white-space: pre;
+}
+
+/* wrapped mode: no horizontal scroll, code wraps but keeps the gutter aligned */
+
+.code-block.is-wrapped .code-scroll {
+    overflow-x: hidden;
+}
+
+.code-block.is-wrapped code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.code-block.is-wrapped .code-txt {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* collapsed mode for very long blocks: content stays in the DOM */
+
+.code-block.is-collapsed .code-scroll {
+    max-height: 380px;
+    overflow: hidden;
+}
+
+.code-block.is-collapsed .code-scroll::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 120px;
+    background: linear-gradient(180deg, transparent, var(--code-bg));
+    pointer-events: none;
+}
+
+.code-expand {
+    display: block;
+    width: 100%;
+    padding: 9px;
+    border: 0;
+    border-top: 1px solid var(--code-border);
+    background: var(--code-head);
+    color: #8b949e;
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color .18s, background-color .18s;
+}
+
+.code-expand:hover {
+    color: var(--text);
+    background: #131820;
+}
+
+/* syntax colors (github-dark inspired, muted to fit the page) */
+
+.hljs-comment,
+.hljs-quote {
+    color: #6a737d;
+    font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag,
+.hljs-formula {
+    color: #ff7b72;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+    color: #a5d6ff;
+}
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+    color: #79c0ff;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+    color: #d2a8ff;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params,
+.hljs-property,
+.hljs-tag {
+    color: #ffa657;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-title.class_ {
+    color: #7ee787;
+}
+
+.hljs-type,
+.hljs-builtin-name {
+    color: #ffa657;
+}
+
+.hljs-meta {
+    color: #79c0ff;
+}
+
+.hljs-deletion {
+    color: #ffa198;
+    background: #490202;
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- figures
+   Gambar artikel dan caption-nya.
+   Article images and their captions. */
+
+.prose figure {
+    margin: 1.9em 0;
+}
+
+.prose figure img {
+    width: 100%;
+    cursor: zoom-in;
+}
+
+.prose figcaption {
+    margin-top: 10px;
+    color: #6b737a;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------------- lightbox
+   Lightbox gambar beserta navigasinya.
+   The image lightbox and its navigation. */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: rgba(4, 6, 8, .93);
+}
+
+.lightbox.is-open {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 100%;
+    max-height: 88vh;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: #0d1117;
+    color: var(--text);
+    cursor: pointer;
+}
+
+/* TABLE OF CONTENTS */
+
+/* ---------------------------------------------------------------- table of contents
+   Daftar isi: struktur, rail progres, dan sorotan aktif.
+   Table of contents: structure, progress rail, and active highlight.
+
+   Daftar ditengahkan vertikal di viewport dan tetap di sana saat artikel
+   digulir, jadi bagian aktif selalu terlihat.
+   The list is vertically centred in the viewport and stays there while the
+   article scrolls, so the current section is always in sight. */
+
+.article-toc {
+    align-self: stretch;
+}
+
+.toc {
+    position: sticky;
+    top: var(--sticky-offset, 0px);
+    height: calc(100vh - var(--sticky-offset, 0px));
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-left: 2px;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+}
+
+.toc-inner {
+    margin: auto 0;
+    padding: 40px 0;
+}
+
+.toc-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 8px 0 10px;
+    background: var(--bg);
+    box-shadow: 0 10px 12px -12px var(--bg);
+}
+
+.toc-title {
+    margin: 0;
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.toc-meter {
+    flex: 1 1 auto;
+    min-width: 24px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.toc-meter-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, rgba(184, 205, 220, .25), var(--accent));
+    transition: width .25s var(--ease);
+}
+
+.toc-percent {
+    min-width: 34px;
+    color: #6b737a;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.toc li {
+    margin: 0;
+}
+
+/* RAIL PROGRES: garis tipis di kiri daftar, terisi sampai bagian aktif */
+
+.toc-list {
+    position: relative;
+}
+
+.toc-list::before,
+.toc-list::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.toc-list::before {
+    height: 100%;
+    background: var(--line);
+}
+
+.toc-list::after {
+    height: var(--toc-fill, 0px);
+    background: linear-gradient(180deg, rgba(184, 205, 220, .2), var(--accent));
+    transition: height .3s var(--ease);
+}
+
+.toc a {
+    position: relative;
+    display: block;
+    padding: 5px 0 5px 12px;
+    color: #79828a;
+    font-size: 13px;
+    line-height: 1.45;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: color .18s, border-color .18s, background-color .18s;
+}
+
+.toc a:hover {
+    color: var(--text);
+    background: linear-gradient(90deg, rgba(184, 205, 220, .05), rgba(184, 205, 220, 0) 80%);
+}
+
+.toc .toc-level-3 a {
+    padding-left: 24px;
+    font-size: 12.5px;
+}
+
+.toc .toc-level-4 a {
+    padding-left: 36px;
+    font-size: 12.5px;
+}
+
+.toc a.is-active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 500;
+    background: linear-gradient(90deg, rgba(184, 205, 220, .11), rgba(184, 205, 220, 0) 88%);
+}
+
+/* Bagian yang sudah dilewati sedikit redup */
+.toc a.is-passed {
+    color: #5f676e;
+}
+
+/* Titik penanda aktif, menempel di rail */
+.toc a.is-active::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(184, 205, 220, .14);
+}
+
+/* ---------------------------------------------------------------- mobile toc drawer
+   Drawer daftar isi untuk layar kecil.
+   The table of contents drawer for small screens. */
+
+.toc-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: none;
+}
+
+.toc-drawer.is-open {
+    display: block;
+}
+
+.toc-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 6, 8, .7);
+}
+
+.toc-drawer-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 84vw);
+    padding: 22px;
+    overflow-y: auto;
+    border-left: 1px solid var(--line);
+    background: #0b0e11;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+}
+
+.toc-drawer-head {
+    position: sticky;
+    top: -22px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 18px 0 14px;
+    background: #0b0e11;
+    box-shadow: 0 10px 12px -12px #0b0e11;
+}
+
+.toc-drawer-head .toc-title {
+    margin: 0;
+}
+
+.toc-head-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+}
+
+.toc-head-right .toc-meter {
+    max-width: 90px;
+}
+
+.toc-drawer-panel ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.toc-drawer-panel li {
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.toc-drawer-panel a {
+    position: relative;
+    display: block;
+    padding: 11px 0 11px 14px;
+    margin-left: -8px;
+    color: #79828a;
+    font-size: 14px;
+    line-height: 1.45;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: color .18s, border-color .18s, background-color .18s;
+}
+
+.toc-drawer-panel a:hover {
+    color: var(--text);
+}
+
+.toc-drawer-panel a.is-active {
+    color: var(--accent);
+    font-weight: 500;
+    border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(184, 205, 220, .1), rgba(184, 205, 220, 0) 88%);
+}
+
+.toc-drawer-panel a.is-active::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(184, 205, 220, .14);
+}
+
+.toc-drawer-panel .toc-list::before,
+.toc-drawer-panel .toc-list::after {
+    left: -8px;
+}
+
+.toc-drawer-panel .toc-list::before {
+    background: var(--line);
+}
+
+.toc-drawer-panel .toc-level-3 a {
+    padding-left: 14px;
+    font-size: 13px;
+}
+
+.toc-drawer-panel .toc-level-4 a {
+    padding-left: 28px;
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- article footer
+   Navigasi artikel, baris related, dan baris sumber.
+   Article navigation, the related row, and the source row. */
+
+.article-end {
+    margin-top: 56px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+}
+
+.article-share {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.copy-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(184, 205, 220, .04);
+    color: var(--muted);
+    font: inherit;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background-color .2s, transform .2s var(--ease);
+}
+
+.copy-link-btn:hover {
+    color: var(--text);
+    border-color: #3d444b;
+    background: rgba(184, 205, 220, .08);
+}
+
+.copy-link-btn:active {
+    transform: scale(.98);
+}
+
+.copy-link-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.copy-link-btn.is-done {
+    color: var(--accent);
+    border-color: rgba(184, 205, 220, .4);
+    background: rgba(184, 205, 220, .1);
+}
+
+.copy-link-btn svg {
+    flex: none;
+}
+
+.article-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 30px;
+}
+
+.article-nav-link {
+    display: block;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color .2s, background-color .2s;
+}
+
+.article-nav-link:hover {
+    border-color: #3d444b;
+    background: #0d1114;
+    text-decoration: none;
+}
+
+.article-nav-link span {
+    display: block;
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.article-nav-link strong {
+    display: block;
+    margin-top: 6px;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.article-nav-link.is-next {
+    text-align: right;
+}
+
+.article-related {
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+}
+
+.related-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.related-head-text {
+    min-width: 0;
+}
+
+.related-title {
+    margin: 0;
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.related-hint {
+    margin: 7px 0 0;
+    color: #8b949c;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+
+.related-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex: none;
+    color: var(--muted);
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .2s;
+}
+
+.related-cta:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.related-cta svg {
+    transition: transform .2s var(--ease);
+}
+
+.related-cta:hover svg {
+    transform: translateX(3px);
+}
+
+.related-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.related-item {
+    --rel-scale: 1;
+    --thumb-w: calc(122px * var(--rel-scale));
+    --thumb-h: calc(81px * var(--rel-scale));
+    --title-size: calc(16.5px * var(--rel-scale));
+    --meta-size: calc(12.5px * var(--rel-scale));
+
+    display: flex;
+    align-items: center;
+    gap: calc(16px * var(--rel-scale));
+    padding: calc(15px * var(--rel-scale)) 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    transition: opacity .2s;
+}
+
+.related-item:last-child {
+    border-bottom: 0;
+}
+
+.related-item:hover {
+    text-decoration: none;
+    opacity: .92;
+}
+
+.related-thumb {
+    flex: none;
+    width: var(--thumb-w);
+    height: var(--thumb-h);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #0d1117;
+    overflow: hidden;
+}
+
+.related-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .6;
+    transition: opacity .25s, transform .35s var(--ease);
+}
+
+.related-item:hover .related-thumb img {
+    opacity: 1;
+    transform: scale(1.04);
+}
+
+.related-rank {
+    display: block;
+    margin-bottom: 4px;
+    color: #454c53;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: calc(11px * var(--rel-scale));
+    letter-spacing: .06em;
+    transition: color .2s;
+}
+
+.related-item:hover .related-rank {
+    color: var(--accent);
+}
+
+.related-body {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.related-item strong {
+    display: block;
+    color: var(--text);
+    font-size: var(--title-size);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -.01em;
+}
+
+.related-meta {
+    display: block;
+    margin-top: calc(6px * var(--rel-scale));
+    color: #6b737a;
+    font-size: var(--meta-size);
+    letter-spacing: .04em;
+}
+
+.related-arrow {
+    flex: none;
+    color: #454c53;
+    transition: color .2s, transform .2s var(--ease);
+}
+
+.related-item:hover .related-arrow {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+}
+/* ---------------------------------------------------------------- source row
+   Baris repo sumber artikel.
+   The article source repository row.
+
+   Satu baris-repo yang menunjuk ke sumber artikel. Sepadan dengan list
+   artikel terkait: pemisah rambut, tanpa kotak, tanpa gradien.
+   A single repository row that points at the source of the article. It
+   matches the related list: hairline separator, no box, no gradient. */
+
+.article-source {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+    transition: opacity .2s;
+}
+
+.article-source:hover {
+    text-decoration: none;
+    opacity: .92;
+}
+
+.article-source-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    color: #6f7d87;
+    transition: color .22s;
+}
+
+.article-source:hover .article-source-icon {
+    color: var(--accent);
+}
+
+.article-source-body {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-width: 0;
+}
+
+.article-source-label {
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.article-source-name {
+    color: #b9c6ce;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.4;
+    word-break: break-all;
+    transition: color .2s;
+}
+
+.article-source:hover .article-source-name {
+    color: #eef3f6;
+}
+
+.article-source-arrow {
+    display: grid;
+    place-items: center;
+    flex: none;
+    margin-left: auto;
+    color: #4d565e;
+    transition: color .22s, transform .28s var(--ease);
+}
+
+.article-source:hover .article-source-arrow {
+    color: #9fbccc;
+    transform: translate(3px, -3px);
+}
+
+/* ---------------------------------------------------------------- responsive
+   Penyesuaian untuk tablet dan ponsel.
+   Adjustments for tablet and phone. */
+
+@media (max-width: 1080px) {
+    .article-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .article-toc,
+    .toc {
+        display: none;
+    }
+
+    .toc-toggle {
+        display: inline-flex;
+    }
+}
+
+@media (max-width: 700px) {
+    .article-header {
+        padding: 26px 0 22px;
+        margin-bottom: 26px;
+    }
+
+    .prose {
+        font-size: 17px;
+        line-height: 1.75;
+    }
+
+    .prose h2 {
+        font-size: 1.3em;
+    }
+
+    .code-block {
+        margin: 1.5em 0;
+        border-radius: 5px;
+    }
+
+    .code-scroll {
+        max-height: none;
+    }
+
+    .code-head {
+        min-height: 34px;
+        padding: 5px 8px 5px 12px;
+    }
+
+    .code-btn {
+        padding: 5px 8px;
+    }
+
+    .code-btn span {
+        display: none;
+    }
+
+    .code-block pre {
+        font-size: 12.5px;
+    }
+
+    .code-num {
+        width: 34px;
+        padding-right: 12px;
+    }
+
+    .code-line {
+        padding-right: 14px;
+    }
+
+    .article-nav {
+        grid-template-columns: 1fr;
+    }
+
+    .article-nav-link.is-next {
+        text-align: left;
+    }
+
+    .article-commit {
+        padding: 5px 9px;
+    }
+}
+
+@media (max-width: 420px) {
+    .code-num {
+        width: 26px;
+        padding-right: 8px;
+        font-size: 11px;
+    }
+
+    /* Keep the bar readable on the narrowest screens */
+    .article-back span {
+        display: none;
+    }
+
+    .article-icon-btn {
+        padding: 7px 11px;
+    }
+}

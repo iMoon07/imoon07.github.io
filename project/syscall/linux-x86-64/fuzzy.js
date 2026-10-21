@@ -4,6 +4,11 @@
  *
  * Copyright (c) 2012 Matt York
  * Licensed under the MIT license.
+ *
+ * Pustaka pihak ketiga yang di-vendor apa adanya. Komentar asli upstream
+ * sengaja dibiarkan utuh, jangan diubah.
+ * A vendored third-party library, kept as is. The original upstream
+ * comments are left untouched on purpose.
  */
 
 (function () {

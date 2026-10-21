@@ -1,113 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
+    <!-- ==========================================================================
+     HALAMAN PEMBACA ARTIKEL / ARTICLE READER PAGE
+     Kerangka halaman artikel. Isi artikel disuntik oleh js/read.js dari
+     The article page shell. The article body is injected by js/read.js from
+     the markdown file, so this file only holds the structure and the slots.
+     ========================================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Raja</title>
-    
-    <!-- Favicon & Social Share Image -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Raja Muhammad Kurnia Setyawan</title>
+
+    <!-- Favicon & Social Share Image
+         Ikon dan pratinjau kartu share.
+         Favicon and the social card preview. -->
     <link rel="icon" type="image/jpeg" href="assets/logos.png">
     <meta property="og:type" content="article">
     <meta property="og:title" content="iMoon07 - Penjelajah CyberSecurity">
     <meta property="og:description" content="Notes and explorations from a Hacker Cool">
     <meta property="og:image" content="https://imoon07.github.io/assets/logos.png">
     <meta name="twitter:card" content="summary_large_image">
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="css/shell.css">
+    <link rel="stylesheet" href="css/article.css">
 </head>
 
-<body>
+<body class="article-page">
 
-    <!-- Navigation -->
-    <nav style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <a href="blog.html">&laquo; Back to Project List</a>
-        <button onclick="toggleTheme()" id="theme-btn" class="theme-btn" title="Toggle Theme">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-        </button>
-    </nav>
+    <!-- READING PROGRESS -->
+    <div class="reading-progress" role="presentation">
+        <span id="reading-progress-bar"></span>
+    </div>
 
-    <!-- Article Content -->
-    <main class="read-container">
-        <!-- Author Byline -->
-        <div class="article-meta" style="margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="assets/foto-raja.jpg" alt="Foto Raja" style="width: 45px !important; height: 45px !important; border-radius: 50% !important; border: 2px solid #30363d !important; object-fit: cover;">
-                <div>
-                    <strong style="display: block; color: #c9d1d9;">Raja Muhammad Kurnia Setyawan</strong>
-                    <a href="https://github.com/iMoon07" target="_blank" style="font-size: 14px; color: #8b949e; text-decoration: none;">@iMoon07</a>
+    <div class="site">
+
+        <!-- STICKY TOOL BAR
+             Bilah atas yang menempel: kembali, judul, dan tombol aksi.
+             The sticky bar: back, title, and action buttons. -->
+        <div class="article-bar">
+            <a class="article-back" href="blog.html" aria-label="Back to all articles">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+                <span>All articles</span>
+            </a>
+
+            <div class="article-bar-actions">
+                <button type="button" class="article-icon-btn toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="toc-drawer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    <span>Contents</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ARTICLE
+             Kolom artikel dan rail daftar isi.
+             The article column and the table of contents rail. -->
+        <main class="article-layout" id="article-layout">
+            <article class="article-column">
+
+                <header class="article-header">
+                    <div class="article-kicker" id="article-kicker">
+                        <span class="article-kicker-label">Article</span>
+                        <span class="dot" aria-hidden="true"></span>
+                        <span id="article-category"></span>
+                    </div>
+
+                    <h1 class="article-title" id="article-title"><span class="title-skeleton" aria-hidden="true"></span></h1>
+                    <p class="article-lede" id="article-lede" hidden></p>
+
+                    <div class="article-meta" id="article-meta"></div>
+                    <div class="article-tags" id="article-tags"></div>
+                </header>
+
+                <div class="prose" id="content">
+                    <div class="article-skeleton" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <footer class="article-end" id="article-end">
+                    <div class="article-share">
+                        <button type="button" class="copy-link-btn" id="copy-link" data-copy-link>
+                            <svg class="copy-link-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <span class="copy-link-text">Copy link</span>
+                        </button>
+                        <span class="sr-only" id="share-status" role="status" aria-live="polite"></span>
+                    </div>
+
+                    <nav class="article-nav" id="article-nav" aria-label="Article navigation" hidden></nav>
+
+                    <section class="article-related" id="article-related" hidden>
+                        <div class="related-head">
+                            <div class="related-head-text">
+                                <h3 class="related-title" id="related-title">Trending now</h3>
+                                <p class="related-hint" id="related-hint"></p>
+                            </div>
+                            <a class="related-cta" id="related-cta" href="blog.html">
+                                <span id="related-cta-label">See all articles</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                            </a>
+                        </div>
+                        <div class="related-list" id="related-list"></div>
+                    </section>
+
+                    <a class="article-source" id="article-source" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                        <span class="article-source-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path><circle cx="6" cy="6" r="3"></circle><path d="M6 21v-3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3"></path><path d="M9 9h3a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h1"></path></svg>
+                        </span>
+
+                        <span class="article-source-body">
+                            <span class="article-source-label">Source</span>
+                            <span class="article-source-name" id="article-source-name">Repository</span>
+                        </span>
+
+                        <span class="article-source-arrow" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg>
+                        </span>
+                    </a>
+                </footer>
+
+                <!-- DISCUSSION
+                     Area komentar Giscus, diisi otomatis oleh js/read.js.
+                     The Giscus comment area, filled in automatically by js/read.js. -->
+                <section class="article-discussion" aria-label="Discussion">
+                    <h2 class="discussion-title">Discussion</h2>
+                    <div id="giscus-wrapper" class="giscus">
+                        <!-- Giscus script injected automatically
+                             Script Giscus disuntik saat runtime.
+                             The Giscus script is injected at runtime. -->
+                    </div>
+                </section>
+            </article>
+
+            <!-- TABLE OF CONTENTS -->
+            <aside class="article-toc" id="article-toc" aria-label="Table of contents">
+                <div class="toc">
+                    <div class="toc-inner">
+                        <div class="toc-head">
+                            <p class="toc-title">Contents</p>
+                            <span class="toc-meter" aria-hidden="true">
+                                <span class="toc-meter-fill" id="toc-meter-fill"></span>
+                            </span>
+                            <span class="toc-percent" id="toc-percent">0%</span>
+                        </div>
+                        <ul id="toc-list" class="toc-list"></ul>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <nav class="navigation" aria-label="Main navigation">
+            <a class="nav-item" href="index.html">
+                Home
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
+            </a>
+
+            <a class="nav-item" href="blog.html" aria-current="page">
+                Blog
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
+            </a>
+
+            <a class="nav-item" href="index.html#about">
+                About
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- MOBILE TABLE OF CONTENTS -->
+    <div class="toc-drawer" id="toc-drawer" hidden>
+        <div class="toc-drawer-backdrop"></div>
+        <div class="toc-drawer-panel" role="dialog" aria-modal="true" aria-label="Table of contents">
+            <div class="toc-drawer-head">
+                <p class="toc-title">Contents</p>
+                <div class="toc-head-right">
+                    <span class="toc-meter" aria-hidden="true">
+                        <span class="toc-meter-fill" id="toc-meter-fill-mobile"></span>
+                    </span>
+                    <span class="toc-percent" id="toc-percent-mobile">0%</span>
+                    <button type="button" class="article-icon-btn" id="toc-close" aria-label="Close contents">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                    </button>
                 </div>
             </div>
-            <div id="article-date-container" style="text-align: right; font-size: 13px; color: #8b949e; display: none;">
-                <!-- Filled via JS -->
-            </div>
+            <ul id="toc-list-mobile" class="toc-list"></ul>
         </div>
-
-        <div id="content">Loading content...</div>
-
-        <!-- Share & Actions -->
-        <div class="article-actions" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; text-align: center;">
-            <button onclick="shareArticle()" class="share-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                Share This Article
-            </button>
-        </div>
-
-        <!-- Giscus Comments Container -->
-        <div class="giscus-container" style="margin-top: 40px;">
-            <h3 style="margin-bottom: 20px;">Discussion</h3>
-            <div id="giscus-wrapper" class="giscus">
-                <!-- Giscus Script injected automatically -->
-            </div>
-        </div>
-    </main>
+    </div>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=1"></script>
+    <script src="js/data.js"></script>
+    <script src="js/markdown.js"></script>
     <script src="js/read.js"></script>
-    <script>
-        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            document.getElementById('theme-btn').innerHTML = isLight ? moonIcon : sunIcon;
-            
-            // Update Giscus theme dynamically
-            const iframe = document.querySelector('iframe.giscus-frame');
-            if (iframe) {
-                iframe.contentWindow.postMessage(
-                    { giscus: { setConfig: { theme: isLight ? 'light' : 'dark' } } },
-                    'https://giscus.app'
-                );
-            }
-        }
-        (function () {
-            const savedTheme = localStorage.getItem('theme');
-            const isLight = savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches);
-            const btn = document.getElementById('theme-btn');
-            if (isLight) {
-                document.body.classList.add('light-mode');
-                if (btn) btn.innerHTML = moonIcon;
-            } else {
-                if (btn) btn.innerHTML = sunIcon;
-            }
-        })();
-    </script>
 </body>
 
 </html>

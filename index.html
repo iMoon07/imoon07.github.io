@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
+    <!-- ==========================================================================
+     HOME DAN ABOUT / HOME AND ABOUT
+     Satu dokumen untuk dua halaman: home dan about, dipindah lewat hash.
+     One document for two pages: home and about, swapped through the hash.
+     ========================================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#080808">
     <meta name="description" content="iMoon07 — Security, systems, and code.">
     <title>iMoon07</title>
 
+    <link rel="icon" type="image/jpeg" href="assets/logos.png">
+    <link rel="stylesheet" href="css/shell.css">
     <link rel="stylesheet" href="css/home.css">
 </head>
 
 <body>
     <div class="site">
         <main class="stage">
-            <!-- HOME -->
+            <!-- HOME
+                 Panel halaman home.
+                 The home page panel. -->
             <section
-                class="page entering"
+                class="page"
                 id="homePage"
                 aria-labelledby="homeTitle"
             >
@@ -35,7 +46,9 @@
                 </div>
             </section>
 
-            <!-- ABOUT -->
+            <!-- ABOUT
+                 Panel halaman about.
+                 The about page panel. -->
             <section
                 class="page"
                 id="aboutPage"
@@ -129,7 +142,9 @@
                         </div>
 
                         <div class="panel-viewport" id="panelViewport">
-                            <!-- PROFILE -->
+                            <!-- PROFILE
+                                 Profil singkat dan tautan sosial.
+                                 A short profile and the social links. -->
                             <section
                                 class="panel active"
                                 id="panelProfile"
@@ -145,7 +160,7 @@
                                 <p>
                                     <strong>Raja Muhammad Kurnia Setyawan</strong>,
                                     known as @iMoon07. A programmer and now a freelance
-                                    penetration tester based in Indonesia.
+                                    penetration tester based in Bintan Islands, Indonesia.
                                 </p>
 
                                 <dl class="facts">
@@ -164,7 +179,9 @@
                                 </dl>
                             </section>
 
-                            <!-- EXPERIENCE -->
+                            <!-- EXPERIENCE
+                                 Pengalaman, pendidikan, dan Certifications.
+                                 Experience, education, and certifications. -->
                             <section
                                 class="panel"
                                 id="panelExperience"
@@ -332,7 +349,9 @@
                                 </div>
                             </section>
 
-                            <!-- SELECTED WORK -->
+                            <!-- SELECTED WORK
+                                 Daftar proyek pilihan.
+                                 The selected work list. -->
                             <section
                                 class="panel"
                                 id="panelWork"
@@ -364,6 +383,23 @@
                                 </div>
 
                                 <div class="entry">
+                                    <h3>Have-Fun-Static-Web</h3>
+                                    <p>
+                                        My first project about static web.
+                                        Vibe coding with AI.
+                                    </p>
+
+                                    <a
+                                        class="project-link"
+                                        href="https://github.com/iMoon07/Have-Fun-Static-Web"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View project <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                    </a>
+                                </div>
+
+                                <div class="entry">
                                     <h3>Linux Syscall Table</h3>
                                     <p>
                                         An x86_64 Linux syscall reference.
@@ -376,9 +412,28 @@
                                         Open reference <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
                                     </a>
                                 </div>
+
+                                <div class="entry">
+                                    <h3>iMoon07.github.io</h3>
+                                    <p>
+                                        Source code of this portfolio.
+                                        Static web built with HTML, CSS, and JS.
+                                    </p>
+
+                                    <a
+                                        class="project-link"
+                                        href="https://github.com/iMoon07/imoon07.github.io"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View source <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                    </a>
+                                </div>
                             </section>
 
-                            <!-- COMMUNITY -->
+                            <!-- COMMUNITY
+                                 Komunitas dan tautan kenalan.
+                                 Communities and acquaintance links. -->
                             <section
                                 class="panel"
                                 id="panelCommunity"
@@ -648,23 +703,6 @@
 
                                 <a
                                     class="social-link"
-                                    href="https://www.linkedin.com/in/imoon07/"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Kurnia on LinkedIn"
-                                    title="LinkedIn"
-                                >
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                        aria-hidden="true"
-                                    >
-                                        <path d="M5.4 3.5a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8ZM3.8 9h3.3v11H3.8V9Zm5.5 0h3.2v1.5h.1c.5-.9 1.6-1.8 3.3-1.8 3.5 0 4.2 2.2 4.2 5.1V20h-3.3v-5.5c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V20H9.3V9Z"/>
-                                    </svg>
-                                </a>
-
-                                <a
-                                    class="social-link"
                                     href="https://github.com/iMoon07"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -680,33 +718,6 @@
                                     </svg>
                                 </a>
 
-                                <a
-                                    class="social-link"
-                                    href="https://medium.com/@kurniatamvan13"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Kurnia on Medium"
-                                    title="Medium"
-                                >
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                        aria-hidden="true"
-                                    >
-                                        <ellipse
-                                            cx="7" cy="12"
-                                            rx="6" ry="6"
-                                        />
-                                        <ellipse
-                                            cx="17" cy="12"
-                                            rx="3" ry="5.7"
-                                        />
-                                        <ellipse
-                                            cx="22" cy="12"
-                                            rx="1" ry="5"
-                                        />
-                                    </svg>
-                                </a>
                             </div>
 
                             <span class="contact-note">
@@ -725,18 +736,18 @@
                 data-page="home"
                 aria-current="page"
             >
-Home
-                                <span class="nav-arrow" aria-hidden="true">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                </span>
-                            </a>
+                Home
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
+            </a>
 
-                            <a class="nav-item" href="blog.html">
-                                Blog
-                                <span class="nav-arrow" aria-hidden="true">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                </span>
-                            </a>
+            <a class="nav-item" href="blog.html">
+                Blog
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
+            </a>
 
             <a
                 class="nav-item"
@@ -744,7 +755,9 @@ Home
                 data-page="about"
             >
                 About
-                <span class="nav-arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+                <span class="nav-arrow" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </span>
             </a>
         </nav>
     </div>

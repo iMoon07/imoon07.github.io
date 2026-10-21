@@ -1,12 +1,26 @@
+/* =============================================================================
+   GAYA UMUM SITUS / SITE-WIDE STYLES
+   Elemen dasar, blog listing, dan gaya bawaan yang dipakai bersama.
+   Base elements, the blog listing, and the shared legacy styles.
+
+   Struktur halaman bersama ada di css/shell.css, halaman artikel di
+   css/article.css.
+   Shared page structure lives in css/shell.css, article styles in
+   css/article.css.
+   ============================================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
-/* GLOBAL STYLES */
+/* ---------------------------------------------------------------- global styles
+   Reset dasar, variabel warna, dan tipografi dasar.
+   Basic reset, colour variables, and base typography. */
 
 * {
     box-sizing: border-box;
 }
 
-/* ===== DEMO HERO ===== */
+/* ---------------------------------------------------------------- demo hero
+   Hero halaman depan versi lama.
+   The older home page hero. */
 .hero {
     display: flex;
     justify-content: center;
@@ -64,7 +78,9 @@
     color: #58a6ff;
 }
 
-/* ===== DEMO POSTS ===== */
+/* ---------------------------------------------------------------- demo posts
+   Daftar artikel versi lama di home.
+   The older home page article list. */
 .posts-section {
     max-width: 760px;
     margin: 0 auto 60px;
@@ -135,31 +151,6 @@
     text-decoration: underline;
 }
 
-/* ===== LIGHT MODE OVERRIDES ===== */
-body.light-mode .hero-links a {
-    border-color: #d0d7de;
-    color: #24292f;
-    background: #ffffff;
-}
-body.light-mode .hero-links a:hover {
-    background: #e5e7eb;
-    border-color: #2563eb;
-    color: #2563eb;
-}
-body.light-mode .hero-bio { color: #4b5563; }
-body.light-mode .hero-name { color: #111827; }
-body.light-mode .post-card {
-    background: #ffffff;
-    border-color: #d0d7de;
-}
-body.light-mode .post-card h3 a { color: #111827; }
-body.light-mode .post-card h3 a:hover { color: #2563eb; }
-body.light-mode .post-card p { color: #4b5563; }
-body.light-mode .section-title { color: #111827; border-color: #d0d7de; }
-body.light-mode .post-tag {
-    color: #2563eb;
-    background: rgba(37, 99, 235, 0.12);
-}
 
 body {
     font-family: 'Inter', sans-serif;
@@ -175,13 +166,17 @@ body {
 }
 h1, h2, h3 { color: #c9d1d9; font-weight: 600; }
 
-/* Links */
+/* ---------------------------------------------------------------- links
+   Tautan di dalam konten.
+   Links inside the content. */
 a { color: #58a6ff; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 hr { border: 0; border-bottom: 1px solid #30363d; margin: 30px 0; }
 
-/* Profile Header */
+/* ---------------------------------------------------------------- profile header
+   Kepala profil di sidebar.
+   The profile header in the sidebar. */
 header {
     border-bottom: 1px solid #30363d;
     padding-bottom: 20px;
@@ -211,7 +206,9 @@ img[alt="Foto Raja"] {
 
 nav { margin-bottom: 30px; }
 
-/* MAIN LAYOUT & PROJECT CARDS */
+/* ---------------------------------------------------------------- main layout & post list
+   Layout utama dan daftar artikel.
+   Main layout and the article list. */
 .main-layout {
     display: flex;
     gap: 30px;
@@ -221,47 +218,12 @@ nav { margin-bottom: 30px; }
 .content-area { flex: 70%; }
 
 #project-container {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+    display: block;
 }
 
-.kotak-preview {
-    border: none;
-    padding: 0 0 30px 0;
-    background: transparent;
-    border-bottom: 1px solid #30363d;
-}
-.kotak-preview:last-child {
-    border-bottom: none;
-}
-.kotak-preview h2 { 
-    margin-top: 0; 
-    font-size: 1.6em; 
-    margin-bottom: 10px; 
-    line-height: 1.3; 
-}
-.kotak-preview img {
-    width: 100%;
-    max-height: 350px;
-    object-fit: contain;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    background-color: #0d1117;
-    border: 1px solid #30363d;
-}
-.kotak-preview p { 
-    color: #c9d1d9; 
-    font-family: 'Lora', serif;
-    font-size: 1.15em; 
-    margin-bottom: 15px; 
-    line-height: 1.6;
-}
-.kotak-preview a {
-    font-weight: 600;
-}
-
-/* Sidebar */
+/* ---------------------------------------------------------------- sidebar
+   Kolom samping: profil, filter, dan tautan.
+   Side column: profile, filters, and links. */
 .sidebar-recent {
     border: none;
     padding: 0;
@@ -271,7 +233,9 @@ nav { margin-bottom: 30px; }
 .sidebar-recent li { margin-bottom: 12px; border-bottom: 1px solid #21262d; padding-bottom: 12px; }
 .sidebar-recent li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-/* Article */
+/* ---------------------------------------------------------------- article
+   Tampilan artikel di listing.
+   Article cards inside the listing. */
 main.read-container {
     border: 1px solid #30363d;
     background-color: #0d1117;
@@ -294,7 +258,9 @@ main.read-container {
 #content table tr { background-color: #0d1117; }
 #content table tr:nth-child(2n) { background-color: #161b22; }
 
-/* Article Meta (Author) & Share Button & Giscus */
+/* ---------------------------------------------------------------- article meta
+   Metadata penulis, tombol bagikan, dan Giscus.
+   Author meta, the share button, and Giscus. */
 .article-meta img { border-color: #30363d !important; }
 .share-btn {
     background-color: #21262d;
@@ -340,73 +306,742 @@ main.read-container {
     /* Main Layout */
     .main-layout { flex-direction: column; gap: 40px; }
     .content-area, .sidebar-area { width: 100%; flex: auto; }
-    .kotak-preview h2 { font-size: 1.4em; }
     
     /* Article */
     main.read-container { padding: 20px 15px; }
     #content { font-size: 16px; line-height: 1.7; }
 }
 
-/* THEME TOGGLE BUTTON */
-.theme-btn {
+/* ---------------------------------------------------------------- blog page canvas
+   Kanvas blog dengan lebar yang sama seperti home dan about.
+   The blog canvas with the same footprint as home and about. */
+
+body.blog-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background-color: #080808;
+}
+
+
+.blog-page .blog-content {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-page .navigation {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------- blog header
+   Kepala blog dengan skala yang sama seperti home dan about.
+   The blog header at the same scale as the home and about pages. */
+
+.blog-page .blog-content {
+    /* Ruang bernapas supaya konten tidak menempel pada navigasi bawah */
+    padding-bottom: clamp(30px, 6vh, 64px);
+}
+
+/* ---------------------------------------------------------------- blog title
+   Judul blog dan jumlah artikel.
+   The blog title and the article count. */
+
+.blog-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    flex-shrink: 0;
+    padding: 44px 0 14px;
+    margin-bottom: 4px;
+}
+
+.blog-count {
+    color: var(--muted);
+    font-size: 14px;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- filter
+   Baris filter yang menempel saat daftar artikel panjang.
+   The filter row that sticks while the article list scrolls. */
+
+.blog-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+}
+
+.blog-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    padding: 10px 0 12px;
+}
+
+/* Satu baris filter: kategori | tag, tanpa label bertumpuk */
+
+.blog-filter-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px 22px;
+    margin: 0;
+}
+
+.blog-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--line);
+}
+
+.blog-tag-group .blog-tab {
+    color: #7d868d;
+}
+
+/* ---------------------------------------------------------------- filter dropdown
+   Menu "+N" supaya filter banyak tidak makan tempat.
+   The "+N" menu so many filters do not take up room. */
+
+.blog-page .filter-more-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.blog-page .filter-more {
+    padding: 4px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
     background: transparent;
-    border: none;
-    color: #c9d1d9;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.6;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
+    transition: color .2s, border-color .2s;
+}
+
+.blog-page .filter-more:hover,
+.blog-page .filter-more[aria-expanded="true"] {
+    color: #fff;
+    border-color: #4a5157;
+}
+
+.blog-page .filter-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 30;
+    min-width: 150px;
+    max-height: min(46vh, 320px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px;
+    border: 1px solid var(--line);
+    background: #0d1117;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .6);
+}
+
+.blog-page .filter-menu-item {
+    display: block;
+    padding: 7px 10px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.blog-page .filter-menu-item:hover {
+    color: #fff;
+    background: #171c21;
+    text-decoration: none;
+}
+
+.blog-page .filter-menu-item.is-active {
+    color: #fff;
+}
+
+.blog-head-main {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.blog-title {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(28px, 3.2vw, 48px);
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: -.055em;
+}
+
+.blog-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 56px;
+    margin-top: 20px;
+}
+
+/* ---------------------------------------------------------------- filter tabs
+   Tab kategori dan tag dalam satu baris.
+   Category and tag tabs in a single row. */
+
+.blog-tab {
+    position: relative;
+    padding: 5px 0;
+    color: #969fa7;
+    font-size: 15px;
+    line-height: 1.6;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+.blog-tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s var(--ease);
+}
+
+.blog-tab:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.blog-tab.is-active {
+    color: var(--text);
+}
+
+.blog-tab.is-active::after {
+    transform: scaleX(1);
+}
+
+.blog-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+}
+
+.blog-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+    margin-bottom: 0;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.blog-links a {
+    color: #cfe0ec;
+    font-weight: 500;
+}
+
+.blog-links a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.blog-page .main-layout {
+    margin-top: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.blog-page .content-area {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-width: 100%;
+}
+
+/* ---------------------------------------------------------------- post list
+   Daftar artikel: satu struktur untuk semua artikel.
+   The article list: one structure for every article.
+
+   Gambar di kiri, teks di kanan, dipisah garis rambut. Polanya sama
+   berapa pun jumlah artikelnya.
+   Image on the left, text on the right, hairline separated. The pattern
+   stays identical no matter how many articles exist. */
+
+.blog-page #project-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.blog-page .post-item {
+    display: grid;
+    grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(24px, 3.2vw, 52px);
+    flex: none;
+    padding: 0;
+}
+
+.blog-page .post-item + .post-item {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+}
+
+.blog-page .post-media {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 28vh;
+    max-height: 28svh;
+    overflow: hidden;
+    background: #0d1117;
+}
+
+.blog-page .post-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform .6s var(--ease);
+}
+
+.blog-page .post-media:hover img {
+    transform: scale(1.03);
+}
+
+.blog-page .post-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------------- lead post
+   Artikel pertama dibesarkan sedikit untuk memberi hierarki.
+   The first article is scaled up a little to build hierarchy. */
+
+.blog-page .post-lead {
+    grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
+}
+
+.blog-page .post-lead .post-media {
+    aspect-ratio: 16 / 9;
+    max-height: 50vh;
+    max-height: 50svh;
+}
+
+.blog-page .post-lead .post-title {
+    font-size: clamp(30px, 3.2vw, 46px);
+    line-height: 1.1;
+    margin-top: 14px;
+}
+
+.blog-page .post-lead .post-desc {
+    font-size: 18px;
+    line-height: 1.7;
+    margin-top: 16px;
+}
+
+.blog-page .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.blog-page .post-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.blog-page .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.blog-page .post-title {
+    margin: 16px 0 0;
+    font-size: clamp(24px, 2.4vw, 34px);
+    line-height: 1.2;
+    font-weight: 400;
+    letter-spacing: -.03em;
+}
+
+.blog-page .post-title a {
+    color: var(--text);
+}
+
+.blog-page .post-title a:hover {
+    color: #cfe0ec;
+    text-decoration: none;
+}
+
+.blog-page .post-desc {
+    margin: 16px 0 0;
+    max-width: 72ch;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.75;
+    /* Panjang ringkasan dibatasi 3 baris supaya tinggi kartu selalu seragam */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.blog-page .post-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.blog-page .post-more svg {
+    transition: transform .3s var(--ease);
+}
+
+.blog-page .post-more:hover {
+    text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- pagination
+   Nomor halaman berbentuk pill garis.
+   Page numbers drawn as outline pills. */
+
+.blog-page .pagination {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.theme-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-.theme-btn:active {
-    transform: scale(0.9);
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 16px 0 12px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-family: inherit;
 }
 
-/* LIGHT MODE OVERRIDES */
-body.light-mode { background-color: #fafafa; color: #333333; }
-body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #111827; }
-body.light-mode a { color: #2563eb; }
-body.light-mode hr { border-bottom: 1px solid #e5e7eb; }
-body.light-mode nav.main-nav { border-bottom: 1px solid #e5e7eb !important; }
-    body.light-mode nav.tag-nav { border-bottom: 1px solid #e5e7eb !important; }
-    body.light-mode nav.tag-nav a { background: #e5e7eb !important; color: #333333 !important; }
-    body.light-mode nav.tag-nav a[style*="58a6ff"] { background: #2563eb !important; color: #ffffff !important; }
-body.light-mode header { border-bottom: 1px solid #e5e7eb; }
-body.light-mode .profile-header { border-bottom: 1px solid #e5e7eb !important; }
-body.light-mode img[alt="Foto Raja"] { border-color: #e5e7eb !important; }
-body.light-mode .profile-img { border: 2px solid #e5e7eb; }
-body.light-mode .bio-text p { color: #4b5563; }
-body.light-mode #about { color: #333333; }
-body.light-mode .kotak-preview { border-bottom: 1px solid #e5e7eb; }
-body.light-mode .kotak-preview img { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
-body.light-mode .kotak-preview p { color: #4b5563; }
-body.light-mode .sidebar-recent li { border-bottom: 1px solid #e5e7eb; }
-body.light-mode main.read-container { background-color: #fafafa; border: 1px solid #e5e7eb; }
-body.light-mode #content { color: #333333; }
-body.light-mode #content h1, body.light-mode #content h2 { border-bottom: 1px solid #e5e7eb; color: #111827; }
-body.light-mode #content img { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
-body.light-mode #content pre { background-color: #f3f4f6; border: 1px solid #e5e7eb; color: #333333; }
-body.light-mode #content code { background-color: rgba(0,0,0,0.05); }
-body.light-mode #content blockquote { color: #6e7781; border-left-color: #d0d7de; }
-body.light-mode #content table th, body.light-mode #content table td { border-color: #d0d7de; }
-body.light-mode #content table tr { background-color: #ffffff; }
-body.light-mode #content table tr:nth-child(2n) { background-color: #f6f8fa; }
+.blog-page .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-/* Light Mode Overrides for Article Meta & Share */
-body.light-mode .article-meta, body.light-mode .article-actions, body.light-mode .giscus-container { border-color: #e5e7eb !important; }
-body.light-mode .article-meta strong { color: #111827 !important; }
-body.light-mode .article-meta img { border-color: #e5e7eb !important; }
-body.light-mode .share-btn { background-color: #ffffff; color: #24292f; border-color: #d0d7de; }
-body.light-mode .share-btn:hover { background-color: #f3f4f6; border-color: #0969da; }
-body.light-mode .theme-btn { color: #4b5563; }
-body.light-mode .theme-btn:hover { background-color: rgba(0,0,0,0.05); }
+.blog-page .page-number,
+.blog-page .page-arrow {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #2c3034;
+    border-radius: 50%;
+    background: transparent;
+    color: #969fa7;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color .2s, color .2s, background-color .2s;
+}
 
-/* DYNAMIC QUOTE BOX */
+.blog-page .page-number:hover,
+.blog-page .page-arrow:hover:not(:disabled) {
+    border-color: #8f9aa3;
+    color: #fff;
+}
+
+.blog-page .page-number.is-active {
+    border-color: #e5e7e9;
+    color: #fff;
+    background: #15181b;
+}
+
+.blog-page .page-number.is-active:hover {
+    border-color: #fff;
+}
+
+.blog-page .page-arrow:disabled {
+    opacity: .3;
+    cursor: not-allowed;
+}
+
+.blog-page .page-ellipsis {
+    width: 18px;
+    text-align: center;
+    color: #6b737a;
+    font-size: 14px;
+    user-select: none;
+}
+
+.blog-page .page-indicator {
+    flex-basis: 100%;
+    text-align: center;
+    margin-top: 4px;
+    color: #777f86;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+/* ---------------------------------------------------------------- skeleton
+   Placeholder saat data artikel dimuat, tanpa teks "loading".
+   Placeholder while the article data loads, without a "loading" label. */
+
+.content-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.content-skeleton span {
+    display: block;
+    height: 16px;
+    border-radius: 2px;
+    background: #11151a;
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.content-skeleton span:nth-child(1) {
+    width: 60%;
+    height: 26px;
+}
+
+.content-skeleton span:nth-child(2) {
+    width: 100%;
+}
+
+.content-skeleton span:nth-child(3) {
+    width: 92%;
+}
+
+.content-skeleton span:nth-child(4) {
+    width: 75%;
+}
+
+@keyframes skeleton-pulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.blog-page .post-skeleton {
+    display: grid;
+    grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(24px, 3.2vw, 52px);
+}
+
+.blog-page .skeleton-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #11151a;
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.blog-page .skeleton-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.blog-page .skeleton-body span {
+    display: block;
+    height: 14px;
+    border-radius: 2px;
+    background: #11151a;
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.blog-page .skeleton-body span:nth-child(1) {
+    width: 30%;
+}
+
+.blog-page .skeleton-body span:nth-child(2) {
+    width: 85%;
+    height: 30px;
+}
+
+.blog-page .skeleton-body span:nth-child(3) {
+    width: 100%;
+}
+
+
+
+
+
+
+/* ---------------------------------------------------------------- tablet
+   Tablet: gambar dan teks tetap berdampingan, kolom lebih rapat.
+   Tablet: image and text stay side by side with tighter columns. */
+
+@media (max-width: 900px) {
+    .blog-page .post-item {
+        grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
+        gap: 22px;
+    }
+
+    .blog-page .post-lead {
+        grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
+    }
+
+    .blog-page .post-media,
+    .blog-page .post-lead .post-media {
+        aspect-ratio: 16 / 9;
+        max-height: 26vh;
+        max-height: 26svh;
+    }
+
+    .blog-page .post-lead .post-title {
+        font-size: clamp(24px, 3.6vw, 34px);
+    }
+
+    .blog-page .post-lead .post-desc {
+        font-size: 16px;
+    }
+}
+
+/* ---------------------------------------------------------------- short landscape screens
+   Layar lanskap pendek, misalnya laptop kecil.
+   Short landscape screens, such as small laptops. */
+
+@media (max-height: 780px) and (min-width: 701px) {
+    .blog-head {
+        padding: 26px 0 10px;
+        margin-bottom: 8px;
+    }
+
+    .blog-title {
+        font-size: clamp(26px, 2.8vw, 38px);
+    }
+
+    .blog-filters {
+        margin-top: 4px;
+        margin-bottom: 16px;
+        padding: 8px 0 10px;
+    }
+
+    .blog-page .post-desc {
+        font-size: 16px;
+    }
+
+    .blog-page .post-item {
+        grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+        gap: 26px;
+    }
+
+    .blog-page .post-lead {
+        grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+    }
+}
+
+/* ---------------------------------------------------------------- mobile
+   Ponsel: satu kolom, gambar di atas.
+   Phone: a single column with the image on top. */
+
+@media (max-width: 700px) {
+    .blog-head {
+        padding: 26px 0 14px;
+        margin-bottom: 10px;
+    }
+
+    .blog-toolbar {
+        gap: 8px 28px;
+        margin-top: 16px;
+    }
+
+    .blog-page .post-item,
+    .blog-page .post-lead {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .blog-page .post-media,
+    .blog-page .post-lead .post-media {
+        aspect-ratio: 16 / 9;
+        max-height: 24vh;
+        max-height: 24svh;
+    }
+
+    .blog-page .post-lead .post-title {
+        font-size: clamp(26px, 7.4vw, 34px);
+    }
+
+    .blog-page .post-title {
+        margin-top: 12px;
+    }
+
+    .blog-page .post-desc {
+        margin-top: 12px;
+        font-size: 16px;
+    }
+
+    .blog-page .pagination {
+        gap: 8px;
+        padding: 2px 0 14px;
+    }
+
+    .blog-page .page-numbers {
+        gap: 7px;
+    }
+
+    .blog-page .page-number,
+    .blog-page .page-arrow {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+    }
+
+    .blog-page .page-ellipsis {
+        width: 12px;
+        font-size: 12px;
+    }
+}
+
+
+
+/* ---------------------------------------------------------------- dynamic quote box
+   Kotak kutipan yang berubah isi secara bergantian.
+   The quote box that cycles through its lines. */
 #dynamic-quote {
     margin-top: 30px;
     padding: 20px;
@@ -424,16 +1059,10 @@ body.light-mode .theme-btn:hover { background-color: rgba(0,0,0,0.05); }
     font-family: monospace;
 }
 
-body.light-mode #dynamic-quote {
-    background-color: #f0f6ff;
-    color: #24292f;
-    border-left-color: #2563eb;
-}
-body.light-mode #dynamic-quote a {
-    color: #2563eb;
-}
 
-/* TAG BUTTONS - Same As Nav Links */
+/* ---------------------------------------------------------------- tag buttons
+   Tombol tag, seragam dengan tautan navigasi.
+   Tag buttons, styled like the navigation links. */
 .tag-btn {
     color: #58a6ff;
     text-decoration: none;
@@ -454,19 +1083,10 @@ body.light-mode #dynamic-quote a {
     font-weight: 600;
     text-decoration: underline;
 }
-body.light-mode .tag-btn {
-    color: #2563eb;
-}
-body.light-mode .tag-btn:hover {
-    color: #3b82f6;
-}
-body.light-mode .tag-btn.active {
-    color: #2563eb;
-    font-weight: 600;
-    text-decoration: underline;
-}
 
-/* TAG BADGES - For Tags In Cards */
+/* ---------------------------------------------------------------- tag badges
+   Lencana tag di dalam kartu artikel.
+   Tag badges inside the article cards. */
 .tag-badge {
     display: inline-block;
     padding: 2px 8px;
@@ -486,18 +1106,10 @@ body.light-mode .tag-btn.active {
     color: #58a6ff;
     border-color: #58a6ff;
 }
-body.light-mode .tag-badge {
-    background: #f3f4f6;
-    color: #4b5563;
-    border-color: #d0d7de;
-}
-body.light-mode .tag-badge:hover {
-    background: #e5e7eb;
-    color: #2563eb;
-    border-color: #2563eb;
-}
 
-/* IFRAME YouTube Embed — Theme-aware Border */
+/* ---------------------------------------------------------------- youtube embed
+   Bingkai iframe YouTube yang menyesuaikan tema.
+   A YouTube iframe frame that follows the theme. */
 .tag-btn {
     display: inline-block;
     padding: 4px 12px;
@@ -518,24 +1130,9 @@ body.light-mode .tag-badge:hover {
     color: #0d1117;
     font-weight: 600;
 }
-body.light-mode .tag-btn {
-    background: #e5e7eb;
-    color: #333333;
-}
-body.light-mode .tag-btn:hover {
-    background: #d0d7de;
-    color: #2563eb;
-}
-body.light-mode .tag-btn.active {
-    background: #2563eb;
-    color: #ffffff;
-}
 
 /* IFRAME YouTube Embed — Theme-aware Border */
 #content iframe {
     border-radius: 8px;
     border: 1px solid #30363d;
-}
-body.light-mode #content iframe {
-    border-color: #d0d7de;
 }
