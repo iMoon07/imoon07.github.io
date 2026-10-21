@@ -15,6 +15,9 @@
 // category : "experiments" | "tutorials" | ... (nilai bebas, pakai tanda hubung untuk kategori berkatasa)
 // tags     : ["labs", "web", ...] (bebas, jumlah tidak dibatasi)
 //
+// title    = judul artikel. Dipakai untuk pencarian di halaman blog dan
+//            daftar artikel terkait, jadi tidak perlu nunggu markdown di-fetch.
+//            Kalau judulnya beda antara ID dan EN, pakai titleId / titleEn.
 // rawUrl  = URL Markdown Indonesia (file *-id.md) di repo Penjelajah-CyberSecurity.
 // Versi Inggris otomatis diambil dari file *-en.md di lokasi yang sama.
 // repoUrl = halaman repository tempat catatan ini hidup (bukan raw, bukan
@@ -30,6 +33,7 @@
 const myProjects = [
   {
     id: "blog-post-template",
+    title: "Write for Fun, Build for Enjoy",
     category: "testing",
     tags: ["markdown", "blog", "template"],
     publishedDate: "2025-05-10",
@@ -40,6 +44,7 @@ const myProjects = [
 
   {
     id: "owasp-toolkit",
+    title: "Build Your Own Hacking Dojo: OWASP Lab Toolkit",
     category: "experiments",
     tags: ["labs", "owasp", "bash", "ubuntu", "self-hosted"],
     publishedDate: "2025-05-15",
@@ -50,6 +55,7 @@ const myProjects = [
 
   {
     id: "lynx",
+    title: "LYNX — Linux eXposure & Network eXperiment",
     category: "experiments",
     tags: ["lamp", "waf-owasp-crs", "qemu-kvm", "anubis", "cloudflare"],
     publishedDate: "2026-10-21",
@@ -58,4 +64,5 @@ const myProjects = [
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
   },
+  
 ];

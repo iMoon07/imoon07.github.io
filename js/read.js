@@ -45,8 +45,7 @@ const el = {
     progress: document.getElementById('reading-progress-bar'),
     nav: document.getElementById('article-nav'),
     related: document.getElementById('related-list'),
-    relatedBox: document.getElementById('article-related'),
-    shareStatus: document.getElementById('share-status')
+    relatedBox: document.getElementById('article-related')
 };
 
 /* ---------------------------------------------------------------- utilities
@@ -221,12 +220,29 @@ const GITHUB_PROFILE = 'https://github.com/iMoon07';
  * Memakai repoUrl dari data kalau ada. Kalau tidak, diturunkan dari rawUrl
  * sehingga always mengarah ke repo catatan, bukan ke raw file.
  */
+function parseGitHubUrl(url) {
+    const match = String(url).match(/^https?:\/\/github\.com\/([^/?#]+)\/([^/?#]+)(?:\/tree\/[^/]+\/(.*?))?\/?$/);
+    if (!match) return null;
+    return { owner: match[1], repo: match[2], folder: match[3] || '' };
+}
+
 function projectRepo(project) {
     if (!project) return null;
 
     if (project.repoUrl) {
+        const parsed = parseGitHubUrl(project.repoUrl);
+        if (parsed) {
+            return {
+                url: project.repoUrl,
+                name: parsed.repo,
+                owner: parsed.owner,
+                repo: parsed.repo,
+                folder: parsed.folder
+            };
+        }
+
         const name = String(project.repoUrl).replace(/^https?:\/\/[^/]+\//, '').replace(/\/+$/, '');
-        return { url: project.repoUrl, name };
+        return { url: project.repoUrl, name, owner: '', repo: name, folder: '' };
     }
 
     if (project.rawUrl && project.rawUrl.includes('raw.githubusercontent.com')) {
@@ -239,7 +255,10 @@ function projectRepo(project) {
             url: folder
                 ? `https://github.com/${owner}/${repo}/tree/main/${folder}`
                 : `https://github.com/${owner}/${repo}`,
-            name: `${owner}/${repo}`
+            name: repo,
+            owner,
+            repo,
+            folder
         };
     }
 
@@ -1657,25 +1676,16 @@ function renderNavigation() {
 
     const index = list.findIndex(project => project.id === postId);
     const previous = index > 0 ? list[index - 1] : null;
-    const next = index >= 0 && index < list.length - 1 ? list[index + 1] : null;
 
     if (el.nav) {
         el.nav.innerHTML = '';
-        el.nav.hidden = !(previous || next);
+        el.nav.hidden = !previous;
 
         if (previous) {
             const link = document.createElement('a');
             link.className = 'article-nav-link is-prev';
             link.href = articleUrl(previous);
             link.innerHTML = `<span>${ARTICLE_LANG === 'en' ? 'Previous' : 'Sebelumnya'}</span><strong>${escapeHtml(humanize(previous.id))}</strong>`;
-            el.nav.appendChild(link);
-        }
-
-        if (next) {
-            const link = document.createElement('a');
-            link.className = 'article-nav-link is-next';
-            link.href = articleUrl(next);
-            link.innerHTML = `<span>${ARTICLE_LANG === 'en' ? 'Next' : 'Berikutnya'}</span><strong>${escapeHtml(humanize(next.id))}</strong>`;
             el.nav.appendChild(link);
         }
     }
@@ -1701,9 +1711,9 @@ function renderNavigation() {
             ctaLabel.textContent = ARTICLE_LANG === 'en' ? 'See all articles' : 'Lihat semua artikel';
         }
 
-        el.related.innerHTML = trending.map((entry, position) => {
+        el.related.innerHTML = trending.map(entry => {
             const project = entry.project;
-            const heading = humanize(project.id);
+            const heading = project.title || humanize(project.id);
             const meta = [
                 project.publishedDate ? formatDate(project.publishedDate) : null,
                 project.category ? humanize(project.category) : null
@@ -1718,7 +1728,6 @@ function renderNavigation() {
                         <img src="${thumbnailPlaceholder(heading)}" alt="" loading="lazy" data-thumb>
                     </span>
                     <span class="related-body">
-                        <span class="related-rank" aria-hidden="true">${String(position + 1).padStart(2, '0')}</span>
                         <strong>${escapeHtml(heading)}</strong>
                         <span class="related-meta">${escapeHtml(meta)}</span>
                     </span>
@@ -1741,62 +1750,6 @@ function renderNavigation() {
             });
         });
     }
-}
-
-/* ---------------------------------------------------------------- share
-   Tombol salin tautan beserta umpan balik statusnya.
-   The copy-link button and its status feedback. */
-
-function setShareStatus(message) {
-    if (!el.shareStatus) return;
-    el.shareStatus.textContent = message;
-    if (message) {
-        setTimeout(() => {
-            if (el.shareStatus.textContent === message) el.shareStatus.textContent = '';
-        }, 2500);
-    }
-}
-
-let copyLinkTimer = 0;
-
-async function shareCurrentArticle() {
-    const url = window.location.href;
-    const isEn = ARTICLE_LANG === 'en';
-    const copied = await copyText(url);
-
-    setShareStatus(copied
-        ? (isEn ? 'Link copied' : 'Tautan disalin')
-        : (isEn ? 'Copy failed' : 'Gagal menyalin'));
-
-    const button = document.getElementById('copy-link');
-    if (!button) return;
-
-    const label = button.querySelector('.copy-link-text');
-    const glyph = button.querySelector('svg');
-
-    if (label) {
-        label.textContent = copied
-            ? (isEn ? 'Link copied' : 'Tautan disalin')
-            : (isEn ? 'Copy failed' : 'Gagal menyalin');
-    }
-
-    if (glyph) glyph.innerHTML = icon(copied ? 'check' : 'copy');
-
-    button.classList.toggle('is-done', copied);
-    button.classList.toggle('is-error', !copied);
-
-    clearTimeout(copyLinkTimer);
-    copyLinkTimer = setTimeout(() => {
-        if (label) label.textContent = isEn ? 'Copy link' : 'Salin tautan';
-        if (glyph) glyph.innerHTML = icon('copy');
-        button.classList.remove('is-done', 'is-error');
-    }, 2600);
-}
-
-function setupShare() {
-    document.querySelectorAll('[data-copy-link]').forEach(button => {
-        button.addEventListener('click', shareCurrentArticle);
-    });
 }
 
 /* ---------------------------------------------------------------- giscus
@@ -1864,8 +1817,24 @@ function renderSource(project) {
     }
 
     const name = document.getElementById('article-source-name');
-    if (name) name.textContent = repo.name;
+    if (name) name.textContent = repo.repo || repo.name;
+
+    const path = document.getElementById('article-source-path');
+    if (path) {
+        // Path panjang dipotong di tengah, bagian folder terakhir tetap terlihat
+        const segments = repo.folder ? repo.folder.split('/') : [];
+        const tail = segments.length ? segments[segments.length - 1] : '';
+        const parts = [];
+
+        if (repo.owner) parts.push(repo.owner);
+        if (tail) parts.push(segments.length > 1 ? `…/${tail}` : tail);
+
+        path.textContent = parts.join(' · ');
+        path.hidden = parts.length === 0;
+    }
+
     box.href = repo.url;
+    box.title = [repo.owner, repo.repo, repo.folder].filter(Boolean).join('/');
     box.hidden = false;
 }
 
@@ -2115,7 +2084,6 @@ if (postId === 'about-me') {
 }
 
 if (!redirected) {
-    setupShare();
     setupTocDrawer();
     syncStickyOffset();
     window.addEventListener('resize', syncStickyOffset, { passive: true });
@@ -2123,9 +2091,4 @@ if (!redirected) {
 
     // Safety net: the page always becomes readable, even if something stalls
     setTimeout(revealArticle, 6000);
-}
-
-/* Backwards compatible helper used by older pages */
-function shareArticle() {
-    shareCurrentArticle();
 }

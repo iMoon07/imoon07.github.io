@@ -23,6 +23,12 @@
     box-sizing: border-box;
 }
 
+/* Atribut hidden harus menang atas aturan display di semua halaman.
+   The hidden attribute must win over display rules on every page. */
+[hidden] {
+    display: none !important;
+}
+
 /* ---------------------------------------------------------------- page canvas
    Kanvas yang memuat seluruh isi halaman.
    The canvas that holds the whole page. */

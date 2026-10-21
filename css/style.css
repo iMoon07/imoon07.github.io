@@ -359,11 +359,96 @@ body.blog-page {
     margin-bottom: 4px;
 }
 
+.blog-head-text {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    min-width: 0;
+}
+
 .blog-count {
     color: var(--muted);
     font-size: 14px;
     letter-spacing: .04em;
     white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- search
+   Kolom pencarian judul artikel.
+   The article title search field. */
+
+.blog-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(184, 205, 220, .04);
+    transition: border-color .2s, background-color .2s;
+}
+
+.blog-search:focus-within {
+    border-color: #3d444b;
+    background: rgba(184, 205, 220, .07);
+}
+
+.blog-search-icon {
+    flex: none;
+    color: #6b737a;
+    transition: color .2s;
+}
+
+.blog-search:focus-within .blog-search-icon {
+    color: var(--accent);
+}
+
+.blog-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 9px 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 13.5px;
+}
+
+.blog-search-input::placeholder {
+    color: #6b737a;
+}
+
+.blog-search-input:focus {
+    outline: none;
+}
+
+.blog-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.blog-search-clear {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #6b737a;
+    cursor: pointer;
+    transition: color .2s, background-color .2s;
+}
+
+.blog-search-clear:hover {
+    color: var(--text);
+    background: rgba(184, 205, 220, .12);
 }
 
 /* ---------------------------------------------------------------- filter
@@ -984,6 +1069,12 @@ body.blog-page {
         margin-bottom: 10px;
     }
 
+    .blog-search {
+        max-width: none;
+        margin-left: 0;
+        margin-top: 12px;
+    }
+
     .blog-toolbar {
         gap: 8px 28px;
         margin-top: 16px;
@@ -1016,23 +1107,23 @@ body.blog-page {
     }
 
     .blog-page .pagination {
-        gap: 8px;
+        gap: 10px;
         padding: 2px 0 14px;
     }
 
     .blog-page .page-numbers {
-        gap: 7px;
+        gap: 8px;
     }
 
     .blog-page .page-number,
     .blog-page .page-arrow {
-        width: 34px;
-        height: 34px;
-        font-size: 12px;
+        width: 38px;
+        height: 38px;
+        font-size: 12.5px;
     }
 
     .blog-page .page-ellipsis {
-        width: 12px;
+        width: 14px;
         font-size: 12px;
     }
 }

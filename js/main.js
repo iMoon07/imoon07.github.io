@@ -19,6 +19,8 @@ const pageNumbersEl = document.getElementById('pageNumbers');
 const pageIndicatorEl = document.getElementById('pageIndicator');
 const prevPageBtn = document.getElementById('prevPage');
 const nextPageBtn = document.getElementById('nextPage');
+const searchInput = document.getElementById('post-search');
+const searchClearBtn = document.getElementById('search-clear');
 
 /* ---------------------------------------------------------------- state
    State bersama: token render, halaman aktif, jumlah halaman.
@@ -26,6 +28,8 @@ const nextPageBtn = document.getElementById('nextPage');
 let renderToken = 0;
 let currentPage = 1;
 let totalPages = 1;
+let searchQuery = '';
+let searchTimer = 0;
 
 /* ---------------------------------------------------------------- project data
    Ambil metadata satu artikel: tanggal commit, bahasa, jumlah baca.
@@ -164,7 +168,7 @@ function postCardHtml(project, index) {
     if (project.tags && project.tags.length > 0) {
         tagsHtml = '<div class="post-tags">';
         project.tags.forEach(tag => {
-            tagsHtml += `<span class="tag-badge" onclick="renderProjects('all', '${tag}')">${tag}</span>`;
+            tagsHtml += `<span class="tag-badge" onclick="renderProjects('all', '${escapeHtml(tag)}')">${escapeHtml(tag)}</span>`;
         });
         tagsHtml += '</div>';
     }
@@ -175,7 +179,7 @@ function postCardHtml(project, index) {
     return `
         <article class="${postClass}">
             <a class="post-media" href="${postUrl}" tabindex="-1" aria-hidden="true">
-                <img src="${project.image}" alt="" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                <img src="${escapeHtml(project.image)}" alt="" loading="lazy" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'600\\' height=\\'300\\' viewBox=\\'0 0 600 300\\'%3E%3Crect fill=\\'%23161b22\\' width=\\'600\\' height=\\'300\\'/%3E%3Ctext fill=\\'%23c9d1d9\\' x=\\'50%25\\' y=\\'50%25\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-family=\\'sans-serif\\' font-size=\\'24\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
             </a>
 
             <div class="post-body">
@@ -189,12 +193,12 @@ function postCardHtml(project, index) {
                 </div>
 
                 <h2 class="post-title">
-                    <a href="${postUrl}">${title}</a>
+                    <a href="${escapeHtml(postUrl)}">${escapeHtml(title)}</a>
                 </h2>
 
-                <p class="post-desc">${desc}</p>
+                <p class="post-desc">${escapeHtml(desc)}</p>
 
-                <a class="post-more" href="${postUrl}">
+                <a class="post-more" href="${escapeHtml(postUrl)}">
                     ${isId ? "Baca Selanjutnya" : "Continue Reading"}
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
                 </a>
@@ -207,6 +211,29 @@ function postCardHtml(project, index) {
 /* ---------------------------------------------------------------- helpers
    Batas konkurensi request, tanggal artikel, dan urutan.
    Request concurrency limit, article date, and ordering. */
+
+/* Escape teks sebelum masuk ke innerHTML.
+   Escape text before it goes into innerHTML. */
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/* Query pencarian dibersihkan: tag HTML dibuang, panjang dibatasi.
+   The search query is cleaned: HTML tags dropped, length capped. */
+function sanitizeQuery(value) {
+    return String(value == null ? '' : value)
+        .replace(/<[^>]*>?/g, '')
+        .replace(/[<>&"']/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 80);
+}
+
 async function mapLimit(items, limit, worker) {
     let index = 0;
 
@@ -247,11 +274,20 @@ function sortByNewest(list) {
 
 // Daftar nomor halaman: 1, …, [current-1, current, current+1], …, total
 /* ---------------------------------------------------------------- pagination
-   Susun nomor halaman, gambar tombol, dan pindah halaman.
-   Build the page numbers, draw the buttons, and change page. */
-function pageRange(current, total) {
+    Susun nomor halaman, gambar tombol, dan pindah halaman.
+    Build the page numbers, draw the buttons, and change page. */
+function pageRange(current, total, compact) {
     const pages = [];
     const window = [];
+
+    // Ponsel: hanya halaman sekitar yang aktif, konteksnya ada di indicator.
+    // Phone: only the pages around the active one, the indicator carries context.
+    if (compact) {
+        for (let p = Math.max(1, current - 1); p <= Math.min(total, current + 1); p++) {
+            pages.push(p);
+        }
+        return pages;
+    }
 
     for (let p = Math.max(1, current - 1); p <= Math.min(total, current + 1); p++) {
         window.push(p);
@@ -280,7 +316,11 @@ function renderPagination() {
 
     pageNumbersEl.innerHTML = '';
 
-    pageRange(currentPage, totalPages).forEach(page => {
+    // Layar sempit: tampilkan 3 angka supaya barisnya nggak melebar
+    // Narrow screen: show three numbers so the row never overflows
+    const compact = window.innerWidth < 700;
+
+    pageRange(currentPage, totalPages, compact).forEach(page => {
         if (page === '…') {
             const gap = document.createElement('span');
             gap.className = 'page-ellipsis';
@@ -331,22 +371,28 @@ function goToPage(page) {
 /* ---------------------------------------------------------------- render list
    Ambil data halaman ini, saring, lalu gambar daftar artikel.
    Fetch this page data, filter it, then draw the article list. */
-async function renderProjects(initialCategory, initialTag = null, page = 1) {
+async function renderProjects(initialCategory, initialTag = null, page = 1, skipFilterRender = false) {
     const token = ++renderToken;
     let isId = (window.currentLang === 'id');
     window.currentCategory = initialCategory;
     window.currentTag = initialTag;
 
     // Update category title
-    if (initialTag) catTitle.innerText = `Tag: ${initialTag}`;
-    else if (initialCategory && initialCategory !== 'all') catTitle.innerText = formatCategory(initialCategory);
-    else catTitle.innerText = "Latest posts";
+    if (searchQuery) catTitle.textContent = isId ? `Cari: "${searchQuery}"` : `Search: "${searchQuery}"`;
+    else if (initialTag) catTitle.textContent = `Tag: ${initialTag}`;
+    else if (initialCategory && initialCategory !== 'all') catTitle.textContent = formatCategory(initialCategory);
+    else catTitle.textContent = "Latest posts";
 
     updateFilterState(initialCategory, initialTag);
 
-    // Tabel filter digambar ulang supaya item aktif tetap terlihat di posisi yang benar
-    renderCategories();
-    renderTags();
+    // Tabel filter digambar ulang supaya item aktif tetap terlihat di posisi yang benar.
+    // Lewati saat ini cuma pencarian, biar mengetik nggak membangun ulang semua tab.
+    // Redraw the filter tabs so the active item stays in place. Skipped while only
+    // searching, so typing does not rebuild every tab.
+    if (!skipFilterRender) {
+        renderCategories();
+        renderTags();
+    }
 
     let list = myProjects.slice();
 
@@ -364,6 +410,15 @@ async function renderProjects(initialCategory, initialTag = null, page = 1) {
         );
     }
 
+    // Filter by search query, judul artikel saja
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        list = list.filter(project => {
+            const title = String(project.title || project.id).toLowerCase();
+            return title.includes(query);
+        });
+    }
+
     // Urut dari post terbaru ke yang terlama (metadata sudah cukup, tanpa fetch)
     sortByNewest(list);
 
@@ -374,8 +429,16 @@ async function renderProjects(initialCategory, initialTag = null, page = 1) {
     renderPagination();
 
     if (list.length === 0) {
-        let noDataText = isId ? "Belum ada tulisan di kategori/tag ini." : "No articles found for this category/tag.";
-        projectContainer.innerHTML = `<p><i>${noDataText}</i></p>`;
+        const noDataText = searchQuery
+            ? (isId ? `Tidak ada artikel yang cocok dengan "${searchQuery}".` : `No articles match "${searchQuery}".`)
+            : (isId ? "Belum ada tulisan di kategori/tag ini." : "No articles found for this category/tag.");
+
+        // Teks masuk lewat textContent, jadi query yang diketik user tidak jadi HTML
+        const empty = document.createElement('p');
+        const note = document.createElement('i');
+        note.textContent = noDataText;
+        empty.appendChild(note);
+        projectContainer.replaceChildren(empty);
         return;
     }
 
@@ -604,10 +667,45 @@ function renderTagsClear() {
     renderProjects('all', null);
 }
 
+/* ---------------------------------------------------------------- search
+   Pencarian judul artikel, diketik langsung dan digabung dengan filter lain.
+   Article title search, typed live and combined with the other filters. */
+function applySearch(value) {
+    searchQuery = sanitizeQuery(value);
+    if (searchClearBtn) searchClearBtn.hidden = !searchQuery;
+    renderProjects(window.currentCategory || 'all', window.currentTag || null, 1, true);
+}
+
+function setupSearch() {
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => applySearch(searchInput.value), 120);
+    });
+
+    searchInput.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        searchInput.value = '';
+        applySearch('');
+    });
+
+    if (searchClearBtn) {
+        searchClearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            applySearch('');
+            searchInput.focus();
+        });
+    }
+}
+
 /* ---------------------------------------------------------------- start
-   Pasang tombol halaman, muat data, lalu render pertama.
-   Hook up the page buttons, load the data, then render the first page. */
+    Pasang tombol halaman, muat data, lalu render pertama.
+    Hook up the page buttons, load the data, then render the first page. */
 async function initEngine() {
+    setupSearch();
+
     // Tabs kategori & tag langsung muncul dari metadata, tanpa perlu fetch
     renderCategories();
     renderTags();
@@ -637,6 +735,7 @@ window.addEventListener('resize', () => {
     resizeTimer = setTimeout(() => {
         renderCategories();
         renderTags();
+        renderPagination();
     }, 200);
 });
 
