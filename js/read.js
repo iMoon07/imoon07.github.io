@@ -2035,7 +2035,7 @@ function loadArticle() {
             clearTimeout(timer);
 
             const headingMatch = text.match(/^#\s+(.+)$/m);
-            const title = headingMatch ? headingMatch[1].trim() : (currentProject ? humanize(currentProject.id) : 'Article');
+            const title = (currentProject && currentProject.title) ? currentProject.title : (headingMatch ? headingMatch[1].trim() : (currentProject ? humanize(currentProject.id) : 'Article'));
 
             document.title = `${title} - Raja Muhammad Kurnia Setyawan`;
             if (el.title) el.title.textContent = title;

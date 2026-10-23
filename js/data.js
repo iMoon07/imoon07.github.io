@@ -34,7 +34,7 @@ const myProjects = [
   {
     id: "blog-post-template",
     title: "Write for Fun, Build for Enjoy",
-    category: "testing",
+    category: "experiments",
     tags: ["markdown", "blog", "template"],
     publishedDate: "2025-05-10",
     rawUrl:
@@ -55,9 +55,9 @@ const myProjects = [
 
   {
     id: "lynx",
-    title: "LYNX — Linux eXposure & Network eXperiment",
-    category: "experiments",
-    tags: ["lamp", "waf-owasp-crs", "qemu-kvm", "anubis", "cloudflare"],
+    title: "Server Single-Tier Stack",
+    category: "notes",
+    tags: ["server", "linux", "web-stack", "deployment", "virtualization", "networking", "web-security", "system-administration", "open-source"],
     publishedDate: "2026-10-21",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/linux-exposure-network-experiment-id.md",
@@ -68,8 +68,8 @@ const myProjects = [
   {
     id: "hardening-single-tier-stack",
     title: "Hardening Single-Tier Stack",
-    category: "experiments",
-    tags: ["hardening", "cis", "security", "single-tier", "waf"],
+    category: "notes",
+    tags: ["hardening", "server-security", "linux-security", "security-configuration", "network-security", "web-security", "monitoring", "backup-recovery", "incident-response"],
     publishedDate: "2026-10-23",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/hardening-single-tier-stack-id.md",
