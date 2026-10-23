@@ -60,7 +60,7 @@ const myProjects = [
     tags: ["server", "linux", "web-stack", "deployment", "virtualization", "networking", "web-security", "system-administration", "open-source"],
     publishedDate: "2026-10-21",
     rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/linux-exposure-network-experiment-id.md",
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/server-single-tier-stack-id.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
   },
