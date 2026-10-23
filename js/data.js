@@ -64,5 +64,17 @@ const myProjects = [
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
   },
+
+  {
+    id: "hardening-single-tier-stack",
+    title: "Hardening Single-Tier Stack",
+    category: "experiments",
+    tags: ["hardening", "cis", "security", "single-tier", "waf"],
+    publishedDate: "2026-10-23",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/hardening-single-tier-stack-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
+  },
   
 ];
