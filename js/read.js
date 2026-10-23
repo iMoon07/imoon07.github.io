@@ -1880,14 +1880,16 @@ function rewriteMarkdown(text, basePath) {
 
     // Relative markdown links -> reader pages
     text = text.replace(/(?<!!)\[([^\]]+)\]\((?!https?:|mailto:|#)([^)\s]+\.md)(?:#[^)]*)?\)/g, (match, label, path) => {
-        const isEnglish = path.includes('-en.md');
+        const langMatch = path.match(/-([a-z]{2})\.md$/);
+        const detectedLang = langMatch ? langMatch[1] : (path.includes('-en.md') ? 'en' : 'id');
+        const langParam = detectedLang !== 'id' ? `&lang=${detectedLang}` : '';
 
         if (postId === 'about-me') {
-            return isEnglish ? `[${label}](read.html?post=about-me&lang=en)` : `[${label}](read.html?post=about-me)`;
+            return langParam ? `[${label}](read.html?post=about-me${langParam})` : `[${label}](read.html?post=about-me)`;
         }
 
         if (postId) {
-            return isEnglish ? `[${label}](read.html?post=${postId}&lang=en)` : `[${label}](read.html?post=${postId})`;
+            return langParam ? `[${label}](read.html?post=${postId}${langParam})` : `[${label}](read.html?post=${postId})`;
         }
 
         return `[${label}](read.html?url=${basePath}${path})`;
