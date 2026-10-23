@@ -77,4 +77,26 @@ const myProjects = [
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
   },
   
+  {
+    id: "hidden-cost-ai-generated-code",
+    title: "The Hidden Cost of AI-Generated Code: Understanding and Managing Technical Debt",
+    category: "notes",
+    tags: ["ai", "technical-debt", "software-engineering", "llm", "maintenance"],
+    publishedDate: "2026-10-23",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/hidden-cost-ai-generated-code-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
+  },
+  {
+    id: "when-learning-becomes-searching",
+    title: "When Learning Becomes Searching: Digital Burnout, Rabbit Holes, and AI-Assisted Learning",
+    category: "notes",
+    tags: ["learning", "burnout", "ai", "rabbit-hole", "digital-learning"],
+    publishedDate: "2026-10-23",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/LYNX/when-learning-becomes-searching-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/LYNX",
+  },
 ];
