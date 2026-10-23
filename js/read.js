@@ -1628,7 +1628,7 @@ function thumbnailPlaceholder(label) {
 }
 
 function loadThumbnail(project) {
-    const url = ARTICLE_LANG === 'en'
+    const url = ARTICLE_LANG !== 'id'
         ? (project.rawUrlEn || project.rawUrl)
         : project.rawUrl;
 
@@ -1765,7 +1765,7 @@ function injectGiscus(repoUrl) {
     if (typeof myProjects !== 'undefined') {
         const project = myProjects.find(item => {
             const derived = item.rawUrlEn || (item.rawUrl
-                ? (item.rawUrl.endsWith('-id.md') ? item.rawUrl.replace('-id.md', '-en.md') : item.rawUrl.replace('.md', '-en.md'))
+                ? (item.rawUrl.endsWith('-id.md') ? item.rawUrl.replace('-id.md', `-${ARTICLE_LANG}.md`) : item.rawUrl.replace('.md', `-${ARTICLE_LANG}.md`))
                 : null);
             return item.rawUrl === repoUrl || derived === repoUrl;
         });
@@ -2075,9 +2075,9 @@ if (postId === 'about-me') {
     const project = myProjects.find(item => item.id === postId);
     if (project && typeof project.id === 'string' && project.id.trim() !== '') {
         currentProject = project;
-        repoUrl = lang === 'en'
+        repoUrl = lang !== 'id'
             ? (project.rawUrlEn || (project.rawUrl
-                ? (project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', '-en.md') : project.rawUrl.replace('.md', '-en.md'))
+                ? (project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', `-${lang}.md`) : project.rawUrl.replace('.md', `-${lang}.md`))
                 : project.rawUrl))
             : project.rawUrl;
     }
