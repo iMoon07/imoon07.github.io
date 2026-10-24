@@ -44,7 +44,6 @@ const myProjects = [
     {
     id: "from-hardware-to-software-how-applications-actually-run",
     title: "From Hardware to Software: How Applications Actually Run",
-    titleId: "Dari Perangkat Keras ke Perangkat Lunak: Bagaimana Aplikasi Benar-Benar Berjalan",
     category: "foundations",
     tags: ["hardware", "software", "operating-system"],
     publishedDate: "2026-10-21",
