@@ -91,7 +91,6 @@ async function fetchProjectData(project) {
                     ? descRaw.slice(0, 240).replace(/\s+\S*$/, '') + '…'
                     : descRaw)
                 : "No description available.";
-            console.log('descRaw.length', descRaw.length, 'desc.length', desc.length);
 
             return { title, desc, date, text };
         } catch (err) {

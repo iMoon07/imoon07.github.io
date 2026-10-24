@@ -1222,3 +1222,10 @@ body.blog-page {
     border-radius: 8px;
     border: 1px solid #30363d;
 }
+
+.blog-cat-group, #cat-nav-container {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+#cat-nav-container::-webkit-scrollbar { display: none; }
