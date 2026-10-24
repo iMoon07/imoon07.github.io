@@ -229,3 +229,17 @@
         scroll-behavior: auto !important;
     }
 }
+
+@media (max-width: 767px) {
+    .blog-page .page-numbers { display: none; }
+    .blog-page .page-indicator { display: inline-block; }
+    .blog-page .pagination { gap: 10px; justify-content: center; }
+    .blog-page .page-arrow { width: 44px; height: 44px; }
+}
+@media (min-width: 768px) {
+    .blog-page .page-indicator { display: none; }
+}
+
+@media (max-width: 767px) {
+    .blog-page .pagination { border-top: 1px solid var(--line); padding-top: 16px; }
+}

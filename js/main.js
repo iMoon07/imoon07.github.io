@@ -40,7 +40,7 @@ async function fetchProjectData(project) {
         console.warn('Project di-skip (tidak punya id yang valid):', project);
         return project;
     }
-    if (project.hasFetched) return project;
+    // (cache disabled for testing)
     project.hasFetched = true;
 
     const fetchSingle = async (url) => {
@@ -60,11 +60,24 @@ async function fetchProjectData(project) {
             let titleMatch = text.match(/<title>(.*?)<\/title>/i) || text.match(/^#\s+(.+)/m) || text.match(/<h1[^>]*>(.*?)<\/h1>/i);
             let title = titleMatch ? titleMatch[1].replace(/<[^>]*>?/gm, '').trim() : "Project Security";
 
-            let body = text.replace(/^#.*$/gm, '');
-            let paragraphs = body.match(/^[A-Za-z].*$/gm) || [];
-
-            let descRaw = paragraphs
-                .join(' ')
+            let body = text
+                .replace(/```[\s\S]*?```/g, '')
+                .replace(/^#{1,6}.*$/gm, '')
+                .replace(/^\[.*\]\(.*\)\s*$/gm, '')
+                .replace(/^!\[.*\]\(.*\)\s*$/gm, '')
+                .replace(/^\|.*/gm, '')
+                .replace(/^---+$/gm, '')
+                .replace(/^>\s*/gm, '')
+                .replace(/﷽/g, '');
+            let paragraphs = body.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+            let collected = '';
+            for (const p of paragraphs) {
+                if (collected.length >= 1000) break;
+                collected += (collected ? ' ' : '') + p;
+            }
+            let firstPara = collected;
+            let descRaw = firstPara
+                .replace(/\n/g, ' ')
                 .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove markdown links
                 .replace(/<[^>]*>?/gm, '')  // Remove HTML tags
                 .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold
@@ -78,6 +91,7 @@ async function fetchProjectData(project) {
                     ? descRaw.slice(0, 240).replace(/\s+\S*$/, '') + '…'
                     : descRaw)
                 : "No description available.";
+            console.log('descRaw.length', descRaw.length, 'desc.length', desc.length);
 
             return { title, desc, date, text };
         } catch (err) {
@@ -341,8 +355,7 @@ function renderPagination() {
     });
 
     if (pageIndicatorEl) {
-        pageIndicatorEl.textContent =
-            `PAGE ${String(currentPage).padStart(3, '0')} / ${String(totalPages).padStart(3, '0')}`;
+        pageIndicatorEl.textContent = `${currentPage} / ${totalPages}`;
     }
 
     if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
@@ -600,14 +613,15 @@ function renderCategories() {
     if (!catNav) return;
 
     // Collect every category used by the projects
-    const allCategories = new Set();
-    myProjects.forEach(project => {
-        if (project.category) {
-            allCategories.add(String(project.category).trim().toLowerCase());
+    const allCategories = [];
+    const categorySet = new Set();
+    sortByNewest(myProjects.slice()).forEach(project => {
+        const cat = project.category ? String(project.category).trim().toLowerCase() : '';
+        if (cat && !categorySet.has(cat)) {
+            categorySet.add(cat);
+            allCategories.push(cat);
         }
     });
-
-    const sortedCategories = Array.from(allCategories).sort();
 
     const items = [{
         label: 'All posts',
@@ -616,7 +630,7 @@ function renderCategories() {
         onClick: () => renderProjects('all')
     }];
 
-    sortedCategories.forEach(category => {
+    allCategories.slice(0, 7).forEach(category => {
         items.push({
             label: formatCategory(category),
             active: !window.currentTag && window.currentCategory === category,
@@ -625,23 +639,26 @@ function renderCategories() {
         });
     });
 
-    renderFilterGroup(catNav, items);
+    renderFilterGroup(catNav, items, window.innerWidth < 700 ? 4 : 8);
 }
 
 function renderTags() {
     const tagNav = document.getElementById('tag-nav-container');
     if (!tagNav) return;
 
-    // Collect all unique tags
-    const allTags = new Set();
-    myProjects.forEach(project => {
+    const allTags = [];
+    const tagSet = new Set();
+    sortByNewest(myProjects.slice()).forEach(project => {
         if (project.tags) {
-            project.tags.forEach(tag => allTags.add(tag));
+            project.tags.forEach(tag => {
+                const t = String(tag).trim();
+                if (t && !tagSet.has(t)) {
+                    tagSet.add(t);
+                    allTags.push(t);
+                }
+            });
         }
     });
-
-    // Sort tags alphabetically
-    const sortedTags = Array.from(allTags).sort();
 
     const items = [{
         label: 'All',
@@ -650,7 +667,7 @@ function renderTags() {
         onClick: () => renderTagsClear()
     }];
 
-    sortedTags.forEach(tag => {
+    allTags.forEach(tag => {
         items.push({
             label: `#${tag}`,
             active: window.currentTag === tag,
@@ -659,7 +676,7 @@ function renderTags() {
         });
     });
 
-    renderFilterGroup(tagNav, items);
+    renderFilterGroup(tagNav, items, window.innerWidth < 700 ? 1000 : 1000);
 }
 
 function renderTagsClear() {

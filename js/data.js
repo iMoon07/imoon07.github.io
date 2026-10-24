@@ -261,6 +261,4 @@ const myProjects = [
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/web-security/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
     repoUrl: "https://github.com/iMoon07/OWASP-Lab-Toolkit",
   },
-  {
-    id: "blog-post-template",
-    title: "Write for Fun, Build for Enjoy",
+];

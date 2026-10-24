@@ -798,11 +798,6 @@ body.blog-page {
     color: var(--muted);
     font-size: 17px;
     line-height: 1.75;
-    /* Panjang ringkasan dibatasi 3 baris supaya tinggi kartu selalu seragam */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 
 .blog-page .post-more {
@@ -810,7 +805,7 @@ body.blog-page {
     align-items: center;
     gap: 10px;
     margin-top: 20px;
-    color: var(--text);
+    color: #58a6ff;
     font-size: 16px;
     font-weight: 500;
 }
@@ -833,7 +828,7 @@ body.blog-page {
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 0;
+    margin-top: 24px;
     padding: 16px 0 12px;
     border-top: 1px solid var(--line);
     color: var(--muted);
@@ -1181,16 +1176,16 @@ body.blog-page {
 .tag-badge {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: 10px;
-    background: #21262d;
-    color: #8b949e;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
     text-decoration: none;
     font-size: 11px;
     font-weight: 500;
     margin: 2px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid #30363d;
+    border: 1px solid transparent;
 }
 .tag-badge:hover {
     background: #30363d;

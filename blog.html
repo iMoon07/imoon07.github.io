@@ -77,19 +77,6 @@
                              Tags are drawn from the article metadata. -->
                     </nav>
                 </div>
-
-                <nav class="pagination" id="pagination" aria-label="Article pages" hidden>                    <button type="button" class="page-arrow" id="prevPage" aria-label="Previous page">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
-                    </button>
-
-                    <div class="page-numbers" id="pageNumbers"></div>
-
-                    <button type="button" class="page-arrow" id="nextPage" aria-label="Next page">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                    </button>
-
-                    <div class="page-indicator" id="pageIndicator">PAGE 001 / 001</div>
-                </nav>
             </div>
 
             <!-- Main Layout
@@ -103,7 +90,21 @@
                 <div class="content-area" style="width: 100%;">
                     <div id="project-container">
                         <!-- Projects rendered dynamically via JS -->
-                    </div>
+            </div>
+
+            <nav class="pagination" id="pagination" aria-label="Article pages" hidden>
+                <button type="button" class="page-arrow" id="prevPage" aria-label="Previous page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+                </button>
+
+                <div class="page-numbers" id="pageNumbers"></div>
+
+                <button type="button" class="page-arrow" id="nextPage" aria-label="Next page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </button>
+
+                <div class="page-indicator" id="pageIndicator">1 / 1</div>
+            </nav>
                 </div>
 
             </div>
