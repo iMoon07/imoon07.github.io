@@ -59,7 +59,7 @@ const myProjects = [
     title: "Hardening Single-Tier Stack",
     category: "notes",
     tags: ["hardening", "server-security", "linux-security", "security-configuration", "network-security", "web-security", "monitoring", "backup-recovery", "incident-response"],
-    publishedDate: "2025-02-21",
+    publishedDate: "2026-10-23",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/server-security/hardening-single-tier-stack-id.md",
     repoUrl:
@@ -71,7 +71,7 @@ const myProjects = [
     title: "Server Single-Tier Stack",
     category: "notes",
     tags: ["server", "architecture", "single-tier"],
-    publishedDate: "2025-03-10",
+    publishedDate: "2026-10-22",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/server-architecture/server-single-tier-stack-id.md",
     repoUrl:
@@ -82,7 +82,7 @@ const myProjects = [
     title: "Dari Perangkat Keras ke Perangkat Lunak: Bagaimana Aplikasi Benar-Benar Berjalan",
     category: "notes",
     tags: ["hardware", "software", "operating-system"],
-    publishedDate: "2025-04-13",
+    publishedDate: "2026-10-21",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/system-foundations/from-hardware-to-software-how-applications-actually-run-id.md",
     repoUrl:
