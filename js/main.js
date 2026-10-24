@@ -659,12 +659,7 @@ function renderTags() {
         }
     });
 
-    const items = [{
-        label: 'All',
-        active: !window.currentTag,
-        dataset: { tag: '' },
-        onClick: () => renderTagsClear()
-    }];
+    const items = []; // tags only, no All
 
     allTags.forEach(tag => {
         items.push({
@@ -675,7 +670,7 @@ function renderTags() {
         });
     });
 
-    renderFilterGroup(tagNav, items, window.innerWidth < 700 ? 1000 : 1000);
+    renderFilterGroup(tagNav, items, window.innerWidth < 700 ? 3 : 1000);
 }
 
 function renderTagsClear() {
