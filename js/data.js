@@ -42,17 +42,7 @@ const myProjects = [
     repoUrl: "https://github.com/iMoon07/imoon07.github.io/",
   },
 
-  {
-    id: "owasp-toolkit",
-    title: "Build Your Own Hacking Dojo: OWASP Lab Toolkit",
-    category: "tutorials",
-    tags: ["labs", "owasp", "bash", "ubuntu", "self-hosted"],
-    publishedDate: "2025-01-18",
-    rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
-    repoUrl: "https://github.com/iMoon07/Penjelajah-CyberSecurity",
-  },
-
+  
   
   {
     id: "hardening-single-tier-stack",
