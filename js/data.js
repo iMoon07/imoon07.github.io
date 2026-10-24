@@ -21,7 +21,7 @@ const myProjects = [
   {
     id: "hardening-single-tier-stack",
     title: "Hardening Single-Tier Stack",
-    category: "notes",
+    category: "foundations",
     tags: ["hardening", "server-security", "linux-security", "security-configuration", "network-security", "web-security", "monitoring", "backup-recovery", "incident-response"],
     publishedDate: "2026-10-23",
     rawUrl:
@@ -33,7 +33,7 @@ const myProjects = [
   {
     id: "server-single-tier-stack",
     title: "Server Single-Tier Stack",
-    category: "notes",
+    category: "foundations",
     tags: ["server", "architecture", "single-tier"],
     publishedDate: "2026-10-22",
     rawUrl:
@@ -44,7 +44,7 @@ const myProjects = [
     {
     id: "from-hardware-to-software-how-applications-actually-run",
     title: "Dari Perangkat Keras ke Perangkat Lunak: Bagaimana Aplikasi Benar-Benar Berjalan",
-    category: "notes",
+    category: "foundations",
     tags: ["hardware", "software", "operating-system"],
     publishedDate: "2026-10-21",
     rawUrl:
