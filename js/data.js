@@ -1,35 +1,8 @@
-/* =============================================================================
-   DATA ARTIKEL / ARTICLE DATA
-   Satu objek per artikel. Dipakai oleh blog listing dan halaman reader.
-   One object per article. Used by the blog listing and the article reader.
-
-   Struktur dan aturan field dijelaskan di bawah (ID lalu EN).
-   Field structure and rules are documented below (ID then EN).
-   ============================================================================= */
 // Data artikel / Article data
-// Tambah satu objek per artikel.
-// Tambahkan satu objek per artikel.
-// Field "category" dan "tags" bebas:
-// tab Categories dan Tags di halaman blog dibuat otomatis dari data di bawah.
-//
-// category : "experiments" | "tutorials" | ... (nilai bebas, pakai tanda hubung untuk kategori berkatasa)
-// tags     : ["labs", "web", ...] (bebas, jumlah tidak dibatasi)
-//
-// title    = judul artikel. Dipakai untuk pencarian di halaman blog dan
-//            daftar artikel terkait, jadi tidak perlu nunggu markdown di-fetch.
-//            Kalau judulnya beda antara ID dan EN, pakai titleId / titleEn.
-// rawUrl  = URL Markdown Indonesia (file *-id.md) di repo Penjelajah-CyberSecurity.
-// Versi Inggris otomatis diambil dari file *-en.md di lokasi yang sama.
-// repoUrl = halaman repository tempat catatan ini hidup (bukan raw, bukan
-// repo source code project yang dibahas). Kalau kosong, diturunkan dari rawUrl.
-//
-// Tanggal:
-// publishedDate = tanggal artikel benar-benar ditulis. WAJIB isi manual,
-//   karena "push ke repo duluan" belum tentu berarti "blog-nya terbit" --
-//   kalau lo push semua artikel sekaligus, commit pertama semua file akan
-//   berbarengan dan tidak berguna sebagai tanggal publish.
-// lastEditedDate = TIDAK perlu diisi. Tanggal "diperbarui" diambil otomatis
-//   dari commit terakhir file di GitHub, lengkap dengan link commit-nya.
+// category : experiments | notes | tutorials
+// tags    : array bebas
+// rawUrl  : URL Markdown Indonesia (*-id.md atau .md)
+// repoUrl : repo tempat artikel hidup
 const myProjects = [
   {
     id: "blog-post-template",
