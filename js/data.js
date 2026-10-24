@@ -297,4 +297,15 @@ const myProjects = [
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/blog-post-template",
   },
+  {
+    id: "reverse-shell-server-side",
+    title: "Reverse Shell: Process, Log, and Network Analysis",
+    category: "experiments",
+    tags: ["reverse-shell", "analysis", "linux", "network"],
+    publishedDate: "2026-10-20",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION",
+  },
 ];
