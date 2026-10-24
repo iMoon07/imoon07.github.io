@@ -39,7 +39,8 @@ const myProjects = [
     publishedDate: "2025-01-01",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/blog-post-template/template-for-you-id.md",
-    repoUrl: "https://github.com/iMoon07/imoon07.github.io/",
+    repoUrl:
+      "https://github.com/iMoon07/imoon07.github.io",
   },
 
   
@@ -87,7 +88,7 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/LINUX-ENUMERATION-INVESTIGATION/linux-enumeration-investigation-id.md",
     repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-post-exploitation/LINUX-ENUMERATION-INVESTIGATION",
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-investigation/LINUX-ENUMERATION-INVESTIGATION",
   },
   {
     id: "post-exploitation-enum",
@@ -131,7 +132,7 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-post-exploitation/POST-EXPLOITATION-LATERAL-MOVEMENT/post-exploitation-lateral-movement-id.md",
     repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-post-exploitation/POST-EXPLOITATION-LATERAL-MOVEMENT",
+      "https://github.com/iMoon07/OWASP-Lab-Toolkit/tree/main/CVE-2026-4480",
   },
   {
     id: "post-exploitation-persistence",
@@ -175,7 +176,7 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-post-exploitation/POST-EXPLOITATION-PRIVILEGE-ESCALATION/post-exploitation-priv-esca-copyfail-id.md",
     repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-post-exploitation/POST-EXPLOITATION-PRIVILEGE-ESCALATION",
+      "https://github.com/iMoon07/OWASP-Lab-Toolkit/tree/main/CVE-2026-31431",
   },
   {
     id: "network-hacking-basic",
@@ -230,7 +231,7 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/tools/MoonAI-TOOLKIT/moon-ecosystem-id.md",
     repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/tools/MoonAI-TOOLKIT",
+      "https://github.com/iMoon07/MoonAI-Toolkit",
   },
   {
     id: "command-injection-reverse-shell",
@@ -252,7 +253,7 @@ const myProjects = [
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/web-security/OWASP-LAB-TOOLKIT/owasp-lab-toolkit-id.md",
     repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/web-security/OWASP-LAB-TOOLKIT",
+      "https://github.com/iMoon07/OWASP-Lab-Toolkit",
   },
   {
     id: "sqli-webshell-reverse-shell",
