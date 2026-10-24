@@ -55,7 +55,7 @@ const myProjects = [
   {
     id: "linux-enumeration-investigation",
     title: "Linux: Execution, History, and Timeline Analysis",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-04-30",
     rawUrl:
@@ -66,7 +66,7 @@ const myProjects = [
   {
     id: "post-exploitation-enum",
     title: "Linux Enumeration: Basic System Information",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-05-17",
     rawUrl:
@@ -77,7 +77,7 @@ const myProjects = [
   {
     id: "post-exploitation-filesystemexplore",
     title: "Linux Post-Exploitation: File System Exploration",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-06-03",
     rawUrl:
@@ -88,7 +88,7 @@ const myProjects = [
   {
     id: "post-exploitation-foothold",
     title: "Linux Foothold: Establishing a C2 Session with Adaptix Framework",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-06-20",
     rawUrl:
@@ -99,7 +99,7 @@ const myProjects = [
   {
     id: "post-exploitation-lateral-movement",
     title: "Linux Lateral Movement: Internal Network Assessment dan Validasi Samba CVE-2026-4480 (Debian)",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-07-07",
     rawUrl:
@@ -110,7 +110,7 @@ const myProjects = [
   {
     id: "post-exploitation-persistence",
     title: "Linux Persistence: Getting Started with PANIX",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-07-24",
     rawUrl:
@@ -121,7 +121,7 @@ const myProjects = [
   {
     id: "post-exploitation-pivoting",
     title: "Linux Pivoting: Exploring Internal Network Access with AdaptixC2 SOCKS5 Tunnel and Proxychains",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-08-10",
     rawUrl:
@@ -132,7 +132,7 @@ const myProjects = [
   {
     id: "post-exploitation-priv-enum",
     title: "Linux Post-Exploitation: Privilege Enumeration",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-08-27",
     rawUrl:
@@ -143,7 +143,7 @@ const myProjects = [
   {
     id: "post-exploitation-priv-esca-copyfail",
     title: "Linux Kernel Privilege Escalation: Copy.Fail (CVE-2026-31431)",
-    category: "experiments",
+    category: "tutorials",
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-09-13",
     rawUrl:
@@ -154,7 +154,7 @@ const myProjects = [
   {
     id: "network-hacking-basic",
     title: "Socket Programming Experiments with Python",
-    category: "experiments",
+    category: "tutorials",
     tags: ["network", "python", "proxy", "ssh"],
     publishedDate: "2025-09-30",
     rawUrl:
@@ -165,7 +165,7 @@ const myProjects = [
   {
     id: "build-tcp-udp-proxy-lab",
     title: "TCP & UDP Proxy Lab — Analisis Traffic FTP",
-    category: "experiments",
+    category: "tutorials",
     tags: ["network", "python", "proxy", "ssh"],
     publishedDate: "2025-10-17",
     rawUrl:
@@ -176,7 +176,7 @@ const myProjects = [
   {
     id: "ssh-client-server-python",
     title: "SSH Client-Server Experiments with Python Paramiko",
-    category: "experiments",
+    category: "tutorials",
     tags: ["network", "python", "proxy", "ssh"],
     publishedDate: "2025-11-03",
     rawUrl:
@@ -187,7 +187,7 @@ const myProjects = [
   {
     id: "trace-network-basic",
     title: "Basic Network Tracing: TCP dan UDP",
-    category: "experiments",
+    category: "tutorials",
     tags: ["network", "python", "proxy", "ssh"],
     publishedDate: "2025-11-20",
     rawUrl:
@@ -209,7 +209,7 @@ const myProjects = [
   {
     id: "command-injection-reverse-shell",
     title: "Reverse Shell with One-Lin3r: Crafting a Reverse Shell Payload in a Single Command",
-    category: "experiments",
+    category: "tutorials",
     tags: ["web", "security", "injection", "reverse-shell"],
     publishedDate: "2025-12-24",
     rawUrl:
@@ -220,7 +220,7 @@ const myProjects = [
   {
     id: "owasp-lab-toolkit",
     title: "Build Your Own Hacking Dojo: OWASP Lab Toolkit",
-    category: "tutorials",
+    category: "experiments",
     tags: ["web", "security", "injection", "reverse-shell"],
     publishedDate: "2026-01-10",
     rawUrl:
@@ -231,7 +231,7 @@ const myProjects = [
   {
     id: "sqli-webshell-reverse-shell",
     title: "SQLi: From Injection to Webshell and Reverse Shell",
-    category: "experiments",
+    category: "tutorials",
     tags: ["web", "security", "injection", "reverse-shell"],
     publishedDate: "2026-01-27",
     rawUrl:
@@ -242,7 +242,7 @@ const myProjects = [
   {
     id: "webshell-reverse-shell",
     title: "Unrestricted File Upload: From Webshell to Reverse Shell Access",
-    category: "experiments",
+    category: "tutorials",
     tags: ["web", "security", "injection", "reverse-shell"],
     publishedDate: "2026-02-13",
     rawUrl:
@@ -253,7 +253,7 @@ const myProjects = [
     {
     id: "reverse-shell-server-side",
     title: "Reverse Shell: Process, Log, and Network Analysis",
-    category: "experiments",
+    category: "tutorials",
     tags: ["reverse-shell", "analysis", "linux", "network"],
     publishedDate: "2026-10-20",
     rawUrl:
