@@ -85,7 +85,7 @@ const myProjects = [
     tags: ["linux", "post-exploitation", "enumeration"],
     publishedDate: "2025-04-30",
     rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-post-exploitation/LINUX-ENUMERATION-INVESTIGATION/linux-enumeration-investigation-id.md",
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/LINUX-ENUMERATION-INVESTIGATION/linux-enumeration-investigation-id.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-post-exploitation/LINUX-ENUMERATION-INVESTIGATION",
   },
@@ -276,18 +276,7 @@ const myProjects = [
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/web-security/WEBSHELL-REVERSE-SHELL",
   },
-  {
-    id: "template-for-you",
-    title: "Write for Fun, Build for Enjoy",
-    category: "experiments",
-    tags: ["notes"],
-    publishedDate: "2026-03-02",
-    rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/blog-post-template/template-for-you-id.md",
-    repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/blog-post-template",
-  },
-  {
+    {
     id: "reverse-shell-server-side",
     title: "Reverse Shell: Process, Log, and Network Analysis",
     category: "experiments",
