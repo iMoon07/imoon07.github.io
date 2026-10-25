@@ -392,6 +392,143 @@ if (name === 'home') {
                     });
                 });
 
+            /* ------------------------------------------------------------ license details
+               Detail lisensi: isi panel sesuai pilihan.
+               License details: fill the panel according to the selection. */
+
+            const licenseViews = {
+                list: document.getElementById('licenseList'),
+                mit: document.getElementById('mitDetail'),
+                cc: document.getElementById('ccDetail'),
+                thirdparty: document.getElementById('thirdpartyDetail')
+            };
+
+            const licenseButtons = Array.from(
+                document.querySelectorAll('[data-open-license]')
+            );
+
+            let licenseOpener = null;
+
+            function showLicense(name) {
+                Object.entries(licenseViews)
+                    .forEach(([key, view]) => {
+                        const active = key === name;
+
+                        view.hidden = !active;
+                        view.classList.remove('active');
+
+                        if (active) {
+                            void view.offsetWidth;
+                            view.classList.add('active');
+                        }
+                    });
+
+                licenseButtons.forEach(button => {
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(
+                            button.dataset.openLicense === name
+                        )
+                    );
+                });
+            }
+
+            licenseButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    licenseOpener = button;
+
+                    const name = button.dataset.openLicense;
+
+                    showLicense(name);
+
+                    licenseViews[name]
+                        .querySelector('h2')
+                        .focus({ preventScroll: true });
+                });
+            });
+
+            document.querySelectorAll('[data-back-license]')
+                .forEach(button => {
+                    button.addEventListener('click', () => {
+                        showLicense('list');
+
+                        if (licenseOpener) {
+                            licenseOpener.focus({
+                                preventScroll: true
+                            });
+                        }
+                    });
+                });
+
+            /* ------------------------------------------------------------ work details
+               Detail proyek: isi panel sesuai pilihan.
+               Work details: fill the panel according to the selection. */
+
+            const workViews = {
+                list: document.getElementById('workList'),
+                owasp: document.getElementById('owaspDetail'),
+                staticWeb: document.getElementById('staticWebDetail'),
+                syscall: document.getElementById('syscallDetail'),
+                portfolio: document.getElementById('portfolioDetail')
+            };
+
+            const workButtons = Array.from(
+                document.querySelectorAll('[data-open-work]')
+            );
+
+            let workOpener = null;
+
+            function showWork(name) {
+                Object.entries(workViews)
+                    .forEach(([key, view]) => {
+                        const active = key === name;
+
+                        view.hidden = !active;
+                        view.classList.remove('active');
+
+                        if (active) {
+                            void view.offsetWidth;
+                            view.classList.add('active');
+                        }
+                    });
+
+                workButtons.forEach(button => {
+                    button.setAttribute(
+                        'aria-expanded',
+                        String(
+                            button.dataset.openWork === name
+                        )
+                    );
+                });
+            }
+
+            workButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    workOpener = button;
+
+                    const name = button.dataset.openWork;
+
+                    showWork(name);
+
+                    workViews[name]
+                        .querySelector('h2')
+                        .focus({ preventScroll: true });
+                });
+            });
+
+            document.querySelectorAll('[data-back-work]')
+                .forEach(button => {
+                    button.addEventListener('click', () => {
+                        showWork('list');
+
+                        if (workOpener) {
+                            workOpener.focus({
+                                preventScroll: true
+                            });
+                        }
+                    });
+                });
+
             /* ------------------------------------------------------------ touch swipe
                Gestur geser untuk berpindah panel di layar sentuh.
                Swipe gestures to move between panels on touch screens. */

@@ -140,6 +140,18 @@
                             >
                                 Community
                             </button>
+
+                            <button
+                                class="tab"
+                                id="tabLicense"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panelLicense"
+                                tabindex="-1"
+                                type="button"
+                            >
+                                License
+                            </button>
                         </div>
 
                         <div class="panel-viewport" id="panelViewport">
@@ -166,8 +178,8 @@
 
                                 <dl class="facts">
                                     <div class="fact">
-                                        <dt>Now My Work</dt>
-                                        <dd>Web, Mobile, Api Application in Sec perspective,and Write Blog/Tutorial</dd>
+                                        <dt>What I Do</dt>
+                                        <dd>Web, Mobile & API Security, and Technical Writing.</dd>
                                     </div>
 
                                     <div class="fact">
@@ -366,69 +378,187 @@
                                     <span>Explore. Document.</span>
                                 </h2>
 
-                                <div class="entry">
-                                    <h3>OWASP-Lab-Toolkit</h3>
-                                    <p>
-                                        A Bash toolkit for deploying a web
-                                        vulnerability lab on Ubuntu Server.
-                                    </p>
-
-                                    <a
-                                        class="project-link"
-                                        href="https://github.com/iMoon07/OWASP-Lab-Toolkit"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                <div class="subview active" id="workList">
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-work="owasp"
+                                        aria-controls="owaspDetail"
+                                        aria-expanded="false"
                                     >
-                                        View toolkit <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                    </a>
+                                        <span>
+                                            <span class="experience-name">OWASP-Lab-Toolkit</span>
+                                            <span class="experience-description">A Bash toolkit for deploying a web vulnerability lab on Ubuntu Server.</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-work="staticWeb"
+                                        aria-controls="staticWebDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Have-Fun-Static-Web</span>
+                                            <span class="experience-description">My first project about static web. Vibe coding with AI.</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-work="syscall"
+                                        aria-controls="syscallDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Linux Syscall Table</span>
+                                            <span class="experience-description">An x86_64 Linux syscall reference.</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-work="portfolio"
+                                        aria-controls="portfolioDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">iMoon07.github.io</span>
+                                            <span class="experience-description">Source code of this portfolio. Static web built with HTML, CSS, and JS.</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
                                 </div>
 
-                                <div class="entry">
-                                    <h3>Have-Fun-Static-Web</h3>
-                                    <p>
-                                        My first project about static web.
-                                        Vibe coding with AI.
-                                    </p>
+                                <div class="subview" id="owaspDetail" hidden>
+                                    <button class="back-button" type="button" data-back-work>
+                                        ← Selected work
+                                    </button>
 
-                                    <a
-                                        class="project-link"
-                                        href="https://github.com/iMoon07/Have-Fun-Static-Web"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        View project <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                    </a>
+                                    <h2 class="detail-title" tabindex="-1">OWASP-Lab-Toolkit</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            A Bash toolkit for deploying a web
+                                            vulnerability lab on Ubuntu Server.
+                                            Provisions 11 vulnerable and
+                                            management applications via Nginx,
+                                            Apache, PHP, MariaDB, Node.js, and
+                                            Java. Designed for isolated local
+                                            VMs and educational use.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="https://github.com/iMoon07/OWASP-Lab-Toolkit"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                View toolkit <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div class="entry">
-                                    <h3>Linux Syscall Table</h3>
-                                    <p>
-                                        An x86_64 Linux syscall reference.
-                                    </p>
+                                <div class="subview" id="staticWebDetail" hidden>
+                                    <button class="back-button" type="button" data-back-work>
+                                        ← Selected work
+                                    </button>
 
-                                    <a
-                                        class="project-link"
-                                        href="project/syscall/linux-x86-64/index.html"
-                                    >
-                                        Open reference <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                    </a>
+                                    <h2 class="detail-title" tabindex="-1">Have-Fun-Static-Web</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            My first project about static web.
+                                            Built with AI-assisted coding
+                                            (vibe coding) using Vite, Tailwind
+                                            CSS, and TypeScript.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="https://github.com/iMoon07/Have-Fun-Static-Web"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                View project <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div class="entry">
-                                    <h3>iMoon07.github.io</h3>
-                                    <p>
-                                        Source code of this portfolio.
-                                        Static web built with HTML, CSS, and JS.
-                                    </p>
+                                <div class="subview" id="syscallDetail" hidden>
+                                    <button class="back-button" type="button" data-back-work>
+                                        ← Selected work
+                                    </button>
 
-                                    <a
-                                        class="project-link"
-                                        href="https://github.com/iMoon07/imoon07.github.io"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        View source <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                                    </a>
+                                    <h2 class="detail-title" tabindex="-1">Linux Syscall Table</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            An x86_64 Linux syscall reference.
+                                            Quick lookup for system calls on
+                                            Linux x86-64.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="project/syscall/linux-x86-64/index.html"
+                                            >
+                                                Open reference <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="subview" id="portfolioDetail" hidden>
+                                    <button class="back-button" type="button" data-back-work>
+                                        ← Selected work
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">iMoon07.github.io</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            Source code of this portfolio.
+                                            Static web built with HTML, CSS,
+                                            and JS. Articles are stored in the
+                                            separate Penjelajah-CyberSecurity
+                                            repository.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="https://github.com/iMoon07/imoon07.github.io"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                View source <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
                                 </div>
                             </section>
 
@@ -641,6 +771,162 @@
                                     </div>
                                 </div>
                             </section>
+                            <!-- LICENSE
+                                 License details for source code and published content. -->
+                            <section
+                                class="panel"
+                                id="panelLicense"
+                                role="tabpanel"
+                                aria-labelledby="tabLicense"
+                                tabindex="0"
+                                hidden
+                            >
+                                <h2 class="panel-title">
+                                    License.<br>
+                                    <span>Terms of use.</span>
+                                </h2>
+
+                                <div class="subview active" id="licenseList">
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-license="mit"
+                                        aria-controls="mitDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Source Code</span>
+                                            <span class="experience-description">MIT License</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-license="cc"
+                                        aria-controls="ccDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Articles &amp; Tutorials</span>
+                                            <span class="experience-description">CC BY-NC-SA 4.0</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-license="thirdparty"
+                                        aria-controls="thirdpartyDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Third-Party Materials</span>
+                                            <span class="experience-description">Separate licensing terms</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div class="subview" id="mitDetail" hidden>
+                                    <button class="back-button" type="button" data-back-license>
+                                        ← License
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">Source Code</h2>
+
+                                    <div class="entry">
+                                        <h3>MIT License</h3>
+
+                                        <p>
+                                            The original source code of this website, including HTML,
+                                            CSS, and JavaScript, is licensed under the MIT License.
+                                        </p>
+
+                                        <p>
+                                            You are free to use, modify, and distribute the code,
+                                            provided that the original copyright and license notices
+                                            are included.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="https://opensource.org/license/mit/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Read the MIT License
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="subview" id="ccDetail" hidden>
+                                    <button class="back-button" type="button" data-back-license>
+                                        ← License
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">Articles &amp; Tutorials</h2>
+
+                                    <div class="entry">
+                                        <h3>CC BY-NC-SA 4.0</h3>
+
+                                        <p>
+                                            Articles, tutorials, and educational materials published
+                                            on this website are licensed under CC BY-NC-SA 4.0.
+                                        </p>
+
+                                        <p>
+                                            You may share and adapt the content for non-commercial
+                                            purposes, provided that you give appropriate credit,
+                                            link to the license, indicate changes, and distribute
+                                            adaptations under the same license.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Read the CC BY-NC-SA 4.0 License
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="subview" id="thirdpartyDetail" hidden>
+                                    <button class="back-button" type="button" data-back-license>
+                                        ← License
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">Third-Party Materials</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            Third-party code, libraries, images, and other materials
+                                            remain subject to their respective licenses and terms.
+                                            Their inclusion on this website does not mean they are
+                                            covered by the licenses listed above.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
 
                         <div class="panel-controls">
@@ -722,7 +1008,7 @@
                             </div>
 
                             <span class="contact-note">
-                                Open to VAPT & consulting.
+                                Copyright © 2026 Raja Muhammad Kurnia Setyawan (@iMoon07).
                             </span>
                         </div>
                     </div>
