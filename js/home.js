@@ -333,7 +333,8 @@ if (name === 'home') {
             const communityViews = {
                 list: document.getElementById('communityList'),
                 codelines: document.getElementById('codelinesDetail'),
-                codingceria: document.getElementById('codingceriaDetail')
+                codingceria: document.getElementById('codingceriaDetail'),
+                debuglife: document.getElementById('debuglifeDetail')
             };
 
             const communityButtons = Array.from(
