@@ -265,7 +265,8 @@ if (name === 'home') {
             const experienceViews = {
                 list: document.getElementById('experienceList'),
                 merdeka: document.getElementById('merdekaDetail'),
-                lpro: document.getElementById('lproDetail')
+                lpro: document.getElementById('lproDetail'),
+                xcode: document.getElementById('xcodeDetail')
             };
 
             const experienceButtons = Array.from(
