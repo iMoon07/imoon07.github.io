@@ -507,16 +507,7 @@ function filterLimit() {
 function splitFilters(items) {
     const limit = filterLimit();
     const visible = items.slice(0, limit);
-    let hidden = items.slice(limit);
-
-    // Filter yang sedang aktif harus tetap kelihatan, walau posisinya di belakang
-    const activeInHidden = hidden.find(item => item.active);
-    if (activeInHidden) {
-        hidden = hidden.filter(item => item !== activeInHidden);
-        const replaceAt = visible.map(item => item.active).lastIndexOf(false);
-        if (replaceAt !== -1) visible[replaceAt] = activeInHidden;
-    }
-
+    const hidden = items.slice(limit);
     return { visible, hidden };
 }
 
@@ -569,6 +560,13 @@ function buildFilterMenu(items) {
         menu.hidden = !open;
         button.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+    button.addEventListener('touchend', event => {
+        event.stopPropagation();
+        const open = menu.hidden;
+        closeFilterMenus();
+        menu.hidden = !open;
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }, { passive: false });
 
     wrap.appendChild(button);
     wrap.appendChild(menu);
@@ -638,7 +636,7 @@ function renderCategories() {
         });
     });
 
-    renderFilterGroup(catNav, items, window.innerWidth < 700 ? 4 : 8);
+    renderFilterGroup(catNav, items, window.innerWidth < 700 ? 100 : 8);
 }
 
 function renderTags() {

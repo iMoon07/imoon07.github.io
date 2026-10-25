@@ -1103,7 +1103,7 @@ body.blog-page {
 
     .blog-page .pagination {
         gap: 10px;
-        padding: 2px 0 14px;
+        padding: 12px 0 14px;
     }
 
     .blog-page .page-numbers {
@@ -1224,8 +1224,8 @@ body.blog-page {
 }
 
 .blog-cat-group, #cat-nav-container {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    overflow-x: visible;
     scrollbar-width: none;
 }
 #cat-nav-container::-webkit-scrollbar { display: none; }
