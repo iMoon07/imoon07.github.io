@@ -508,7 +508,7 @@ body.blog-page {
     background: transparent;
     color: var(--muted);
     font: inherit;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.6;
     cursor: pointer;
     transition: color .2s, border-color .2s;
@@ -587,7 +587,7 @@ body.blog-page {
     position: relative;
     padding: 5px 0;
     color: #969fa7;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.6;
     cursor: pointer;
     transition: color .2s;
@@ -1203,7 +1203,7 @@ body.blog-page {
     background: #21262d;
     color: #c9d1d9;
     text-decoration: none;
-    font-size: 13px;
+    font-size: 12px;
     margin: 2px;
     transition: all 0.2s;
 }
