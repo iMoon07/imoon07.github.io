@@ -250,15 +250,13 @@ const myProjects = [
   },
   {
     id: "literasi-dan-sumber-belajar-gratis",
-    title: "Daftar Literasi dan Sumber Belajar Gratis",
+    title: "List of Free Literacy and Learning Resources",
     category: "reference",
     tags: ["literacy", "learning-resources", "multidisciplinary"],
     publishedDate: "2026-10-28",
     publishedTime: "19:00",
     rawUrl:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/Reference/literasi-dan-sumber-belajar-gratis-id.md",
-    rawUrlEn:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/Reference/literasi-dan-sumber-belajar-gratis-en.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/Reference",
   },
