@@ -1,3 +1,24 @@
+// =============================================================================
+// DATA ARTIKEL / ARTICLE DATA
+// Daftar semua artikel blog yang ditampilkan di halaman listing (blog.html)
+// dan halaman pembaca (read.html). Setiap objek mewakili satu artikel.
+//
+// Struktur tiap artikel:
+//   id          : ID unik artikel, dipakai sebagai parameter ?post= di URL
+//   title       : Judul artikel yang ditampilkan
+//   category    : Kategori artikel (digunakan untuk filter dan tombol kategori)
+//   tags        : Daftar tag artikel (digunakan untuk filter dan tombol tag)
+//   publishedDate : Tanggal publikasi (format YYYY-MM-DD), dipakai pengurutan
+//   publishedTime : Waktu publikasi (opsional, jam 24)
+//   rawUrl      : URL file markdown di raw.githubusercontent.com (bahasa Indonesia)
+//   repoUrl     : URL repo GitHub tempat artikel ini tinggal (untuk tautan sumber)
+//
+// Untuk menambahkan artikel baru, duplikasi objek di bawah ini lalu ganti
+// nilainya sesuai artikel baru.
+//
+// Catatan: file markdown bahasa Inggris otomatis dicari dengan mengganti
+// akhiran -id.md menjadi -en.md, atau .md menjadi -en.md.
+// =============================================================================
 const myProjects = [
   {
     id: "server-single-tier-stack",
@@ -238,6 +259,7 @@ const myProjects = [
     repoUrl: "https://github.com/iMoon07/OWASP-Lab-Toolkit",
   },
     {
+    // CONTOH TEMPLATE ARTIKEL — duplikasi ini untuk artikel baru
     id: "blog-post-template",
     title: "Write for Fun, Build for Enjoy",
     category: "experiments",

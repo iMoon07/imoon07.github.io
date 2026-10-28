@@ -503,19 +503,21 @@ html {
 
 .article-tag {
     padding: 5px 12px;
-    border: 1px solid var(--line);
+    border: 1px solid transparent;
     border-radius: 999px;
-    color: var(--muted);
+    color: #6b737a;
     font-size: 12px;
     letter-spacing: .04em;
     text-decoration: none;
     transition: color .2s, border-color .2s;
+    background: transparent;
 }
 
 .article-tag:hover {
     color: var(--text);
     border-color: #4a5157;
     text-decoration: none;
+    background: rgba(255, 255, 255, .03);
 }
 
 /* ---------------------------------------------------------------- prose
@@ -1948,6 +1950,66 @@ html {
 .related-item:hover {
     text-decoration: none;
     opacity: .92;
+}
+
+/* ---------------------------------------------------------------- related nav
+   Tombol prev / next elegan untuk membuka halaman berikutnya atau sebelumnya
+   dari daftar artikel terkait, 3 kartu per halaman. Mirip navigasi bawah. */
+
+.related-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.related-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #6b737a;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .02em;
+    cursor: pointer;
+    transition: color .2s, transform .2s var(--ease);
+    white-space: nowrap;
+}
+
+.related-nav-btn:hover:not(:disabled) {
+    color: var(--text);
+}
+
+.related-nav-btn:disabled {
+    color: #30363d;
+    cursor: not-allowed;
+}
+
+.related-nav-btn .related-nav-arrow {
+    transition: transform .2s var(--ease);
+    color: inherit;
+}
+
+.related-nav-btn.related-nav-prev:hover:not(:disabled) .related-nav-arrow {
+    transform: translateX(-3px);
+}
+
+.related-nav-btn.related-nav-next:hover:not(:disabled) .related-nav-arrow {
+    transform: translateX(3px);
+}
+
+.related-nav-info {
+    color: #6b737a;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
 }
 
 .related-thumb {

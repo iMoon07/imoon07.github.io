@@ -21,6 +21,7 @@ if (!postId && window.location.pathname.endsWith('about.html')) {
 
 let repoUrl = urlParams.get('url');
 let currentProject = null;
+let relatedPage = 1;
 
 const ARTICLE_LANG = lang;
 const HLJS_BASE = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1';
@@ -1678,20 +1679,15 @@ function renderNavigation() {
     const previous = index > 0 ? list[index - 1] : null;
 
     if (el.nav) {
+        el.nav.hidden = true;
         el.nav.innerHTML = '';
-        el.nav.hidden = !previous;
-
-        if (previous) {
-            const link = document.createElement('a');
-            link.className = 'article-nav-link is-prev';
-            link.href = articleUrl(previous);
-            link.innerHTML = `<span>${ARTICLE_LANG === 'en' ? 'Previous' : 'Sebelumnya'}</span><strong>${escapeHtml(humanize(previous.id))}</strong>`;
-            el.nav.appendChild(link);
-        }
     }
 
     if (el.related && el.relatedBox) {
-        const trending = trendingProjects(currentProject, 3);
+        const RELATED_PER_PAGE = 3;
+        const trending = trendingProjects(currentProject, 20);
+        const totalPages = Math.max(1, Math.ceil(trending.length / RELATED_PER_PAGE));
+        relatedPage = Math.min(Math.max(1, relatedPage), totalPages);
         el.relatedBox.hidden = trending.length === 0;
 
         const title = document.getElementById('related-title');
@@ -1711,7 +1707,54 @@ function renderNavigation() {
             ctaLabel.textContent = ARTICLE_LANG === 'en' ? 'See all articles' : 'Lihat semua artikel';
         }
 
-        el.related.innerHTML = trending.map(entry => {
+        // Hapus nav lama kalau ada
+        let relatedNav = el.related.parentElement.querySelector('.related-nav');
+        if (relatedNav) relatedNav.remove();
+
+        const nav = document.createElement('div');
+        nav.className = 'related-nav';
+
+        const prevBtn = document.createElement('button');
+        prevBtn.type = 'button';
+        prevBtn.className = 'related-nav-btn related-nav-prev';
+        prevBtn.disabled = relatedPage === 1;
+        prevBtn.setAttribute('aria-label', 'Previous');
+        prevBtn.innerHTML = `
+            <span class="related-nav-label">Previous</span>
+            <svg class="related-nav-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        `;
+        prevBtn.addEventListener('click', () => {
+            relatedPage--;
+            renderNavigation();
+        });
+
+        const nextBtn = document.createElement('button');
+        nextBtn.type = 'button';
+        nextBtn.className = 'related-nav-btn related-nav-next';
+        nextBtn.disabled = relatedPage === totalPages;
+        nextBtn.setAttribute('aria-label', 'Next');
+        nextBtn.innerHTML = `
+            <svg class="related-nav-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            <span class="related-nav-label">Next</span>
+        `;
+        nextBtn.addEventListener('click', () => {
+            relatedPage++;
+            renderNavigation();
+        });
+
+        const pageInfo = document.createElement('span');
+        pageInfo.className = 'related-nav-info';
+        pageInfo.textContent = `${relatedPage} / ${totalPages}`;
+
+        nav.appendChild(prevBtn);
+        nav.appendChild(pageInfo);
+        nav.appendChild(nextBtn);
+        el.related.parentElement.insertBefore(nav, el.related);
+
+        const start = (relatedPage - 1) * RELATED_PER_PAGE;
+        const pageItems = trending.slice(start, start + RELATED_PER_PAGE);
+
+        el.related.innerHTML = pageItems.map(entry => {
             const project = entry.project;
             const heading = project.title || humanize(project.id);
             const meta = [
@@ -1719,7 +1762,6 @@ function renderNavigation() {
                 project.category ? humanize(project.category) : null
             ].filter(Boolean).join(' · ');
 
-            // Skala thumbnail dan teks mengikuti panjang judul, bukan angka mati
             const scale = Math.min(1.2, Math.max(0.9, 0.9 + heading.length * 0.011));
 
             return `
@@ -1739,7 +1781,7 @@ function renderNavigation() {
         }).join('');
 
         // Cover image diambil setelah item dirender supaya halaman tidak nunggu
-        trending.forEach((entry, position) => {
+        pageItems.forEach((entry, position) => {
             const image = el.related.querySelectorAll('[data-thumb]')[position];
             if (!image) return;
 
@@ -1869,6 +1911,8 @@ function rewriteMarkdown(text, basePath) {
     // Tag HTML multi baris digabung lebih dulu supaya tidak bocor sebagai teks
     text = collapseHtmlTags(text);
 
+    text = text.replace(/﷽/g, '');
+
     // Relative images -> absolute path inside the repository folder
     text = text.replace(/!\[([^\]]*)\]\((?!https?:|data:)([^)\s]+)\)/g, (match, alt, path) => {
         return `![${alt}](${basePath}${path.replace(/^\.\//, '')})`;
@@ -1917,8 +1961,14 @@ function extractLede(text) {
         if (/^```/.test(trimmed)) continue;
         if (/^[-*+]\s/.test(trimmed)) continue;
         if (/^\d+\.\s/.test(trimmed)) continue;
+        // Skip language/link switcher lines: optional emoji/symbol + [text](url)
+        if (/^[^\w\s]*\s*\[.*\]\(.*\)\s*$/.test(trimmed)) continue;
 
-        const plain = trimmed.replace(/[*_`>#]/g, '').trim();
+        const plain = trimmed
+            .replace(/﷽/g, '')
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // [text](url) -> text
+            .replace(/[*_`>#]/g, '')
+            .trim();
         if (plain.length < 40) continue;
         if (!/\s/.test(plain)) continue;
 
@@ -2012,6 +2062,7 @@ function showError(message) {
 }
 
 function loadArticle() {
+    relatedPage = 1;
     if (!repoUrl || repoUrl === '#') {
         showError(ARTICLE_LANG === 'en' ? 'Article not found.' : 'Artikel tidak ditemukan.');
         return;

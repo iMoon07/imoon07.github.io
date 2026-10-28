@@ -15,7 +15,6 @@ const projectContainer = document.getElementById('project-container');
 const catTitle = document.getElementById('cat-title');
 const postCountEl = document.getElementById('post-count');
 const paginationEl = document.getElementById('pagination');
-const pageNumbersEl = document.getElementById('pageNumbers');
 const pageIndicatorEl = document.getElementById('pageIndicator');
 const prevPageBtn = document.getElementById('prevPage');
 const nextPageBtn = document.getElementById('nextPage');
@@ -64,6 +63,7 @@ async function fetchProjectData(project) {
                 .replace(/```[\s\S]*?```/g, '')
                 .replace(/^#{1,6}.*$/gm, '')
                 .replace(/^\[.*\]\(.*\)\s*$/gm, '')
+                .replace(/^[^\w\s]*\s*\[.*\]\(.*\)\s*$/gm, '')
                 .replace(/^!\[.*\]\(.*\)\s*$/gm, '')
                 .replace(/^\|.*/gm, '')
                 .replace(/^---+$/gm, '')
@@ -285,73 +285,14 @@ function sortByNewest(list) {
     });
 }
 
-// Daftar nomor halaman: 1, …, [current-1, current, current+1], …, total
-/* ---------------------------------------------------------------- pagination
-    Susun nomor halaman, gambar tombol, dan pindah halaman.
-    Build the page numbers, draw the buttons, and change page. */
-function pageRange(current, total, compact) {
-    const pages = [];
-    const window = [];
-
-    // Ponsel: hanya halaman sekitar yang aktif, konteksnya ada di indicator.
-    // Phone: only the pages around the active one, the indicator carries context.
-    if (compact) {
-        for (let p = Math.max(1, current - 1); p <= Math.min(total, current + 1); p++) {
-            pages.push(p);
-        }
-        return pages;
-    }
-
-    for (let p = Math.max(1, current - 1); p <= Math.min(total, current + 1); p++) {
-        window.push(p);
-    }
-
-    pages.push(1);
-    if (window[0] > 2) pages.push('…');
-    window.forEach(p => {
-        if (p !== 1) pages.push(p);
-    });
-    if (window[window.length - 1] < total - 1) pages.push('…');
-    if (total > 1 && !window.includes(total)) pages.push(total);
-
-    return pages;
-}
-
 function renderPagination() {
-    if (!paginationEl || !pageNumbersEl) return;
+    if (!paginationEl || !pageIndicatorEl) return;
 
     paginationEl.hidden = totalPages <= 1;
 
     if (totalPages <= 1) {
-        pageNumbersEl.innerHTML = '';
         return;
     }
-
-    pageNumbersEl.innerHTML = '';
-
-    // Layar sempit: tampilkan 3 angka supaya barisnya nggak melebar
-    // Narrow screen: show three numbers so the row never overflows
-    const compact = window.innerWidth < 700;
-
-    pageRange(currentPage, totalPages, compact).forEach(page => {
-        if (page === '…') {
-            const gap = document.createElement('span');
-            gap.className = 'page-ellipsis';
-            gap.textContent = '…';
-            gap.setAttribute('aria-hidden', 'true');
-            pageNumbersEl.appendChild(gap);
-            return;
-        }
-
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'page-number' + (page === currentPage ? ' is-active' : '');
-        button.textContent = page;
-        button.setAttribute('aria-label', `Page ${page}`);
-        if (page === currentPage) button.setAttribute('aria-current', 'page');
-        button.addEventListener('click', () => goToPage(page));
-        pageNumbersEl.appendChild(button);
-    });
 
     if (pageIndicatorEl) {
         pageIndicatorEl.textContent = `${currentPage} / ${totalPages}`;
