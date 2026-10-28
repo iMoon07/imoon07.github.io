@@ -1,17 +1,5 @@
 const myProjects = [
   {
-    id: "from-hardware-to-software-how-applications-actually-run",
-    title: "From Hardware to Software: How Applications Actually Run",
-    category: "foundations",
-    tags: ["hardware", "operating-system", "system-architecture"],
-    publishedDate: "2026-10-25",
-    publishedTime: "19:00",
-    rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/system-foundations/from-hardware-to-software-how-applications-actually-run-id.md",
-    repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/foundations/system-foundations",
-  },
-  {
     id: "server-single-tier-stack",
     title: "Server Single-Tier Stack",
     category: "foundations",
@@ -22,18 +10,6 @@ const myProjects = [
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/server-architecture/server-single-tier-stack-id.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/foundations/server-architecture",
-  },
-  {
-    id: "hardening-single-tier-stack",
-    title: "Hardening Single-Tier Stack",
-    category: "foundations",
-    tags: ["server-security", "system-hardening", "incident-response"],
-    publishedDate: "2026-10-25",
-    publishedTime: "19:00",
-    rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/foundations/server-security/hardening-single-tier-stack-id.md",
-    repoUrl:
-      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/foundations/server-security",
   },
   {
     id: "webshell-reverse-shell",
