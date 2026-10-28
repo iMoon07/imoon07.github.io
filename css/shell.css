@@ -19,6 +19,10 @@
     --motion-leave: .18s;
 }
 
+/* Font Arabic untuk mendukung karakter Unicode seperti U+FDFD (Bismillah)
+   Arabic font to support Unicode characters such as U+FDFD (Bismillah) */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -67,7 +71,7 @@
     min-height: 78px;
     padding: 18px clamp(12px, 2.4vw, 36px);
     color: var(--muted);
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "Segoe UI", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
     font-size: clamp(23px, 2.7vw, 36px);
     line-height: 1.2;
     letter-spacing: -.04em;

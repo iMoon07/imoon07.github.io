@@ -1911,7 +1911,9 @@ function rewriteMarkdown(text, basePath) {
     // Tag HTML multi baris digabung lebih dulu supaya tidak bocor sebagai teks
     text = collapseHtmlTags(text);
 
-    text = text.replace(/﷽/g, '');
+    // Ganti karakter U+FDFD (Islamic Declaration) dengan teks yang dapat dibaca
+    // Character U+FDFD (Bismillah) replaced with readable text
+    text = text.replace(/ domains /g, 'Bismillahirrahmanirrahim');
 
     // Relative images -> absolute path inside the repository folder
     text = text.replace(/!\[([^\]]*)\]\((?!https?:|data:)([^)\s]+)\)/g, (match, alt, path) => {

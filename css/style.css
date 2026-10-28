@@ -153,7 +153,7 @@
 
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Noto Naskh Arabic', 'Amiri', sans-serif;
     color: #c9d1d9;
     max-width: 1000px;
     margin: 0 auto;
@@ -244,7 +244,7 @@ main.read-container {
     margin-bottom: 30px;
 }
 
-#content { font-family: 'Lora', serif; font-size: 18px; color: #c9d1d9; line-height: 1.9; overflow-wrap: break-word; word-wrap: break-word; }
+#content { font-family: 'Lora', 'Amiri', 'Noto Naskh Arabic', serif; font-size: 18px; color: #c9d1d9; line-height: 1.9; overflow-wrap: break-word; word-wrap: break-word; }
 #content p { text-align: justify; }
 #content a { word-break: break-all; }
 #content h1, #content h2 { border-bottom: 1px solid #21262d; padding-bottom: 0.3em; margin-bottom: 16px; margin-top: 24px; color: #c9d1d9; }
