@@ -249,8 +249,8 @@ const myProjects = [
       "https://github.com/iMoon07/imoon07.github.io",
   },
   {
-    id: "literasi-dan-sumber-belajar-gratis #1",
-    title: "List of Free Literacy and Learning Resources",
+    id: "literasi-dan-sumber-belajar-gratis",
+    title: "List of Free Literacy and Learning Resources #1",
     category: "reference",
     tags: ["literacy", "learning-resources", "multidisciplinary"],
     publishedDate: "2026-10-28",
