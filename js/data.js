@@ -256,9 +256,9 @@ const myProjects = [
     publishedDate: "2026-10-28",
     publishedTime: "19:00",
     rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/Reference/literasi-dan-sumber-belajar-gratis-id.md",
-    rawUrlEn:
       "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/Reference/literasi-dan-sumber-belajar-gratis-en.md",
+    rawUrlId:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/Reference/literasi-dan-sumber-belajar-gratis-id.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/Reference",
   },
