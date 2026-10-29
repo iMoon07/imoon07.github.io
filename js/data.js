@@ -7,7 +7,7 @@
 //   id          : ID unik artikel, dipakai sebagai parameter ?post= di URL
 //   title       : Judul artikel yang ditampilkan
 //   category    : Kategori artikel (digunakan untuk filter dan tombol kategori)
-//   tags        : Daftar tag artikel (digunakan untuk filter dan tombol tag)
+//   tags        : Daftar tag artikel 3 tags (digunakan untuk filter dan tombol tag)
 //   publishedDate : Tanggal publikasi (format YYYY-MM-DD), dipakai pengurutan
 //   publishedTime : Waktu publikasi (opsional, jam 24)
 //   rawUrl      : URL file markdown di raw.githubusercontent.com (bahasa Indonesia)
@@ -20,6 +20,18 @@
 // akhiran -id.md menjadi -en.md, atau .md menjadi -en.md.
 // =============================================================================
 const myProjects = [
+  {
+    id: "sql-injection-portswigger",
+    title: "SQL Injection — PortSwigger Web Security Academy",
+    category: "web-security",
+    tags: ["sql-injection", "portswigger", "database"],
+    publishedDate: "2026-10-30",
+    publishedTime: "22:40",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Port-Swigger/Web-Security-Academy/SQL-Injection/sql-injection-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/SQL-Injection",
+  },
   {
     id: "setup-burpsuite-community",
     title: "How to Setup Burpsuite Community in Browser",
