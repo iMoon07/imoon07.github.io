@@ -21,6 +21,18 @@
 // =============================================================================
 const myProjects = [
   {
+    id: "setup-burpsuite-community",
+    title: "How to Setup Burpsuite Community in Browser",
+    category: "tools",
+    tags: ["burpsuite", "proxy", "tutorial"],
+    publishedDate: "2026-10-29",
+    publishedTime: "19:00",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/burpsuite-community/Setup-Burpsuite-Community-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/burpsuite-community",
+  },
+  {
     id: "server-single-tier-stack",
     title: "Server Single-Tier Stack",
     category: "foundations",
