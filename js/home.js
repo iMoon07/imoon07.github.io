@@ -468,10 +468,9 @@ if (name === 'home') {
 
             const workViews = {
                 list: document.getElementById('workList'),
-                owasp: document.getElementById('owaspDetail'),
-                staticWeb: document.getElementById('staticWebDetail'),
-                syscall: document.getElementById('syscallDetail'),
-                portfolio: document.getElementById('portfolioDetail')
+                 owasp: document.getElementById('owaspDetail'),
+                 staticWeb: document.getElementById('staticWebDetail'),
+                 portfolio: document.getElementById('portfolioDetail')
             };
 
             const workButtons = Array.from(
