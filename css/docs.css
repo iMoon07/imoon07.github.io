@@ -135,9 +135,17 @@ html:has(.docs-page) { scroll-padding-top: calc(var(--docs-header-h) + 16px); }
   display: flex; align-items: center; min-height: 36px; padding: 6px 10px;
   border-radius: 8px; border: 1px solid transparent;
   color: #8d98a1; font-size: 13px; line-height: 1.4; text-decoration: none;
+  transition: color .18s, border-color .18s, background-color .18s;
 }
-.docs-nav-link:hover { color: var(--docs-text); background: rgba(184,205,220,.04); }
-.docs-nav-link.is-active { color: var(--docs-text); background: rgba(184,205,220,.07); border-color: rgba(184,205,220,.08); }
+.docs-nav-link:hover {
+  color: var(--docs-text);
+  background: linear-gradient(90deg, rgba(184,205,220,.05), rgba(184,205,220,0) 80%);
+}
+.docs-nav-link.is-active {
+  color: var(--docs-accent);
+  background: linear-gradient(90deg, rgba(184,205,220,.11), rgba(184,205,220,0) 88%);
+  border-color: transparent;
+}
 
 /* Desktop right TOC */
 .docs-toc .toc { position: static; padding: 0 8px 0 0; border: 0; background: transparent; }
