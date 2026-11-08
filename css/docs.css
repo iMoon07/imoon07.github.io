@@ -207,6 +207,7 @@ html:has(.docs-page) { scroll-padding-top: calc(var(--docs-header-h) + 16px); }
 .docs-drawer-panel::-webkit-scrollbar { display: none; }
 
 
+.docs-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .docs-drawer-nav { display: grid; gap: 2px; margin: 0 0 16px; padding: 0 0 14px; border-bottom: 1px solid var(--docs-border); }
 .docs-drawer-nav a { display: flex; align-items: center; min-height: 44px; padding: 0 4px; border-radius: 0; border-bottom: 1px solid transparent; color: #8d98a1; font-size: 15px; text-decoration: none; background: transparent; }
 .docs-drawer-nav a:hover, .docs-drawer-nav a:focus-visible { color: var(--docs-text); border-bottom-color: rgba(184,205,220,.28); background: transparent; outline: none; }

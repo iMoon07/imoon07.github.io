@@ -61,11 +61,12 @@
     return 'index';
   }
 
-  function moduleSource(m) { return pickPrimary(m); }
+  // simple, clean URLs (like blog/read): keep ?ref + ?lang; do NOT force ?doc.
+  // Loading resolves real -<lang>.md candidates from manifest; URL stays stable.
   function moduleUrl(id) {
     var m = byId[id] || byId.index;
-    var url = 'references.html?ref=' + encodeURIComponent(m.id) + '&doc=' + encodeURIComponent(moduleSource(m));
-    if (LANG && LANG !== 'id') url += '&lang=' + encodeURIComponent(LANG);
+    var url = 'references.html?ref=' + encodeURIComponent(m.id);
+    if (LANG && LANG !== 'en') url += '&lang=' + encodeURIComponent(LANG);
     return url;
   }
 
@@ -148,13 +149,18 @@
     renderPager(m.id);
   }
 
+  function dispatchRef(id, opts) {
+    var m = byId[id] || byId.index;
+    window.__referenceDoc = { id: m.id, src: m.src || '', file: m.file, fallback: m.file, title: m.title, hash: (opts && opts.hash) || '' };
+    window.dispatchEvent(new CustomEvent('references:load', { detail: window.__referenceDoc }));
+  }
+
   function load(id, opts) {
     var m = byId[id] || byId.index;
     applyMeta(m.id);
     history.replaceState(null, '', moduleUrl(m.id));
     renderNav(filter ? filter.value : '');
-    window.__referenceDoc = { src: moduleSource(m), file: m.file, fallback: m.file, title: m.title, id: m.id };
-    window.dispatchEvent(new CustomEvent('references:load', { detail: window.__referenceDoc }));
+    dispatchRef(m.id, opts);
     if (!(opts && opts.keepScroll === true)) {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
@@ -359,8 +365,7 @@
     var hash = (opts && opts.hash) ? '#'+opts.hash : '';
     history.replaceState(null,'', moduleUrl(m.id) + hash);
     renderNav(filter ? filter.value : '');
-    window.__referenceDoc = { src: moduleSource(m), file: m.file, fallback: m.file, title: m.title, id: m.id, hash: (opts&&opts.hash)||'' };
-    window.dispatchEvent(new CustomEvent('references:load', { detail: window.__referenceDoc }));
+    dispatchRef(m.id, opts);
     if (!(opts && (opts.keepScroll===true || opts.hash))) window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
@@ -438,4 +443,6 @@
 
   renderNav('');
   applyMeta(currentId());
+  // Load content immediately on first open (no extra click, no stuck skeleton) — simple like blog/read.
+  dispatchRef(currentId());
 })();
