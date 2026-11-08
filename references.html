@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- References / Documentation hub. Uses shared shell + article reader foundation. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>References - Raja Muhammad Kurnia Setyawan</title>
+    <link rel="icon" type="image/jpeg" href="assets/logos.png">
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="css/shell.css">
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/docs.css">
+</head>
+<body class="article-page docs-page">
+    <div class="site docs-site">
+                <header class="docs-topbar" aria-label="Documentation header">
+            <a class="docs-brand" href="references.html?ref=index" aria-label="iMoon07 Docs home">iMoon07 <span>Docs</span></a>
+            <button type="button" class="docs-search-trigger" id="docs-search-trigger" aria-haspopup="dialog" aria-controls="docs-command" aria-label="Search documentation">
+                <svg class="docs-ico" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+                <span class="docs-search-trigger-label">Search documentation...</span>
+                <kbd>Ctrl K</kbd>
+            </button>
+            <nav class="docs-topnav" aria-label="Primary">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="references.html?ref=index" aria-current="page">Docs</a>
+                <a href="index.html#about">About</a>
+            </nav>
+            <div class="docs-top-actions">
+                <button type="button" class="docs-icon-btn" id="docs-nav-toggle" aria-expanded="false" aria-controls="docs-nav-drawer" aria-label="Open menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                </button>
+                <button type="button" class="article-icon-btn toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="toc-drawer" aria-label="Contents" hidden>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    <span>Contents</span>
+                </button>
+                <button type="button" class="docs-icon-btn" id="docs-search-open" aria-label="Search documentation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="docs-layout" id="docs-layout">
+            <aside class="docs-sidebar" aria-label="Reference categories and materials">
+                <div class="docs-sidebar-inner">
+                    <div class="docs-sidebar-head">
+                        <p class="docs-panel-title">Materials</p>
+                    </div>
+                    <label class="docs-search" for="docs-search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+                        <input id="docs-search" type="search" placeholder="Filter materials" aria-label="Filter materials" autocomplete="off" spellcheck="false">
+                    </label>
+                    <nav id="docs-nav" aria-label="Materials"></nav>
+                </div>
+            </aside>
+
+            <article class="article-column docs-main">
+                <header class="article-header docs-header">
+                    <nav class="docs-breadcrumb" id="docs-breadcrumb" aria-label="Breadcrumb"></nav>
+                    <h1 class="article-title" id="article-title"><span class="title-skeleton" aria-hidden="true"></span></h1>
+                    <p class="article-lede" id="article-lede" hidden></p>
+                    <div class="article-meta" id="article-meta" hidden></div>
+                    <div class="article-tags" id="article-tags" hidden></div>
+                    <div id="article-kicker" hidden><span id="article-category"></span></div>
+                </header>
+
+                <details class="docs-toc-inline" id="docs-toc-inline" hidden>
+                    <summary class="docs-toc-inline-summary">
+                        <span class="docs-toc-inline-label">Contents</span>
+                        <svg class="docs-toc-inline-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </summary>
+                    <nav class="docs-toc-inline-body" aria-label="On this page">
+                        <ul id="toc-list-inline" class="toc-list"></ul>
+                    </nav>
+                </details>
+
+                <div class="prose" id="content">
+                    <div class="article-skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+
+                <nav class="docs-pager" id="docs-pager" aria-label="Material navigation" hidden></nav>
+
+                <footer class="article-end" id="article-end" hidden>
+                    <nav class="article-nav" id="article-nav" aria-label="Article navigation" hidden></nav>
+                    <section class="article-related" id="article-related" hidden>
+                        <div class="related-head"><div class="related-text"><h3 class="related-title" id="related-title"></h3><p class="related-hint" id="related-hint"></p></div><a class="related-cta" id="related-cta" href="references.html"><span id="related-cta-label"></span></a></div>
+                        <div class="related-list" id="related-list"></div>
+                    </section>
+                    <a class="article-source" id="article-source" href="#" target="_blank" rel="noopener noreferrer" hidden></a>
+                </footer>
+                <section class="article-discussion" aria-label="Discussion" hidden></section>
+            </article>
+
+            <aside class="article-toc docs-toc" id="article-toc" aria-label="Table of contents">
+                <div class="toc">
+                    <div class="toc-inner">
+                        <div class="toc-head">
+                            <p class="toc-title">Contents</p>
+                            <span class="toc-meter" aria-hidden="true">
+                                <span class="toc-meter-fill" id="toc-meter-fill"></span>
+                            </span>
+                            <span class="toc-percent" id="toc-percent">0%</span>
+                        </div>
+                        <ul id="toc-list" class="toc-list"></ul>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div class="docs-drawer" id="docs-nav-drawer" hidden>
+        <div class="docs-drawer-backdrop" data-close-docs-nav></div>
+        <div class="docs-drawer-panel" role="dialog" aria-modal="true" aria-label="Materials">
+            <div class="docs-drawer-head">
+                <p class="toc-title">Menu</p>
+                <button type="button" class="docs-action-btn" id="docs-nav-close" aria-label="Close menu">Close</button>
+            </div>
+            <nav class="docs-drawer-nav" aria-label="Primary">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="references.html?ref=index" aria-current="page">Docs</a>
+                <a href="index.html#about">About</a>
+            </nav>
+            <p class="docs-drawer-section">Materials</p>
+            <div id="docs-nav-mobile"></div>
+        </div>
+    </div>
+
+    <div class="toc-drawer" id="toc-drawer" hidden>
+        <div class="toc-drawer-backdrop"></div>
+        <div class="toc-drawer-panel" role="dialog" aria-modal="true" aria-label="Table of contents">
+            <div class="toc-drawer-head">
+                <p class="toc-title">Contents</p>
+                <div class="toc-head-right">
+                    <span class="toc-meter" aria-hidden="true">
+                        <span class="toc-meter-fill" id="toc-meter-fill-mobile"></span>
+                    </span>
+                    <span class="toc-percent" id="toc-percent-mobile">0%</span>
+                    <button type="button" class="article-icon-btn" id="toc-close" aria-label="Close contents">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <ul id="toc-list-mobile" class="toc-list"></ul>
+        </div>
+    </div>
+
+    <div class="docs-command" id="docs-command" hidden aria-hidden="true">
+        <div class="docs-command-backdrop" data-close-command></div>
+        <div class="docs-command-dialog" role="dialog" aria-modal="true" aria-label="Search documentation">
+            <div class="docs-command-input-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+                <input id="docs-command-input" type="search" placeholder="Search iMoon07 Docs…" autocomplete="off" spellcheck="false" aria-controls="docs-command-results" aria-autocomplete="list">
+                <button type="button" class="docs-command-clear" id="docs-command-clear" aria-label="Clear search" hidden>×</button>
+                <kbd class="docs-command-esc" aria-hidden="true">Esc</kbd>
+            </div>
+            <div class="docs-command-status" id="docs-command-status" aria-live="polite"></div>
+            <div class="docs-command-results" id="docs-command-results" role="listbox" aria-label="Search results"></div>
+            <div class="docs-command-foot"><span id="docs-command-foot-text">Ctrl/Cmd+K · Docs only</span></div>
+        </div>
+    </div>
+
+    <script src="js/blog-data.js"></script>
+    <script src="js/markdown.js"></script>
+    <script src="js/docs-references-data.js"></script>
+    <script src="js/read.js"></script>
+    <script src="js/references.js"></script>
+</body>
+</html>

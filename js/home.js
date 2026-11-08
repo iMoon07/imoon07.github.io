@@ -13,7 +13,8 @@
 
             const pages = {
                 home: document.getElementById('homePage'),
-                about: document.getElementById('aboutPage')
+                about: document.getElementById('aboutPage'),
+                references: document.getElementById('referencesPage')
             };
 
             const pageLinks = document.querySelectorAll('[data-page]');
@@ -84,20 +85,20 @@
 
                 if (focusTarget) {
                     const target = name === 'about'
-                        ? document.querySelector(
-                            '.tab[aria-selected="true"]'
-                        )
-                        : document.getElementById('homeTitle');
+                        ? document.querySelector('.tab[aria-selected="true"]')
+                        : name === 'references'
+                            ? document.getElementById('referencesTitle')
+                            : document.getElementById('homeTitle');
 
 if (name === 'home') {
-                    target.setAttribute('tabindex', '-1');
+                    if (target) target.setAttribute('tabindex', '-1');
                     startTypewriter();
                     startSubtitle();
                 } else {
                     stopTypewriter();
                 }
 
-                target.focus({ preventScroll: true });
+                if (target) target.focus({ preventScroll: true });
                 }
             }
 
@@ -148,11 +149,8 @@ if (name === 'home') {
             });
 
             window.addEventListener('hashchange', () => {
-                showPage(
-                    location.hash === '#about'
-                        ? 'about'
-                        : 'home'
-                );
+                var hash = (location.hash || '').replace('#', '');
+                showPage(hash === 'about' ? 'about' : hash === 'references' ? 'references' : 'home');
             });
 
             /* ------------------------------------------------------------ about slider
@@ -755,7 +753,8 @@ if (name === 'home') {
                Resolve the initial page from the hash and set up navigation. */
 
             function initialRoute() {
-                const target = location.hash === '#about' ? 'about' : 'home';
+                var hash = (location.hash || '').replace('#', '');
+                const target = hash === 'about' ? 'about' : hash === 'references' ? 'references' : 'home';
 
                 Object.values(pages).forEach(page => {
                     page.hidden = page !== pages[target];

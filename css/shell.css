@@ -57,7 +57,7 @@
     bottom: 0;
     z-index: 10;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     border-top: 1px solid var(--line);
     background: var(--bg);
 }
@@ -67,9 +67,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: clamp(4px,1.2vw,16px);
     min-height: 78px;
-    padding: 18px clamp(12px, 2.4vw, 36px);
+    padding: 18px clamp(8px, 1.8vw, 36px);
     color: var(--muted);
     font-family: "Segoe UI", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
     font-size: clamp(23px, 2.7vw, 36px);
@@ -174,13 +174,14 @@
 
     .nav-item {
         min-height: 64px;
-        padding: 15px 12px;
-        font-size: 24px;
+        padding: 15px 10px;
+        font-size: 20px;
+        gap: 8px;
     }
 
     .nav-arrow svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -191,9 +192,9 @@
 
     .nav-item {
         min-height: 58px;
-        padding: 12px 6px;
-        font-size: 20px;
-        gap: 6px;
+        padding: 12px 4px;
+        font-size: 16px;
+        gap: 4px;
     }
 
     .nav-arrow {
@@ -201,8 +202,8 @@
     }
 
     .nav-arrow svg {
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
     }
 }
 
@@ -213,9 +214,15 @@
 
     .nav-item {
         min-height: 54px;
-        padding: 10px 4px;
-        font-size: 18px;
-        gap: 4px;
+        padding: 10px 2px;
+        font-size: 14px;
+        gap: 3px;
+        letter-spacing: -.05em;
+    }
+
+    .nav-arrow svg {
+        width: 12px;
+        height: 12px;
     }
 }
 
@@ -246,4 +253,10 @@
 
 @media (max-width: 767px) {
     .blog-page .pagination { border-top: 1px solid var(--line); padding-top: 16px; }
+}
+
+
+@media (max-width: 520px) {
+  .nav-item { gap: 4px; padding: 16px 8px; font-size: clamp(16px, 4.8vw, 22px); letter-spacing: -.03em; }
+  .nav-arrow { display: none; }
 }

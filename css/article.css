@@ -1536,14 +1536,22 @@ html {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding-left: 2px;
+    padding: 0 8px 0 2px;
     scroll-behavior: smooth;
     overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.toc::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 .toc-inner {
     margin: auto 0;
-    padding: 40px 0;
+    padding: 40px 4px 40px 0;
 }
 
 .toc-head {
@@ -1553,8 +1561,8 @@ html {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
-    padding: 8px 0 10px;
+    margin-bottom: 16px;
+    padding: 8px 0 12px;
     background: var(--bg);
     box-shadow: 0 10px 12px -12px var(--bg);
 }
@@ -1609,6 +1617,9 @@ html {
 
 .toc-list {
     position: relative;
+    display: grid;
+    gap: 2px;
+    padding-right: 2px;
 }
 
 .toc-list::before,
@@ -1636,10 +1647,11 @@ html {
 .toc a {
     position: relative;
     display: block;
-    padding: 5px 0 5px 12px;
+    padding: 6px 8px 6px 14px;
     color: #79828a;
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.55;
+    border-radius: 0 6px 6px 0;
     text-decoration: none;
     border-left: 2px solid transparent;
     transition: color .18s, border-color .18s, background-color .18s;
@@ -1651,13 +1663,13 @@ html {
 }
 
 .toc .toc-level-3 a {
-    padding-left: 24px;
+    padding-left: 26px;
     font-size: 12.5px;
 }
 
 .toc .toc-level-4 a {
     padding-left: 36px;
-    font-size: 12.5px;
+    font-size: 12px;
 }
 
 .toc a.is-active {
@@ -1712,13 +1724,22 @@ html {
     top: 0;
     right: 0;
     bottom: 0;
-    width: min(320px, 84vw);
-    padding: 22px;
+    width: min(320px, 88vw);
+    padding: 22px 18px 28px;
     overflow-y: auto;
     border-left: 1px solid var(--line);
     background: #0b0e11;
     scroll-behavior: smooth;
     overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.toc-drawer-panel::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 .toc-drawer-head {
@@ -1759,18 +1780,18 @@ html {
 
 .toc-drawer-panel li {
     margin: 0;
-    border-bottom: 1px solid var(--line);
 }
 
 .toc-drawer-panel a {
     position: relative;
     display: block;
-    padding: 11px 0 11px 14px;
+    padding: 9px 8px 9px 14px;
     margin-left: -8px;
     color: #79828a;
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.55;
     text-decoration: none;
+    border-radius: 0 6px 6px 0;
     border-left: 2px solid transparent;
     transition: color .18s, border-color .18s, background-color .18s;
 }
@@ -1809,12 +1830,12 @@ html {
 }
 
 .toc-drawer-panel .toc-level-3 a {
-    padding-left: 14px;
-    font-size: 13px;
+    padding-left: 26px;
+    font-size: 13.5px;
 }
 
 .toc-drawer-panel .toc-level-4 a {
-    padding-left: 28px;
+    padding-left: 36px;
     font-size: 13px;
 }
 

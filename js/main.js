@@ -5,8 +5,8 @@
    Fetches article metadata from GitHub, filters, paginates, then draws the
    article cards.
 
-   Data sumber ada di js/data.js, markup di blog.html.
-   Source data lives in js/data.js, markup in blog.html.
+   Data sumber ada di js/blog-data.js, markup di blog.html.
+   Source data lives in js/blog-data.js, markup in blog.html.
    ============================================================================= */
 const FETCH_CONCURRENCY = 6;
 const POSTS_PER_PAGE = 10;
@@ -515,16 +515,17 @@ function buildFilterMenu(items) {
 }
 
 // Render satu baris filter: beberapa item langsung, sisanya di dropdown
-function renderFilterGroup(container, items) {
+function renderFilterGroup(container, items, drawerMode) {
     if (!container) return;
 
     container.innerHTML = '';
-    const { visible, hidden } = splitFilters(items);
+    const isDrawer = !!drawerMode || container.id === 'cat-nav-mobile' || container.id === 'tag-nav-mobile';
+    const { visible, hidden } = isDrawer ? { visible: items, hidden: [] } : splitFilters(items);
 
     visible.forEach(item => {
         const link = document.createElement('a');
         link.href = '#';
-        link.className = 'blog-tab' + (item.active ? ' is-active' : '');
+        link.className = (isDrawer ? 'blog-index-link' : 'blog-tab') + (item.active ? ' is-active' : '');
         link.textContent = item.label;
         if (item.dataset) {
             Object.keys(item.dataset).forEach(key => {
@@ -533,12 +534,13 @@ function renderFilterGroup(container, items) {
         }
         link.addEventListener('click', event => {
             event.preventDefault();
+            if (isDrawer && typeof closeBlogIndexDrawer === 'function') closeBlogIndexDrawer();
             item.onClick();
         });
         container.appendChild(link);
     });
 
-    if (hidden.length) {
+    if (!isDrawer && hidden.length) {
         container.appendChild(buildFilterMenu(hidden));
     }
 }
@@ -577,7 +579,9 @@ function renderCategories() {
         });
     });
 
-    renderFilterGroup(catNav, items, window.innerWidth < 700 ? 100 : 8);
+    renderFilterGroup(catNav, items);
+    var catMobile = document.getElementById('cat-nav-mobile');
+    if (catMobile) renderFilterGroup(catMobile, items, true);
 }
 
 function renderTags() {
@@ -609,7 +613,9 @@ function renderTags() {
         });
     });
 
-    renderFilterGroup(tagNav, items, window.innerWidth < 700 ? 3 : 1000);
+    renderFilterGroup(tagNav, items);
+    var tagMobile = document.getElementById('tag-nav-mobile');
+    if (tagMobile) renderFilterGroup(tagMobile, items, true);
 }
 
 function renderTagsClear() {
@@ -675,6 +681,8 @@ if (nextPageBtn) {
 // Tutup dropdown filter saat klik di luar
 document.addEventListener('click', closeFilterMenus);
 document.addEventListener('keydown', event => {
+    var cmd = document.getElementById('blog-command');
+    if (cmd && !cmd.hidden) return; // handled by command palette
     if (event.key === 'Escape') closeFilterMenus();
 });
 
@@ -691,3 +699,119 @@ window.addEventListener('resize', () => {
 
 // Initialize application
 window.blogReady = initEngine();
+
+/* ---------------------------------------------------------------- command palette (Ctrl+K)
+   Quick post search like Docs (title/category/tags). Bottom nav not affected. */
+function setupBlogCommand() {
+    var cmd = document.getElementById('blog-command');
+    var input = document.getElementById('blog-command-input');
+    var results = document.getElementById('blog-command-results');
+    if (!cmd || !input || !results || typeof myProjects === 'undefined') return;
+    var active = -1;
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function _open() {
+        cmd.hidden = false; cmd.setAttribute('aria-hidden', 'false');
+        input.value = ''; active = -1; render('');
+        setTimeout(function () { try{input.focus();}catch(_){} }, 0);
+    }
+    function _close() {
+        if (cmd.hidden) return;
+        cmd.hidden = true; cmd.setAttribute('aria-hidden', 'true'); active = -1;
+    }
+    function open(){ if (window.__blogCmdOpen && window.__blogCmdOpen !== open) { window.__blogCmdOpen(); active=-1; render(''); } else _open(); }
+    function close(){ if (window.__blogCmdClose && window.__blogCmdClose !== close) window.__blogCmdClose(); else _close(); active=-1; }
+    function ranked(query) {
+        var q = String(query || '').trim().toLowerCase();
+        var list = myProjects.slice();
+        if (q) {
+            list = list.map(function (p) {
+                var title = String(p.title || p.id || '').toLowerCase();
+                var cat = String(p.category || '').toLowerCase();
+                var tags = (p.tags || []).join(' ').toLowerCase();
+                var score = 0;
+                if (title.indexOf(q) !== -1) score += 4;
+                if (tags.indexOf(q) !== -1) score += 2;
+                if (cat.indexOf(q) !== -1) score += 1;
+                return { p: p, score: score };
+            }).filter(function (x) { return x.score > 0; }).sort(function (a,b){ return b.score-a.score; }).map(function (x){ return x.p; });
+        }
+        return list.slice(0, 14);
+    }
+    function render(query) {
+        var q = String(query || '').trim();
+        var items = ranked(q);
+        if (!items.length) {
+            results.innerHTML = '<div class="blog-command-empty">' + (q ? 'No posts for “' + esc(q) + '”.' : 'Type to search posts.') + '</div>';
+            active = -1; return;
+        }
+        results.innerHTML = items.map(function (p, i) {
+            var meta = [p.category ? formatCategory(p.category) : '', (p.tags && p.tags[0]) ? '#' + p.tags[0] : ''].filter(Boolean).join(' · ');
+            return '<a class="blog-command-item' + (i===active?' is-active':'') + '" role="option" data-i="' + i + '" href="read.html?post=' + encodeURIComponent(p.id) + '" aria-selected="' + (i===active) + '">' +
+                '<span><span class="title">' + esc(p.title || p.id) + '</span>' + (p.tags && p.tags.length ? '<span class="snippet">' + esc(p.tags.slice(0,4).map(function(t){return '#'+t;}).join(' ')) + '</span>' : '') + '</span>' +
+                '<span class="meta">' + esc(meta) + '</span></a>';
+        }).join('');
+        results.querySelectorAll('.blog-command-item').forEach(function (el) {
+            el.addEventListener('mousemove', function () {
+                active = Number(el.getAttribute('data-i')) || 0;
+                results.querySelectorAll('.blog-command-item').forEach(function (x, i) { x.classList.toggle('is-active', i===active); x.setAttribute('aria-selected', i===active); });
+            });
+            el.addEventListener('click', function () { close(); });
+        });
+    }
+    window.__blogCmdRender = render;
+    input.addEventListener('input', function () { active = -1; render(input.value); });
+    input.addEventListener('keydown', function (e) {
+        var items = results.querySelectorAll('.blog-command-item');
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (items.length) { active = Math.min(items.length-1, active+1); render(input.value); items[active] && items[active].scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); if (items.length) { active = Math.max(0, active-1); render(input.value); items[active] && items[active].scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'Enter' && active >= 0 && items[active]) { /* let link navigate */ }
+        else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+    cmd.addEventListener('click', function (e) { if (e.target && e.target.hasAttribute('data-close-blog-cmd')) close(); });
+    // Ctrl/Cmd+K handled by early capture handler (window.__blogCmdToggle)
+    // Ctrl+K hint/button opens palette; inline search tetap untuk filter judul di halaman
+    [document.getElementById('blog-cmd-open'), document.querySelector('.blog-search-kbd')].filter(Boolean).forEach(function (el) {
+        if (el._blogCmd) return; el._blogCmd = true;
+        el.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); open(); });
+    });
+}
+
+/* Blog Index drawer (mobile menu: Home/Blog/Docs/About + Category + Tags), like References menu. */
+function openBlogIndexDrawer() {
+    var d = document.getElementById('blog-index-drawer'); if (!d) return;
+    d.hidden = false; d.setAttribute('aria-hidden','false');
+    var b = document.getElementById('blog-menu-open'); if (b) b.setAttribute('aria-expanded','true');
+}
+function closeBlogIndexDrawer() {
+    var d = document.getElementById('blog-index-drawer'); if (!d) return;
+    d.hidden = true; d.setAttribute('aria-hidden','true');
+    var b = document.getElementById('blog-menu-open'); if (b) b.setAttribute('aria-expanded','false');
+}
+function setupBlogIndexDrawer() {
+    if (window.__blogDrawerSetup) return;
+    var openBtn = document.getElementById('blog-menu-open');
+    if (!openBtn && !document.getElementById('blog-index-drawer')) return;
+    window.__blogDrawerSetup = true;
+    var closeBtn = document.getElementById('blog-index-close');
+    var searchBtn = document.getElementById('blog-search-open');
+    if (openBtn) openBtn.addEventListener('click', function(e){ e.preventDefault(); openBlogIndexDrawer(); });
+    if (closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); closeBlogIndexDrawer(); });
+    if (searchBtn) searchBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        var wrap = document.querySelector('.blog-search');
+        var inp = document.getElementById('post-search');
+        if (wrap) { wrap.classList.add('is-mobile-open'); }
+        if (inp) { try { inp.focus(); inp.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch(_){} }
+    });
+    var drawer = document.getElementById('blog-index-drawer');
+    if (drawer) drawer.addEventListener('click', function(e){ if (e.target && (e.target.hasAttribute('data-close-blog-drawer') || e.target.closest('[data-close-blog-drawer]'))) closeBlogIndexDrawer(); });
+    document.addEventListener('keydown', function(e){
+        var d=document.getElementById('blog-index-drawer');
+        if ((e.key==='Escape'||e.code==='Escape') && d && !d.hidden) closeBlogIndexDrawer();
+    }, true);
+}
+function renderBlogCommand(q){ var inp=document.getElementById('blog-command-input'); if(inp && typeof inp.dispatchEvent==='function'){ var ev=document.createEvent('Event'); ev.initEvent('input',true,true); if(q!=null) inp.value=q; inp.dispatchEvent(ev);} }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupBlogIndexDrawer); else setupBlogIndexDrawer();

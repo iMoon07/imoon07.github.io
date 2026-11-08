@@ -7,7 +7,7 @@
      DAFTAR ARTIKEL / ARTICLE LISTING
      Halaman blog: filter, pagination, dan daftar artikel.
      The blog page: filters, pagination, and the article list.
-     Data artikel diambil dari js/data.js lalu dimuat lewat js/main.js.
+     Data artikel diambil dari js/blog-data.js lalu dimuat lewat js/main.js.
      ========================================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,6 +31,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="css/shell.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/docs.css">
 </head>
 <body class="blog-page">
     <div class="site">
@@ -39,6 +40,15 @@
                 <div class="blog-head-text">
                     <h1 class="blog-title" id="cat-title">Latest posts</h1>
                     <span class="blog-count" id="post-count"></span>
+                </div>
+
+                <div class="blog-head-actions" aria-label="Blog actions">
+                    <button type="button" class="blog-icon-btn" id="blog-menu-open" aria-expanded="false" aria-controls="blog-index-drawer" aria-label="Open menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                    </button>
+                    <button type="button" class="blog-icon-btn" id="blog-search-open" aria-label="Search title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+                    </button>
                 </div>
 
                 <div class="blog-search">
@@ -58,24 +68,12 @@
                 </div>
             </div>
 
-            <!-- FILTER + PAGINATION TETAP DI ATAS (sticky), hanya daftar artikel yang di-scroll
-                 Filter dan pagination menempel di atas, daftar artikel yang digulir.
-                 Filters and pagination stay on top, only the article list scrolls. -->
-            <div class="blog-sticky">
+            <!-- Desktop: filter bar tetap di atas (scroll list). Mobile: filter masuk ke Index drawer. Bottom nav tetap di bawah. -->
+            <div class="blog-sticky blog-filters-desktop">
                 <div class="blog-filters">
-                    <nav class="blog-filter-group" id="cat-nav-container" aria-label="Categories">
-                        <!-- Categories rendered dynamically via JS
-                             Kategori digambar dari metadata artikel.
-                             Categories are drawn from the article metadata. -->
-                    </nav>
-
+                    <nav class="blog-filter-group" id="cat-nav-container" aria-label="Categories"></nav>
                     <span class="blog-divider" aria-hidden="true"></span>
-
-                    <nav class="blog-filter-group blog-tag-group" id="tag-nav-container" aria-label="Tags">
-                        <!-- Tags rendered dynamically via JS
-                             Tag digambar dari metadata artikel.
-                             Tags are drawn from the article metadata. -->
-                    </nav>
+                    <nav class="blog-filter-group blog-tag-group" id="tag-nav-container" aria-label="Tags"></nav>
                 </div>
             </div>
 
@@ -108,34 +106,38 @@
                 </div>
 
             </div>
-        </main>
+    </main>
 
-        <nav class="navigation" aria-label="Main navigation">
-            <a class="nav-item" href="index.html">
-                Home
-                <span class="nav-arrow" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                </span>
-            </a>
+    <div class="docs-drawer blog-index-drawer" id="blog-index-drawer" hidden>
+        <div class="docs-drawer-backdrop" data-close-blog-drawer></div>
+        <div class="docs-drawer-panel" role="dialog" aria-modal="true" aria-label="Blog index">
+            <div class="docs-drawer-head">
+                <p class="toc-title">Index</p>
+                <button type="button" class="docs-action-btn" id="blog-index-close" aria-label="Close menu">Close</button>
+            </div>
+            <nav class="docs-drawer-nav" aria-label="Primary">
+                <a href="index.html">Home</a>
+                <a href="blog.html" aria-current="page">Blog</a>
+                <a href="references.html?ref=index">Docs</a>
+                <a href="index.html#about">About</a>
+            </nav>
+            <p class="docs-drawer-section">Category</p>
+            <nav id="cat-nav-mobile" class="blog-index-links" aria-label="Categories"></nav>
+            <p class="docs-drawer-section">Tags</p>
+            <nav id="tag-nav-mobile" class="blog-index-links blog-index-tags" aria-label="Tags"></nav>
+        </div>
+    </div>
 
-            <a class="nav-item" href="blog.html" aria-current="page">
-                Blog
-                <span class="nav-arrow" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                </span>
-            </a>
-
-            <a class="nav-item" href="index.html#about">
-                About
-                <span class="nav-arrow" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                </span>
-            </a>
+        <nav class="navigation blog-bottom-nav" aria-label="Main navigation">
+            <a class="nav-item" href="index.html">Home<span class="nav-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span></a>
+            <a class="nav-item" href="blog.html" aria-current="page">Blog<span class="nav-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span></a>
+            <a class="nav-item" href="references.html?ref=index">Docs<span class="nav-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span></a>
+            <a class="nav-item" href="index.html#about">About<span class="nav-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span></a>
         </nav>
     </div>
 
     <!-- Scripts -->
-    <script src="js/data.js"></script>
+    <script src="js/blog-data.js"></script>
     <script src="js/main.js"></script>
     <script>
         // Global Lang State
@@ -186,24 +188,6 @@
             }
         })();
 
-        /* PAGE TRANSITION — same opacity motion as home -> about */
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-        document.querySelectorAll('.navigation .nav-item[href^="index.html"]')
-            .forEach(link => {
-                link.addEventListener('click', event => {
-                    event.preventDefault();
-
-                    const content = document.querySelector('.blog-content');
-
-                    content.classList.remove('page-enter');
-                    content.classList.add('page-leave');
-
-                    setTimeout(() => {
-                        window.location.href = link.getAttribute('href');
-                    }, reducedMotion.matches ? 0 : 180);
-                });
-            });
     </script>
 </body>
 </html>

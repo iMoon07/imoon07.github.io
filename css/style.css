@@ -385,15 +385,17 @@ body.blog-page {
     width: 100%;
     max-width: 320px;
     margin-left: auto;
-    padding: 0 14px;
-    border: 1px solid #2c3034;
-    border-radius: 999px;
+    padding: 10px 2px;
+    border: 0;
+    border-bottom: 1px solid rgba(184,205,220,.12);
+    border-radius: 0;
     background: transparent;
+    box-shadow: none;
     transition: border-color .2s;
 }
 
 .blog-search:focus-within {
-    border-color: #4a5157;
+    border-bottom-color: rgba(184,205,220,.32);
 }
 
 .blog-search-icon {
@@ -409,7 +411,7 @@ body.blog-page {
 .blog-search-input {
     flex: 1 1 auto;
     min-width: 0;
-    padding: 10px 0;
+    padding: 0;
     border: 0;
     background: transparent;
     color: var(--text);
@@ -434,20 +436,20 @@ body.blog-page {
     display: grid;
     place-items: center;
     flex: none;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     padding: 0;
-    border: 1px solid #2c3034;
-    border-radius: 50%;
+    border: 0;
+    border-radius: 4px;
     background: transparent;
     color: #6b737a;
     cursor: pointer;
-    transition: border-color .2s, color .2s;
+    transition: color .2s, background-color .15s;
 }
 
 .blog-search-clear:hover {
-    border-color: #4a5157;
     color: var(--text);
+    background: rgba(229,231,233,.06);
 }
 
 /* ---------------------------------------------------------------- filter
@@ -458,8 +460,10 @@ body.blog-page {
     position: sticky;
     top: 0;
     z-index: 6;
-    background: var(--bg);
-    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(184,205,220,.08);
     margin-bottom: 22px;
 }
 
@@ -467,24 +471,26 @@ body.blog-page {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 6px 18px;
+    gap: 8px 14px;
     padding: 10px 0 12px;
 }
 
-/* Satu baris filter: kategori | tag, tanpa label bertumpuk */
+/* Filter: kategori | tag, rapi dan bisa di-scroll horizontal di mobile */
 
 .blog-filter-group {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 2px 22px;
+    gap: 4px 14px;
     margin: 0;
+    min-width: 0;
 }
 
 .blog-divider {
     width: 1px;
     height: 14px;
-    background: var(--line);
+    background: rgba(184,205,220,.12);
+    flex: 0 0 auto;
 }
 
 .blog-tag-group .blog-tab {
@@ -492,31 +498,33 @@ body.blog-page {
 }
 
 /* ---------------------------------------------------------------- filter dropdown
-   Menu "+N" supaya filter banyak tidak makan tempat.
-   The "+N" menu so many filters do not take up room. */
+   Menu "+N" supaya filter banyak tidak makan tempat. */
 
 .blog-page .filter-more-wrap {
     position: relative;
     display: inline-flex;
+    flex: 0 0 auto;
 }
 
 .blog-page .filter-more {
-    padding: 4px 11px;
-    border: 1px solid var(--line);
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid rgba(184,205,220,.14);
     border-radius: 999px;
-    background: transparent;
-    color: var(--muted);
+    background: rgba(184,205,220,.03);
+    color: #8d98a1;
     font: inherit;
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1;
     cursor: pointer;
-    transition: color .2s, border-color .2s;
+    transition: color .2s, border-color .2s, background-color .2s;
 }
 
 .blog-page .filter-more:hover,
 .blog-page .filter-more[aria-expanded="true"] {
     color: #fff;
-    border-color: #4a5157;
+    border-color: rgba(184,205,220,.28);
+    background: rgba(184,205,220,.06);
 }
 
 .blog-page .filter-menu {
@@ -524,34 +532,43 @@ body.blog-page {
     top: calc(100% + 8px);
     left: 0;
     z-index: 30;
-    min-width: 150px;
+    min-width: 170px;
+    max-width: min(320px, calc(100vw - 32px));
     max-height: min(46vh, 320px);
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 6px;
-    border: 1px solid var(--line);
-    background: #0d1117;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, .6);
+    border: 1px solid rgba(184,205,220,.12);
+    border-radius: 12px;
+    background: color-mix(in srgb, #0d1117 86%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .45);
+    scrollbar-width: none;
 }
+.blog-page .filter-menu::-webkit-scrollbar { display: none; }
 
 .blog-page .filter-menu-item {
     display: block;
-    padding: 7px 10px;
-    color: var(--muted);
+    min-height: 40px;
+    padding: 10px 10px;
+    border-radius: 8px;
+    color: #8d98a1;
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.35;
     text-decoration: none;
     white-space: nowrap;
 }
 
 .blog-page .filter-menu-item:hover {
     color: #fff;
-    background: #171c21;
+    background: rgba(184,205,220,.06);
     text-decoration: none;
 }
 
 .blog-page .filter-menu-item.is-active {
     color: #fff;
+    background: rgba(184,205,220,.08);
 }
 
 .blog-head-main {
@@ -1071,69 +1088,55 @@ body.blog-page {
    Ponsel: satu kolom, gambar di atas.
    Phone: a single column with the image on top. */
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
     .blog-head {
-        padding: 26px 0 14px;
-        margin-bottom: 10px;
+        padding: 22px 0 10px;
+        margin-bottom: 8px;
+        align-items: flex-start;
     }
+    .blog-head-text { gap: 6px 10px; }
+    .blog-title { font-size: clamp(24px, 7vw, 32px); }
+    .blog-count { font-size: 13px; }
 
     .blog-search {
         max-width: none;
         margin-left: 0;
-        margin-top: 12px;
+        margin-top: 10px;
     }
 
-    .blog-toolbar {
-        gap: 8px 28px;
-        margin-top: 16px;
+    /* Mobile: filter horizontal scroll (rapi), bottom nav tetap tidak diubah */
+    .blog-sticky { margin-bottom: 14px; background: color-mix(in srgb, var(--bg) 92%, transparent); }
+    .blog-filters {
+        flex-wrap: nowrap;
+        gap: 8px 10px;
+        padding: 8px 0 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
+        -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
     }
+    .blog-filters::-webkit-scrollbar { display: none; }
+    .blog-filter-group { flex-wrap: nowrap; gap: 2px 16px; flex: 0 0 auto; }
+    .blog-divider { display: none; }
+    .blog-tab { white-space: nowrap; flex: 0 0 auto; font-size: 13px; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; }
+    .blog-page .filter-menu { position: fixed; left: 16px; right: 16px; top: auto; bottom: calc(96px + env(safe-area-inset-bottom)); max-height: min(42vh, 280px); z-index: 40; }
 
     .blog-page .post-item,
     .blog-page .post-lead {
         grid-template-columns: 1fr;
         gap: 14px;
     }
-
     .blog-page .post-media,
-    .blog-page .post-lead .post-media {
-        aspect-ratio: 16 / 9;
-        max-height: 24vh;
-        max-height: 24svh;
-    }
-
-    .blog-page .post-lead .post-title {
-        font-size: clamp(26px, 7.4vw, 34px);
-    }
-
-    .blog-page .post-title {
-        margin-top: 12px;
-    }
-
-    .blog-page .post-desc {
-        margin-top: 12px;
-        font-size: 16px;
-    }
-
-    .blog-page .pagination {
-        gap: 10px;
-        padding: 12px 0 14px;
-    }
-
-    .blog-page .page-numbers {
-        gap: 8px;
-    }
-
-    .blog-page .page-number,
-    .blog-page .page-arrow {
-        width: 38px;
-        height: 38px;
-        font-size: 12.5px;
-    }
-
-    .blog-page .page-ellipsis {
-        width: 14px;
-        font-size: 12px;
-    }
+    .blog-page .post-lead .post-media { aspect-ratio: 16 / 9; max-height: 24vh; max-height: 24svh; }
+    .blog-page .post-lead .post-title { font-size: clamp(26px, 7.4vw, 34px); }
+    .blog-page .post-title { margin-top: 12px; }
+    .blog-page .post-desc { margin-top: 12px; font-size: 16px; }
+    .blog-page .pagination { gap: 10px; padding: 12px 0 14px; }
+    .blog-page .page-numbers { gap: 8px; }
+    .blog-page .page-number, .blog-page .page-arrow { width: 38px; height: 38px; font-size: 12.5px; }
+    .blog-page .page-ellipsis { width: 14px; font-size: 12px; }
 }
 
 
@@ -1242,3 +1245,96 @@ body.blog-page {
     scrollbar-width: none;
 }
 #cat-nav-container::-webkit-scrollbar { display: none; }
+
+/* ===== Blog command palette (Ctrl+K) — modeled on docs, scoped to blog ===== */
+.blog-command[hidden] { display: none !important; }
+.blog-command { position: fixed; inset: 0; z-index: 100; }
+.blog-command-backdrop { position: absolute; inset: 0; background: rgba(4,6,8,.55); backdrop-filter: blur(4px); }
+.blog-command-dialog {
+  position: relative; width: min(640px, calc(100vw - 24px)); margin: min(10vh, 72px) auto 0;
+  border: 1px solid rgba(184,205,220,.14); border-radius: 14px;
+  background: color-mix(in srgb, #0d1117 86%, transparent); backdrop-filter: blur(14px) saturate(120%); -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 24px 80px rgba(0,0,0,.42); overflow: hidden;
+}
+.blog-command-input-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(184,205,220,.1); background: transparent; cursor: text; }
+.blog-command-input-wrap svg { flex: none; color: #74808a; }
+.blog-command-input-wrap input { flex: 1; min-width: 0; min-height: 44px; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 16px; box-shadow: none; }
+.blog-command-input-wrap input:focus { outline: none; }
+.blog-command-esc { flex: none; min-height: 36px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #74808a; font: inherit; font-size: 12px; cursor: pointer; }
+.blog-command-results { max-height: min(50vh, 420px); overflow: auto; padding: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.blog-command-results::-webkit-scrollbar { display: none; }
+.blog-command-item { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--text); font: inherit; text-align: left; cursor: pointer; text-decoration: none; }
+.blog-command-item:hover, .blog-command-item.is-active { background: rgba(184,205,220,.05); }
+.blog-command-item .meta { color: #6f7a84; font-size: 12px; white-space: nowrap; }
+.blog-command-item .title { font-size: 14px; }
+.blog-command-item .snippet { display: block; margin-top: 3px; color: #7f8a94; font-size: 12px; line-height: 1.4; }
+.blog-command-empty { padding: 18px 12px; color: #6f7a84; font-size: 14px; }
+.blog-command-foot { padding: 10px 14px; border-top: 1px solid rgba(184,205,220,.08); color: #59636c; font-size: 12px; margin: 0; }
+.blog-search-kbd { flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 0 8px; border: 1px solid rgba(184,205,220,.12); border-radius: 6px; background: transparent; color: #6b737a; font: inherit; font-size: 11px; cursor: pointer; appearance: none; -webkit-appearance: none; }
+.blog-search-kbd:hover, .blog-search-kbd:focus-visible { color: var(--text); border-color: rgba(184,205,220,.24); outline: none; }
+@media (max-width: 760px) {
+  .blog-search-kbd { display: none; }
+  .blog-command-dialog { width: calc(100vw - 16px); margin-top: 8px; border-radius: 12px; }
+  .blog-command-esc { display: none; }
+  .blog-command-foot { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blog-command-item { transition: none !important; }
+}
+
+/* Blog mobile: references-like header actions + Index drawer (bottom nav unchanged) */
+.blog-head-actions { display: none; gap: 8px; margin-left: auto; align-items: center; flex: 0 0 auto; }
+.blog-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; min-width: 44px; border: 0; border-radius: 10px;
+  background: transparent; color: #9aa5ae; cursor: pointer; padding: 0;
+}
+.blog-icon-btn:hover, .blog-icon-btn:focus-visible { color: var(--text); background: rgba(184,205,220,.05); outline: none; }
+
+/* Index drawer content (uses docs-drawer shell from docs.css) */
+.blog-page .docs-drawer-panel { background: color-mix(in srgb, var(--bg) 86%, transparent); }
+.blog-index-links { display: grid; gap: 2px; margin: 0 0 14px; }
+.blog-index-link {
+  display: flex; align-items: center; min-height: 44px; padding: 10px 12px;
+  border: 0; border-radius: 10px; background: transparent; color: #8d98a1;
+  font-size: 14px; line-height: 1.4; text-decoration: none;
+}
+.blog-index-link:hover, .blog-index-link:focus-visible { color: var(--text); background: rgba(184,205,220,.05); outline: none; }
+.blog-index-link.is-active { color: var(--text); background: rgba(184,205,220,.07); }
+.blog-index-tags .blog-index-link { color: #7d868d; }
+.blog-index-tags .blog-index-link.is-active { color: var(--text); }
+
+@media (max-width: 760px) {
+  .blog-head { align-items: center; gap: 10px 12px; padding: 18px 0 10px; }
+  .blog-head-text { flex: 1 1 auto; min-width: 0; }
+  .blog-head-actions { display: flex; }
+  .blog-search { display: none; } /* mobile/tablet uses search icon -> palette */
+  .blog-filters-desktop { display: none; } /* categories/tags moved to Index drawer */
+  /* Full-screen drawer like references mobile */
+  .blog-page .docs-drawer { align-items: stretch; }
+  .blog-page .docs-drawer .docs-drawer-panel {
+    inset: 0; width: 100%; max-width: none; border: 0; border-radius: 0;
+    padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
+  }
+  .blog-page .docs-drawer-head { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(184,205,220,.1); }
+  .blog-page .docs-drawer-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 12px; margin: 0 0 18px; padding: 0 0 14px; }
+  .blog-page .docs-drawer-nav a { justify-content: center; min-height: 44px; padding: 0 2px; font-size: 14px; font-weight: 500; text-align: center; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; }
+  .blog-page .docs-drawer-nav a[aria-current="page"] { color: var(--text); border-bottom-color: rgba(184,205,220,.5); background: transparent; }
+  .blog-page .docs-drawer-section { padding: 0 4px; }
+}
+@media (max-width: 380px) {
+  .blog-page .docs-drawer-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
+}
+
+/* Bottom nav: tetap tampil di desktop dan browser view (sesuai permintaan). Mobile tetap bisa akses via Index drawer juga. */
+@media (max-width: 760px) {
+  .blog-page .blog-bottom-nav.navigation { display: none !important; }
+}
+@media (min-width: 761px) {
+  .blog-page .blog-bottom-nav.navigation { display: grid; }
+}
+
+/* Mobile search icon opens title filter */
+@media (max-width: 760px) {
+  .blog-search.is-mobile-open { display: flex !important; width: 100%; max-width: none; margin: 8px 0 0; order: 3; }
+}

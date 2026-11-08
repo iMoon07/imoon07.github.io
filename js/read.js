@@ -5,21 +5,31 @@
    Fetches markdown, renders it to HTML, then wires the interactions: TOC,
    lightbox, video, giscus, and the reading progress bar.
 
-   Markup ada di read.html, data artikel di js/data.js, extension markdown
+   Markup ada di read.html, data artikel di js/blog-data.js, extension markdown
    di js/markdown.js. Berkas ini tidak mengubah isi markdown sumber.
-   Markup lives in read.html, article data in js/data.js, markdown extensions
+   Markup lives in read.html, article data in js/blog-data.js, markdown extensions
    in js/markdown.js. This file never rewrites the source markdown.
    ============================================================================= */
 
 const urlParams = new URLSearchParams(window.location.search);
 let postId = urlParams.get('post');
-const lang = urlParams.get('lang') || 'id';
+const langParamRaw = urlParams.get('lang');
+const docParamEarly = (urlParams.get('doc') || '').trim();
+const refParamEarly = (urlParams.get('ref') || '').trim();
+const lang = (langParamRaw || ((docParamEarly || refParamEarly) ? 'en' : 'id')).toLowerCase();
+function isSafeDocSource(src) {
+    if (!src || src.indexOf('..') !== -1) return false;
+    if (/^docs\/references\/[a-z0-9._-]+\.md$/i.test(src.replace(/^\/+/, ''))) return true;
+    return /^https:\/\/raw\.githubusercontent\.com\/iMoon07\/Penjelajah-CyberSecurity\/(main|master)\/References\/[a-z0-9._-]+\.md$/i.test(src);
+}
+const docParam = (urlParams.get('doc') || '').trim();
+const docMode = isSafeDocSource(docParam);
 
 if (!postId && window.location.pathname.endsWith('about.html')) {
     postId = 'about-me';
 }
 
-let repoUrl = urlParams.get('url');
+let repoUrl = docMode ? docParam.replace(/^\/+/, '') : urlParams.get('url');
 let currentProject = null;
 let relatedPage = 1;
 
@@ -35,6 +45,8 @@ const el = {
     category: document.getElementById('article-category'),
     toc: document.getElementById('toc-list'),
     tocMobile: document.getElementById('toc-list-mobile'),
+    tocInline: document.getElementById('toc-list-inline'),
+    tocInlineWrap: document.getElementById('docs-toc-inline'),
     tocAside: document.getElementById('article-toc'),
     tocToggle: document.getElementById('toc-toggle'),
     tocClose: document.getElementById('toc-close'),
@@ -59,6 +71,54 @@ function escapeHtml(value) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+
+const _mdTextCache = Object.create(null);
+function _docLang() { try { return (new URLSearchParams(location.search).get('lang') || 'en').toLowerCase(); } catch(_){ return 'en'; } }
+function _langVariantMd(src, lang) {
+    if (!src || !lang || !/\.md$/i.test(src)) return src;
+    return src.replace(/(?:-[a-z]{2})?\.md$/i, '-' + lang + '.md');
+}
+function _docBaseName(src) {
+    var m = String(src||'').match(/([a-z0-9._-]+?)(?:-[a-z]{2})?\.md$/i);
+    return m ? m[1] : '';
+}
+function _fetchMdOnce(url) {
+    if (!url) return Promise.reject(new Error('no-url'));
+    if (_mdTextCache[url]) return _mdTextCache[url];
+    var abs = url;
+    try { if (!/^https?:/i.test(url)) abs = new URL(url, location.href).href; } catch(_){}
+    function go(u){
+        var ctl = (typeof AbortController!=='undefined') ? new AbortController() : null;
+        var t = setTimeout(function(){ try{ctl&&ctl.abort();}catch(_){} }, 15000);
+        return fetch(u, { signal: ctl?ctl.signal:undefined, cache: 'no-store' }).then(function(r){
+            clearTimeout(t);
+            if (r && r.ok) return r.text();
+            throw new Error('http-'+(r?r.status:0));
+        }).catch(function(e){
+            clearTimeout(t);
+            // XHR fallback (file:// / quirky cases)
+            return new Promise(function(resolve, reject){
+                try {
+                    var x = new XMLHttpRequest(); x.open('GET', u, true); x.timeout = 15000;
+                    x.onload = function(){ if ((x.status>=200&&x.status<300) || (x.status===0&&x.responseText)) resolve(x.responseText); else reject(e||new Error('xhr-'+x.status)); };
+                    x.onerror = function(){ if (x.responseText) resolve(x.responseText); else reject(e||new Error('xhr')); };
+                    x.ontimeout = function(){ reject(e||new Error('timeout')); }; x.send();
+                } catch(xe){ reject(e||xe); }
+            });
+        });
+    }
+    var p = go(abs).catch(function(){ return abs!==url ? go(url) : Promise.reject(new Error('all')); })
+        .then(function(t){ if(typeof t!=='string') throw new Error('empty'); return t; })
+        .catch(function(e){ delete _mdTextCache[url]; throw e; });
+    _mdTextCache[url]=p; return p;
+}
+function _fetchFirstMd(urls) {
+    var list=(urls||[]).filter(Boolean), seen={}; list=list.filter(function(u){ return seen[u]?false:(seen[u]=1,true); });
+    var i=0, errs=[];
+    function next(){ if(i>=list.length){ var e=new Error('all-failed'); e.errors=errs; throw e; } var u=list[i++]; return _fetchMdOnce(u).then(function(t){ return {text:t,url:u}; }).catch(function(er){ errs.push(u+' -> '+(er&&er.message)); return next(); }); }
+    return Promise.resolve().then(next);
 }
 
 function slugify(text) {
@@ -935,6 +995,7 @@ function renderToc(headings) {
         if (el.tocAside) el.tocAside.hidden = true;
         if (el.tocToggle) el.tocToggle.hidden = true;
         if (el.drawer) el.drawer.hidden = true;
+        if (el.tocInlineWrap) el.tocInlineWrap.hidden = true;
         return;
     }
 
@@ -944,21 +1005,25 @@ function renderToc(headings) {
 
     if (el.toc) el.toc.innerHTML = html;
     if (el.tocMobile) el.tocMobile.innerHTML = html;
+    if (el.tocInline) el.tocInline.innerHTML = html;
+    if (el.tocInlineWrap) el.tocInlineWrap.hidden = false;
 }
 
 // Garis baca: tepat di bawah bar sticky, jadi judul yang baru dilewati
 // dianggap sedang dibaca
 function tocReadingLine() {
-    const bar = document.querySelector('.article-bar');
+    const bar = document.querySelector('.docs-topbar') || document.querySelector('.article-bar');
     const barHeight = bar ? bar.getBoundingClientRect().height : 0;
     return barHeight + TOC_SCROLL_GAP;
 }
 
 // Tinggi bar sticky dipakai CSS supaya kolom TOC tidak ketutup bar
 function syncStickyOffset() {
-    const bar = document.querySelector('.article-bar');
+    const docsBar = document.querySelector('.docs-topbar');
+    const bar = docsBar || document.querySelector('.article-bar');
     if (!bar) return;
-    document.documentElement.style.setProperty('--sticky-offset', `${Math.round(bar.getBoundingClientRect().height)}px`);
+    const h = Math.round(bar.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty('--sticky-offset', `${h}px`);
 }
 
 function scrollToHeading(id, smooth) {
@@ -1004,6 +1069,7 @@ function setupToc(headings) {
     const groups = [
         { list: el.toc, links: el.toc ? Array.from(el.toc.querySelectorAll('a')) : [] },
         { list: el.tocMobile, links: el.tocMobile ? Array.from(el.tocMobile.querySelectorAll('a')) : [] },
+        { list: el.tocInline, links: el.tocInline ? Array.from(el.tocInline.querySelectorAll('a')) : [] },
     ].filter(group => group.links.length);
 
     if (!groups.length || !headings.length) return;
@@ -1025,7 +1091,7 @@ function setupToc(headings) {
     function keepVisible(group, link) {
         if (!group.list || !link) return;
 
-        const container = group.list.closest('.toc, .toc-drawer-panel');
+        const container = group.list.closest('.toc, .toc-drawer-panel, .docs-toc-inline-body');
         if (!container || !container.getClientRects().length) return;
         if (container.scrollHeight <= container.clientHeight + 1) return;
 
@@ -1087,7 +1153,11 @@ function setupToc(headings) {
 
     function sync() {
         setActive(currentSection());
-        updateTocMeter(readingPercent());
+        const hasContent = headings && headings.length;
+    if (el.tocAside) el.tocAside.hidden = !hasContent;
+    if (el.tocToggle) el.tocToggle.hidden = !hasContent;
+    if (el.tocInlineWrap) el.tocInlineWrap.hidden = !hasContent;
+    updateTocMeter(readingPercent());
     }
 
     function onScroll() {
@@ -1938,6 +2008,10 @@ function rewriteMarkdown(text, basePath) {
             return langParam ? `[${label}](read.html?post=${postId}${langParam})` : `[${label}](read.html?post=${postId})`;
         }
 
+        if (docMode) {
+            const resolved = basePath + path.replace(/^\.\//, '');
+            return isSafeDocSource(resolved) ? `[${label}](read.html?doc=${encodeURIComponent(resolved)})` : `[${label}](${resolved})`;
+        }
         return `[${label}](read.html?url=${basePath}${path})`;
     });
 
@@ -2019,7 +2093,7 @@ function renderArticle(markdown, project) {
     );
 
     el.content.innerHTML = withoutFrameSrc;
-    enhanceTaskLists(el.content, project.id);
+    enhanceTaskLists(el.content, project && project.id ? project.id : (docMode ? 'doc' : 'article'));
     enhanceCallouts(el.content);
     enhanceTables(el.content);
     enhanceImages(el.content);
@@ -2041,26 +2115,45 @@ function renderArticle(markdown, project) {
     renderMermaid(el.content);
 
     setupProgress();
-    renderNavigation();
-    renderSource(project);
+    if (!docMode) {
+        renderNavigation();
+        renderSource(project);
+    } else {
+        if (el.nav) { el.nav.hidden = true; el.nav.innerHTML = ''; }
+        if (el.relatedBox) { el.relatedBox.hidden = true; }
+        const source = document.getElementById('article-source');
+        if (source) source.hidden = true;
+    }
     revealArticle();
+    // Docs search (Ctrl+K) can request scrolling to a matched heading after render.
+    try {
+        var pending = window.__docPendingHash;
+        if (pending) {
+            window.__docPendingHash = '';
+            var hid = decodeURIComponent(String(pending).replace(/^#/, ''));
+            if (hid && document.getElementById(hid)) {
+                requestAnimationFrame(function(){ requestAnimationFrame(function(){ scrollToHeading(hid, false); settleHeading(hid); }); });
+            }
+        }
+    } catch(_){}
 }
 
 function showError(message) {
-    if (el.title) {
-        el.title.textContent = ARTICLE_LANG === 'en' ? 'Article not found' : 'Artikel tidak ditemukan';
-        document.title = `${el.title.textContent} - Raja Muhammad Kurnia Setyawan`;
+    var isDoc = (typeof docMode !== 'undefined' && docMode) || /references\.html|[?&](ref|doc)=/i.test(location.search + location.href);
+    if (isDoc) {
+        if (el && el.title && (!el.title.textContent || /Article not found/i.test(el.title.textContent))) el.title.textContent = 'Reference';
+        document.title = ((el && el.title && el.title.textContent) ? el.title.textContent : 'Reference') + ' - References - iMoon07';
+        if (el && el.lede) el.lede.hidden = true;
+        if (!el || !el.content) return;
+        el.content.innerHTML = '<p class="article-error">' + escapeHtml(message || 'Could not load this reference.') + '</p><p class="article-error-hint">Return to <a href="references.html?ref=index">References</a>.</p>';
+    } else {
+        if (el && el.title) el.title.textContent = (typeof ARTICLE_LANG !== 'undefined' && ARTICLE_LANG === 'en') ? 'Article not found' : 'Artikel tidak ditemukan';
+        document.title = ((el && el.title) ? el.title.textContent : 'Not found') + ' - Raja Muhammad Kurnia Setyawan';
+        if (el && el.lede) el.lede.hidden = true;
+        if (!el || !el.content) return;
+        el.content.innerHTML = '<p class="article-error">' + escapeHtml(message || 'Could not load article.') + '</p><p class="article-error-hint">Return to the <a href="blog.html">article list</a>.</p>';
     }
-
-    if (el.lede) el.lede.hidden = true;
-
-    if (!el.content) return;
-    el.content.innerHTML = `<p class="article-error">${escapeHtml(message)}</p>
-        <p class="article-error-hint">${ARTICLE_LANG === 'en'
-            ? 'Return to the <a href="blog.html">article list</a>.'
-            : 'Kembali ke <a href="blog.html">daftar artikel</a>.'}</p>`;
-
-    revealArticle();
+    if (typeof revealArticle === 'function') revealArticle();
 }
 
 function loadArticle() {
@@ -2100,13 +2193,23 @@ function loadArticle() {
             }
 
             const updated = modified ? new Date(modified).toISOString().slice(0, 10) : null;
-            buildMeta(currentProject, text, updated);
+            if (docMode) {
+                if (el.meta) el.meta.innerHTML = '';
+                if (el.tags) el.tags.innerHTML = '';
+                if (el.category) el.category.textContent = 'References';
+                const discussion = document.querySelector('.article-discussion');
+                if (discussion) discussion.hidden = true;
+            } else {
+                buildMeta(currentProject, text, updated);
+            }
 
             renderArticle(text, currentProject);
-            injectGiscus(repoUrl);
 
-            // Riwayat commit diambil menyusul, tanggal statis sudah tampil
-            fetchGitHistory(currentProject).then(applyGitHistory);
+            if (!docMode) {
+                injectGiscus(repoUrl);
+                // Riwayat commit diambil menyusul, tanggal statis sudah tampil
+                fetchGitHistory(currentProject).then(applyGitHistory);
+            }
         })
         .catch(error => {
             clearTimeout(timer);
@@ -2122,7 +2225,14 @@ function loadArticle() {
 
 let redirected = false;
 
-if (postId === 'about-me') {
+if (docMode) {
+    // Local documentation/reference mode: render modular markdown via the same reader foundation.
+    currentProject = null;
+    if (el.meta) el.meta.innerHTML = '';
+    if (el.tags) el.tags.innerHTML = '';
+    const discussion = document.querySelector('.article-discussion');
+    if (discussion) discussion.hidden = true;
+} else if (postId === 'about-me') {
     // The about page lives on the home page now
     redirected = true;
     window.location.replace('index.html#about');
@@ -2138,12 +2248,69 @@ if (postId === 'about-me') {
     }
 }
 
+window.addEventListener('references:load', function (event) {
+    var detail = event && event.detail ? event.detail : (window.__referenceDoc || null) || {};
+    var candidates = [];
+    function push(u){ if(!u) return; u=String(u).replace(/^\.\//,''); if(typeof isSafeDocSource==='function' && !isSafeDocSource(u)) return; if(candidates.indexOf(u)<0) candidates.push(u); if(/^docs\/references\//i.test(u) && candidates.indexOf('./'+u)<0) candidates.push('./'+u); }
+    var rawSrc = (detail.src && /^https?:\/\//i.test(detail.src)) ? detail.src : null; // raw GitHub (Penjelajah-CyberSecurity)
+    var localFile = detail.file || detail.fallback || (detail.src && /^docs\//i.test(detail.src) ? detail.src : null);
+    var base = detail.id || _docBaseName(localFile || rawSrc || repoUrl || '');
+    if (!localFile && base) localFile = 'docs/references/' + base + '.md';
+    if (!rawSrc && base) rawSrc = 'https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/' + base + '.md';
+    var pref = _docLang();
+    var langs = [pref, pref !== 'en' ? 'en' : null, pref !== 'id' ? 'id' : null].filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i;});
+    // id terkunci: coba <id>-<lang>.md dulu (pref→en→id), base sebagai fallback terakhir.
+    function add(u){ if(!u) return; langs.forEach(function(l){ push(_langVariantMd(u,l)); }); push(u); }
+    var isFile = location.protocol === 'file:';
+    if (isFile) { add(localFile); add(rawSrc); } else { add(rawSrc); add(localFile); }
+    add(repoUrl); // ?doc= direct
+    if (!candidates.length) return;
+
+    repoUrl = candidates[0]; currentProject = null;
+    window.__docCandidates = candidates.slice();
+    var docTitle = detail.title || (base ? base.replace(/[-_]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}) : 'Reference');
+    if (el && el.title) el.title.textContent = docTitle;
+    if (el && el.content) el.content.innerHTML = '<div class="article-skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>';
+
+    _fetchFirstMd(candidates).then(function(res){
+        var text = (res && res.text) ? res.text : '';
+        if (!String(text).trim()) throw new Error('empty');
+        repoUrl = res.url;
+        // Ctrl+K Docs search can target a heading anchor (slug must match read.js enhanceHeadings)
+        if (detail && detail.hash) { try { window.__docPendingHash = String(detail.hash).replace(/^#/, ''); } catch(_){} }
+        var hm = text.match(/^#\s+(.+)$/m);
+        var title = hm ? hm[1].trim() : docTitle;
+        document.title = title + ' - References - iMoon07';
+        if (el.title) el.title.textContent = title;
+        var lede = (typeof extractLede==='function') ? extractLede(text) : '';
+        if (el.lede){ el.lede.textContent = lede||''; el.lede.hidden=!lede; }
+        if (el.meta) el.meta.innerHTML=''; if (el.tags) el.tags.innerHTML='';
+        var d=document.querySelector('.article-discussion'); if(d) d.hidden=true;
+        renderArticle(text, null);
+    }).catch(function(err){
+        try{ console.warn('[references] load failed', err, err&&err.errors, candidates); }catch(_){}
+        showError('Could not load this reference. Check Console/Network for details.');
+    });
+});
+
 if (!redirected) {
     setupTocDrawer();
     syncStickyOffset();
     window.addEventListener('resize', syncStickyOffset, { passive: true });
-    loadArticle();
+    // Doc/references mode is loaded by references:load event (with candidates/cache/fallback).
+    // Avoid a parallel initial load of repoUrl which can race and leave stale/empty state.
+    if (repoUrl && !docMode) loadArticle();
 
+    // Fallback: if references hub hasn't dispatched yet, load resolved doc source once.
+    if (docMode && repoUrl) {
+        setTimeout(function () {
+            if (el.content && /article-skeleton/.test(el.content.innerHTML || '') && !el.content.querySelector('.prose')) {
+                var detail = window.__referenceDoc;
+                if (detail) window.dispatchEvent(new CustomEvent('references:load', { detail: detail }));
+                else loadArticle();
+            }
+        }, 120);
+    }
     // Safety net: the page always becomes readable, even if something stalls
-    setTimeout(revealArticle, 6000);
+    setTimeout(revealArticle, 8000);
 }
