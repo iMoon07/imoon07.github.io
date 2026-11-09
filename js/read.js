@@ -2009,6 +2009,15 @@ function rewriteMarkdown(text, basePath) {
         }
 
         if (docMode) {
+            const file = path.replace(/^\.\//, '').split('/').pop() || path;
+            const rm = file.match(/^([a-z0-9._-]+?)(?:-([a-z]{2}))?\.md$/i);
+            if (rm) {
+                const refId = rm[1];
+                const docLang = (typeof _docLang === 'function' ? _docLang() : (new URLSearchParams(location.search).get('lang') || 'en')).toLowerCase();
+                const lang = (rm[2] || docLang || 'en').toLowerCase();
+                const href = 'references.html?ref=' + encodeURIComponent(refId) + (lang && lang !== 'en' ? '&lang=' + encodeURIComponent(lang) : '');
+                return `[${label}](${href})`;
+            }
             const resolved = basePath + path.replace(/^\.\//, '');
             return isSafeDocSource(resolved) ? `[${label}](read.html?doc=${encodeURIComponent(resolved)})` : `[${label}](${resolved})`;
         }
