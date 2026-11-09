@@ -1985,6 +1985,9 @@ function rewriteMarkdown(text, basePath) {
     // Character U+FDFD (Bismillah) replaced with readable text
     text = text.replace(/ domains /g, 'Bismillahirrahmanirrahim');
 
+    const isDocContext = (typeof docMode !== 'undefined' && docMode)
+        || /references\.html|[?&](ref|doc)=/i.test(location.search + ' ' + location.pathname + ' ' + location.href);
+
     // Relative images -> absolute path inside the repository folder
     text = text.replace(/!\[([^\]]*)\]\((?!https?:|data:)([^)\s]+)\)/g, (match, alt, path) => {
         return `![${alt}](${basePath}${path.replace(/^\.\//, '')})`;
@@ -2004,11 +2007,12 @@ function rewriteMarkdown(text, basePath) {
             return langParam ? `[${label}](read.html?post=about-me${langParam})` : `[${label}](read.html?post=about-me)`;
         }
 
-        if (postId) {
+        // In docs/references context, never route relative .md links through blog posts.
+        if (!isDocContext && postId) {
             return langParam ? `[${label}](read.html?post=${postId}${langParam})` : `[${label}](read.html?post=${postId})`;
         }
 
-        if (docMode) {
+        if (isDocContext) {
             const file = path.replace(/^\.\//, '').split('/').pop() || path;
             const rm = file.match(/^([a-z0-9._-]+?)(?:-([a-z]{2}))?\.md$/i);
             if (rm) {
