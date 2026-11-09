@@ -989,15 +989,32 @@ function closeLightbox() {
 
 const TOC_SCROLL_GAP = 20;
 let tocRevealActive = null;
+let _tocCleanup = null;
+
+function teardownToc() {
+    if (typeof _tocCleanup === 'function') {
+        try { _tocCleanup(); } catch (_) {}
+    }
+    _tocCleanup = null;
+    tocRevealActive = null;
+    [el.toc, el.tocMobile, el.tocInline].forEach(function (list) {
+        if (!list) return;
+        list.innerHTML = '';
+        try { list.style.removeProperty('--toc-fill'); } catch (_) {}
+    });
+    if (el.tocAside) el.tocAside.hidden = true;
+    if (el.tocToggle) el.tocToggle.hidden = true;
+    if (el.tocInlineWrap) el.tocInlineWrap.hidden = true;
+    if (el.drawer) { el.drawer.classList.remove('is-open'); el.drawer.hidden = true; }
+    if (el.tocMeter) el.tocMeter.style.width = '0%';
+    if (el.tocMeterMobile) el.tocMeterMobile.style.width = '0%';
+    if (el.tocPercent) el.tocPercent.textContent = '0%';
+    if (el.tocPercentMobile) el.tocPercentMobile.textContent = '0%';
+}
 
 function renderToc(headings) {
-    if (!headings.length) {
-        if (el.tocAside) el.tocAside.hidden = true;
-        if (el.tocToggle) el.tocToggle.hidden = true;
-        if (el.drawer) el.drawer.hidden = true;
-        if (el.tocInlineWrap) el.tocInlineWrap.hidden = true;
-        return;
-    }
+    teardownToc();
+    if (!headings.length) return;
 
     const html = headings.map((heading, index) =>
         `<li class="toc-level-${heading.level}" style="--i:${index}"><a href="#${heading.id}">${escapeHtml(heading.text)}</a></li>`
@@ -1006,6 +1023,8 @@ function renderToc(headings) {
     if (el.toc) el.toc.innerHTML = html;
     if (el.tocMobile) el.tocMobile.innerHTML = html;
     if (el.tocInline) el.tocInline.innerHTML = html;
+    if (el.tocAside) el.tocAside.hidden = false;
+    if (el.tocToggle) el.tocToggle.hidden = false;
     if (el.tocInlineWrap) el.tocInlineWrap.hidden = false;
 }
 
@@ -2115,7 +2134,7 @@ function renderArticle(markdown, project) {
 
     const headings = enhanceHeadings(el.content);
     renderToc(headings);
-    setupToc(headings);
+    if (headings.length) setupToc(headings);
 
     const blocks = Array.from(el.content.querySelectorAll('pre'))
         .map((pre, index) => buildCodeBlock(pre, index + 1))
