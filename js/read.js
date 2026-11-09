@@ -2186,11 +2186,8 @@ function loadArticle() {
             document.title = `${title} - Raja Muhammad Kurnia Setyawan`;
             if (el.title) el.title.textContent = title;
 
-            const lede = extractLede(text);
-            if (el.lede) {
-                el.lede.textContent = lede;
-                el.lede.hidden = !lede;
-            }
+            // lede not shown in header: rendered content keeps the intro (avoids duplicate)
+            if (el.lede) { el.lede.textContent = ''; el.lede.hidden = true; }
 
             const updated = modified ? new Date(modified).toISOString().slice(0, 10) : null;
             if (docMode) {
@@ -2282,8 +2279,8 @@ window.addEventListener('references:load', function (event) {
         var title = hm ? hm[1].trim() : docTitle;
         document.title = title + ' - References - iMoon07';
         if (el.title) el.title.textContent = title;
-        var lede = (typeof extractLede==='function') ? extractLede(text) : '';
-        if (el.lede){ el.lede.textContent = lede||''; el.lede.hidden=!lede; }
+        // docs: title shown in header; keep lede hidden to avoid duplicating the intro paragraph
+        if (el.lede){ el.lede.textContent = ''; el.lede.hidden = true; }
         if (el.meta) el.meta.innerHTML=''; if (el.tags) el.tags.innerHTML='';
         var d=document.querySelector('.article-discussion'); if(d) d.hidden=true;
         renderArticle(text, null);
