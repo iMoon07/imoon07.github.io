@@ -324,6 +324,18 @@ html,
             line-height: 1.75;
         }
 
+        #panelProfile p {
+            font-size: 16px;
+        }
+
+        #experienceList > .entry-meta,
+        #panelCommunity > .entry-meta,
+        #panelLicense > .entry-meta {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
         .panel strong {
             color: #e0e6ea;
             font-weight: 500;
@@ -415,7 +427,7 @@ html,
         .experience-name {
             display: block;
             margin: 0 0 5px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             line-height: 1.4;
         }
@@ -423,8 +435,18 @@ html,
         .experience-description {
             display: block;
             color: var(--muted);
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.65;
+        }
+
+        #experienceList .experience-name,
+        #communityList .experience-name {
+            font-size: 15px;
+        }
+
+        #experienceList .experience-description,
+        #communityList .experience-description {
+            font-size: 13px;
         }
 
         .experience-arrow {
@@ -451,20 +473,29 @@ html,
         }
 
         #recognitionDetail .experience-name {
-            font-size: 18px;
+            font-size: 15px;
         }
 
         #recognitionDetail .experience-description {
-            font-size: 15px;
+            font-size: 13px;
             line-height: 1.6;
         }
 
+        #recognitionDetail .detail-title {
+            font-size: 24px;
+        }
+
+        #recognitionDetail .entry-meta {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
         .subview[id^="rec"] .detail-title {
-            font-size: 27px;
+            font-size: 24px;
         }
 
         .subview[id^="rec"] .entry-meta {
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.7;
         }
 
