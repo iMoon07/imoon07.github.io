@@ -647,7 +647,7 @@ if (name === 'home') {
                 "Testing. Learning. Advancing.",
                 "Coding with purpose.",
                 "Protecting what matters.",
-                "Alhamdulillah.",
+                "ٱلْحَمْدُ لِلَّٰهِ. Alhamdulillah.",
                 "Learning with purpose.",
                 "Sharing for the benefit of others.",
                 "Stay curious. Keep exploring.",
@@ -660,11 +660,11 @@ if (name === 'home') {
                 "Find. Fix. Share.",
                 "Explore. Document. Grow.",
                 "Secure. Harden. Repeat.",
-                "Alhamdulillah.",
+                "ٱلْحَمْدُ لِلَّٰهِ. Alhamdulillah.",
                 "Thanks for coming.",
                 "May knowledge bring benefit.",
                 "Enjoy the journey.",
-                "Barakallahu fiik."
+                "بَارَكَ اللهُ فِيكَ. Barakallahu fiik."
             ];
 
             let typewriterTimer = null;
