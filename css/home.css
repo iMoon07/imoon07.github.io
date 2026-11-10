@@ -329,8 +329,8 @@ html,
         }
 
         #experienceList > .entry-meta,
-        #panelCommunity > .entry-meta,
-        #panelLicense > .entry-meta {
+        #communityList > .entry-meta,
+        #licenseList > .entry-meta {
             font-size: 14px;
             line-height: 1.7;
             margin-bottom: 16px;
