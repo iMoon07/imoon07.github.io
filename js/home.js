@@ -78,6 +78,14 @@
                 activePage = name;
                 updateNavigation(name);
 
+                if (name === 'about') {
+                    const activeTab = tabs[selectedPanel];
+                    const activePanel = activeTab ? document.getElementById(activeTab.getAttribute('aria-controls')) : null;
+                    startCalmText(activePanel || pages.about);
+                } else {
+                    stopCalmText();
+                }
+
                 window.scrollTo({
                     top: 0,
                     behavior: 'auto'
@@ -207,6 +215,11 @@ if (name === 'home') {
                     ' / ' +
                     String(tabs.length).padStart(2, '0');
 
+                const activePanel = document.getElementById(
+                    tabs[next].getAttribute('aria-controls')
+                );
+                startCalmText(activePanel);
+
                 if (focusTab) {
                     tabs[next].focus({ preventScroll: true });
                 }
@@ -264,7 +277,17 @@ if (name === 'home') {
                 list: document.getElementById('experienceList'),
                 merdeka: document.getElementById('merdekaDetail'),
                 lpro: document.getElementById('lproDetail'),
-                xcode: document.getElementById('xcodeDetail')
+                xcode: document.getElementById('xcodeDetail'),
+                recognition: document.getElementById('recognitionDetail'),
+                recBengkulu: document.getElementById('recBengkuluDetail'),
+                recPrague: document.getElementById('recPragueDetail'),
+                recDetik: document.getElementById('recDetikDetail'),
+                recMagelang: document.getElementById('recMagelangDetail'),
+                recDki: document.getElementById('recDkiDetail'),
+                recKukar: document.getElementById('recKukarDetail'),
+                recKpi: document.getElementById('recKpiDetail'),
+                recTransjakarta: document.getElementById('recTransjakartaDetail'),
+                recPasuruan: document.getElementById('recPasuruanDetail')
             };
 
             const experienceButtons = Array.from(
@@ -314,7 +337,8 @@ if (name === 'home') {
             document.querySelectorAll('[data-back-experience]')
                 .forEach(button => {
                     button.addEventListener('click', () => {
-                        showExperience('list');
+                        const target = button.dataset.backExperience || 'list';
+                        showExperience(target);
 
                         if (experienceOpener) {
                             experienceOpener.focus({
@@ -627,8 +651,7 @@ if (name === 'home') {
                 "Learning with purpose.",
                 "Sharing for the benefit of others.",
                 "Stay curious. Keep exploring.",
-                "Thank you for being here.",
-                "Assalamu’alaikum."
+                "Thank you for being here."
             ];
 
             const subtitlePhrases = [
@@ -637,10 +660,11 @@ if (name === 'home') {
                 "Find. Fix. Share.",
                 "Explore. Document. Grow.",
                 "Secure. Harden. Repeat.",
-                "All praise be to Allah.",
+                "Alhamdulillah.",
+                "Thanks for coming.",
                 "May knowledge bring benefit.",
                 "Enjoy the journey.",
-                "Thank you for visiting."
+                "Barakallahu fiik."
             ];
 
             let typewriterTimer = null;
@@ -687,17 +711,17 @@ if (name === 'home') {
                         typewriterState.charIndex++;
                     }
 
-                    let delay = 100;
+                    let delay = 70;
 
                     if (!typewriterState.isDeleting && typewriterState.charIndex === phrase.length) {
-                        delay = 2000;
+                        delay = 1800;
                         typewriterState.isDeleting = true;
                     } else if (typewriterState.isDeleting && typewriterState.charIndex === 0) {
                         typewriterState.isDeleting = false;
                         typewriterState.phraseIndex = (typewriterState.phraseIndex + 1) % typewriterPhrases.length;
-                        delay = 500;
+                        delay = 350;
                     } else if (typewriterState.isDeleting) {
-                        delay = 50;
+                        delay = 35;
                     }
 
                     typewriterTimer = setTimeout(tick, delay);
@@ -725,7 +749,7 @@ if (name === 'home') {
                         subtitle.textContent = subtitlePhrases[index];
                         subtitle.style.opacity = '1';
                     }, 250);
-                }, 4000);
+                }, 3500);
             }
 
             function stopTypewriter() {
@@ -746,6 +770,54 @@ if (name === 'home') {
                     subtitle.textContent = subtitlePhrases[0];
                     subtitle.style.opacity = '1';
                 }
+            }
+
+            /* ------------------------------------------------------------ calm headings
+               Animasi ketik santai untuk judul panel.
+               Calm typing animation for panel headings. */
+
+            let calmTimers = [];
+
+            function stopCalmText() {
+                calmTimers.forEach(timer => clearTimeout(timer));
+                calmTimers = [];
+            }
+
+            function startCalmText(container = document) {
+                stopCalmText();
+                const nodes = Array.from(container.querySelectorAll('[data-calm-text]'));
+                nodes.forEach((node, i) => {
+                    const text = node.dataset.calmText || '';
+                    if (reducedMotion.matches) {
+                        node.textContent = text;
+                        return;
+                    }
+                    let idx = 0;
+                    let deleting = false;
+                    node.textContent = '';
+                    const tick = () => {
+                        if (!deleting) {
+                            idx++;
+                            node.textContent = text.slice(0, idx);
+                            if (idx >= text.length) {
+                                deleting = true;
+                                calmTimers.push(setTimeout(tick, 2600));
+                                return;
+                            }
+                            calmTimers.push(setTimeout(tick, 95));
+                        } else {
+                            idx--;
+                            node.textContent = text.slice(0, idx);
+                            if (idx <= 0) {
+                                deleting = false;
+                                calmTimers.push(setTimeout(tick, 700));
+                                return;
+                            }
+                            calmTimers.push(setTimeout(tick, 45));
+                        }
+                    };
+                    calmTimers.push(setTimeout(tick, 300 + i * 180));
+                });
             }
 
             /* ------------------------------------------------------------ initial route
@@ -769,6 +841,12 @@ if (name === 'home') {
                 if (target === 'home') {
                     startTypewriter();
                     startSubtitle();
+                }
+
+                const activeTab = tabs[selectedPanel];
+                if (activeTab) {
+                    const activePanel = document.getElementById(activeTab.getAttribute('aria-controls'));
+                    startCalmText(activePanel);
                 }
             }
 

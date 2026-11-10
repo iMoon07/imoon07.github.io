@@ -219,13 +219,7 @@ html,
         }
 
         .portrait-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding-top: 11px;
-            color: var(--muted);
-            font-size: 14px;
+            display: none;
         }
 
         .photo-toggle {
@@ -298,9 +292,12 @@ html,
             touch-action: pan-y;
         }
 
-        .panel.active,
-        .subview.active {
+        .panel.active {
             animation: slide-in .4s var(--ease) both;
+        }
+
+        .subview.active {
+            animation: fade-in .2s ease both;
         }
 
         .panel-title {
@@ -311,8 +308,13 @@ html,
             letter-spacing: -.05em;
         }
 
-        .panel-title span {
+        .panel-title span,
+        .panel-title .panel-accent {
             color: #a9bece;
+        }
+
+        .panel-title .panel-primary {
+            color: var(--text);
         }
 
         .panel p {
@@ -329,20 +331,34 @@ html,
 
         .facts {
             display: grid;
-            gap: 11px;
+            gap: 16px;
             margin: 23px 0 0;
         }
 
         .fact {
             display: grid;
-            grid-template-columns: 65px minmax(0, 1fr);
+            grid-template-columns: 150px minmax(0, 1fr);
             gap: 16px;
+            align-items: start;
         }
 
         .fact dt {
             color: #949fa8;
             font-size: 14px;
             line-height: 1.7;
+            padding-top: 1px;
+        }
+
+        .fact-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fact-icon {
+            flex: 0 0 auto;
+            color: #a9bece;
+            opacity: .9;
         }
 
         .fact dd {
@@ -350,6 +366,28 @@ html,
             color: #ced6dd;
             font-size: 15px;
             line-height: 1.7;
+        }
+
+        .fact-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 6px;
+        }
+
+        .fact-list li {
+            margin: 0;
+            display: grid;
+            grid-template-columns: 14px minmax(0, 1fr);
+            align-items: start;
+            gap: 10px;
+        }
+
+        .fact-item-icon {
+            margin-top: 5px;
+            color: #8faec2;
+            opacity: .85;
         }
 
         /* ------------------------------------------------------------ experience
@@ -399,11 +437,88 @@ html,
         .experience-arrow svg {
             display: block;
             color: inherit;
+            transition: transform .25s var(--ease);
         }
-
 
         button.experience-entry:hover .experience-arrow svg {
             transform: translateX(5px);
+        }
+
+        .recognition-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 24px;
+        }
+
+        #recognitionDetail .experience-name {
+            font-size: 18px;
+        }
+
+        #recognitionDetail .experience-description {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .subview[id^="rec"] .detail-title {
+            font-size: 27px;
+        }
+
+        .subview[id^="rec"] .entry-meta {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .subview[id^="rec"] .project-link {
+            font-size: 15px;
+        }
+
+        .recognition-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+            margin: 12px 0 8px;
+        }
+
+        .recognition-preview img,
+        .recognition-frame {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--soft);
+        }
+
+        .recognition-preview img {
+            height: auto;
+            max-height: min(70vh, 520px);
+            object-fit: contain;
+        }
+
+        .recognition-frame {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 210 / 297;
+            max-height: 80vh;
+        }
+
+        @media (max-width: 900px) {
+            .recognition-list {
+                grid-template-columns: 1fr;
+            }
+
+            .recognition-preview {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .recognition-preview img {
+                max-height: 75vh;
+            }
+
+            .recognition-frame {
+                max-height: 75vh;
+            }
         }
 
         button.experience-entry:hover .experience-name {
@@ -662,17 +777,21 @@ html,
 
             .facts {
                 margin-top: 18px;
-                gap: 9px;
+                gap: 14px;
             }
 
             .fact {
-                grid-template-columns: 55px minmax(0, 1fr);
-                gap: 10px;
+                grid-template-columns: 1fr;
+                gap: 4px;
             }
 
             .fact dt,
             .fact dd {
-                font-size: 13px;
+                font-size: 14px;
+            }
+
+            .fact-list {
+                padding-left: 18px;
             }
 
             .entry h3 {
@@ -765,6 +884,11 @@ html,
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .session-details > summary { list-style: none; }
