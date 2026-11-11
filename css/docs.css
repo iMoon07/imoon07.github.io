@@ -45,8 +45,11 @@ html:has(.docs-page) { scroll-padding-top: calc(var(--docs-header-h) + 16px); }
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--docs-border);
 }
-.docs-brand { color: var(--docs-text); font-size: 15px; font-weight: 500; letter-spacing: -.03em; text-decoration: none; white-space: nowrap; flex: 0 0 auto; }
-.docs-brand span { color: var(--docs-accent); font-weight: 400; opacity: .85; }
+.docs-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--docs-text); text-decoration: none; flex: 0 0 auto; font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif; }
+.docs-brand-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: 0 0 auto; border: 1px solid var(--docs-border); }
+.docs-brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
+.docs-brand-name { font-size: 14px; font-weight: 600; letter-spacing: -.01em; color: var(--docs-text); }
+.docs-brand-sub { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--docs-muted); margin-top: 2px; }
 
 .docs-search-trigger {
   display: inline-flex; align-items: center; gap: 10px;
@@ -273,8 +276,7 @@ html:has(.docs-page) { scroll-padding-top: calc(var(--docs-header-h) + 16px); }
 @media (max-width: 760px) {
   .docs-site.site { padding: 0 16px; }
   .docs-topbar { gap: 8px; min-height: 52px; padding: 6px 0; }
-  .docs-brand { font-size: 15px; min-width: 0; flex: 1 1 auto; }
-  .docs-brand span { opacity: .9; }
+  .docs-brand { min-width: 0; flex: 1 1 auto; }
   .docs-top-actions { gap: 8px; flex: 0 0 auto; }
   .docs-page #article-layout.docs-layout,
   .docs-page .docs-layout,
@@ -307,7 +309,9 @@ html:has(.docs-page) { scroll-padding-top: calc(var(--docs-header-h) + 16px); }
 /* Very small phones: keep controls usable, avoid overflow */
 @media (max-width: 360px) {
   .docs-site.site { padding: 0 12px; }
-  .docs-brand { font-size: 14px; }
+  .docs-brand-avatar { width: 26px; height: 26px; }
+  .docs-brand-name { font-size: 13px; }
+  .docs-brand-sub { font-size: 10px; }
   .docs-icon-btn { width: 42px; height: 42px; min-width: 42px; }
   .docs-main .article-title { font-size: 1.55rem; }
 }

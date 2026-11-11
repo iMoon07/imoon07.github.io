@@ -8,12 +8,12 @@
    Markup ada di index.html, transisi halaman di js/home.js.
    Markup lives in index.html, page transitions in js/home.js.
    ============================================================================= */
-html,
+        html,
         body {
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: "Segoe UI", Arial, sans-serif;
+            font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -137,17 +137,105 @@ html,
            The about page panel. */
 
         .about-layout {
+            position: relative;
             width: 100%;
             margin-inline: auto;
             padding: 26px 0 36px;
             display: grid;
             grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr);
-            align-items: center;
+            align-items: start;
             gap: clamp(30px, 5vw, 72px);
+            overflow: hidden;
+        }
+
+        .logo-chaos-field {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .6s ease;
+            contain: layout style paint;
+        }
+
+        .logo-chaos-field.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .logo-chaos-field .chaos-logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--size, 30px);
+            height: var(--size, 30px);
+            padding: 4px;
+            margin: -4px;
+            box-sizing: content-box;
+            object-fit: contain;
+            opacity: var(--base-opacity, .52);
+            --logo-scale: 1;
+            filter: brightness(1.05) saturate(1.05) drop-shadow(0 0 3px rgba(160, 220, 255, 0.06));
+            will-change: transform;
+            pointer-events: auto;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity .18s ease, filter .18s ease;
+        }
+
+        .logo-chaos-field .chaos-logo:hover,
+        .logo-chaos-field .chaos-logo:focus-visible,
+        .logo-chaos-field .chaos-logo:active {
+            --logo-scale: 1.22;
+            opacity: .84;
+            z-index: 3;
+            filter: brightness(1.12) saturate(1.08) drop-shadow(0 0 6px rgba(140, 190, 220, 0.22));
+        }
+
+        @media (hover: none) {
+            .logo-chaos-field .chaos-logo:active {
+                --logo-scale: 1.24;
+                opacity: .9;
+                filter: brightness(1.16) saturate(1.1) drop-shadow(0 0 7px rgba(150, 200, 230, 0.26));
+            }
+        }
+
+        .chaos-tooltip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 6;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+            color: #eaf6ff;
+            background: rgba(18, 26, 34, 0.88);
+            border: 1px solid rgba(160, 220, 255, 0.22);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .12s ease;
+            will-change: transform, opacity;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .chaos-tooltip.show {
+            opacity: 1;
         }
 
         .about-content {
+            position: relative;
+            z-index: 2;
             min-width: 0;
+            order: 2;
         }
 
         /* ------------------------------------------------------------ full portrait
@@ -155,9 +243,18 @@ html,
            The full screen portrait behind the curtain. */
 
         .portrait {
+            position: relative;
+            z-index: 2;
             width: min(410px, 100%);
             margin: 0;
-            justify-self: start;
+            margin-top: clamp(64px, 10vh, 120px);
+            justify-self: center;
+            cursor: pointer;
+            order: 1;
+        }
+
+        .mobile-profile-intro {
+            display: none;
         }
 
         .portrait-stage {
@@ -207,10 +304,11 @@ html,
         .cover-name {
             font-size: clamp(25px, 3vw, 40px);
             letter-spacing: -1.4px;
+            color: #f0f6fc;
         }
 
         .cover-caption {
-            color: #b2c5d2;
+            color: #c9d1d9;
             font-size: 14px;
         }
 
@@ -218,36 +316,18 @@ html,
             transform: translateY(0);
         }
 
-        .portrait-footer {
-            display: none;
-        }
-
-        .photo-toggle {
-            min-height: 44px;
-            padding: 8px 13px;
-            border: 1px solid #343a40;
-            border-radius: 999px;
-            background: transparent;
-            color: #c9d1d8;
-            font-size: 13px;
-            transition: background .2s, border-color .2s;
-        }
-
-        .photo-toggle:hover {
-            background: #191f24;
-            border-color: #71818e;
-        }
-
         /* ------------------------------------------------------------ about tabs
            Tab pengalaman dan komunitas.
            The experience and community tabs. */
 
         .tabs {
-            display: flex;
+            display: inline-flex;
             flex-wrap: wrap;
             gap: 6px 18px;
             margin-bottom: 24px;
             border-bottom: 1px solid var(--line);
+            width: max-content;
+            max-width: 100%;
         }
 
         .tab {
@@ -256,8 +336,9 @@ html,
             padding: 8px 0 13px;
             border: 0;
             background: transparent;
-            color: #969fa7;
+            color: #b1bac4;
             font-size: 14px;
+            font-weight: 500;
             transition: color .2s;
         }
 
@@ -283,7 +364,7 @@ html,
         }
 
         .tab:hover {
-            color: #fff;
+            color: var(--text);
         }
 
         .panel-viewport {
@@ -303,14 +384,14 @@ html,
         .panel-title {
             margin: 0 0 19px;
             font-size: clamp(32px, 3.9vw, 52px);
-            line-height: 1.1;
-            font-weight: 400;
-            letter-spacing: -.05em;
+            line-height: 1.15;
+            font-weight: 500;
+            letter-spacing: -.03em;
         }
 
         .panel-title span,
         .panel-title .panel-accent {
-            color: #a9bece;
+            color: var(--accent);
         }
 
         .panel-title .panel-primary {
@@ -319,26 +400,28 @@ html,
 
         .panel p {
             margin: 0 0 16px;
-            color: var(--muted);
-            font-size: 17px;
-            line-height: 1.75;
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.8;
         }
 
         #panelProfile p {
-            font-size: 16px;
+            font-size: 18px;
+            color: var(--text);
         }
 
         #experienceList > .entry-meta,
         #communityList > .entry-meta,
         #licenseList > .entry-meta {
-            font-size: 14px;
-            line-height: 1.7;
+            font-size: 16px;
+            line-height: 1.8;
             margin-bottom: 16px;
+            color: var(--muted);
         }
 
         .panel strong {
-            color: #e0e6ea;
-            font-weight: 500;
+            color: var(--text);
+            font-weight: 600;
         }
 
         .facts {
@@ -355,7 +438,7 @@ html,
         }
 
         .fact dt {
-            color: #949fa8;
+            color: #c9d1d9;
             font-size: 14px;
             line-height: 1.7;
             padding-top: 1px;
@@ -369,13 +452,13 @@ html,
 
         .fact-icon {
             flex: 0 0 auto;
-            color: #a9bece;
-            opacity: .9;
+            color: #79c0ff;
+            opacity: 1;
         }
 
         .fact dd {
             margin: 0;
-            color: #ced6dd;
+            color: var(--text);
             font-size: 15px;
             line-height: 1.7;
         }
@@ -398,8 +481,8 @@ html,
 
         .fact-item-icon {
             margin-top: 5px;
-            color: #8faec2;
-            opacity: .85;
+            color: #79c0ff;
+            opacity: 1;
         }
 
         /* ------------------------------------------------------------ experience
@@ -434,7 +517,7 @@ html,
 
         .experience-description {
             display: block;
-            color: var(--muted);
+            color: #b1bac4;
             font-size: 14px;
             line-height: 1.65;
         }
@@ -599,7 +682,7 @@ html,
         }
 
         .entry-meta {
-            color: #b9cad6 !important;
+            color: #b1bac4 !important;
         }
 
         .project-link {
@@ -607,7 +690,7 @@ html,
             align-items: center;
             min-height: 44px;
             gap: 10px;
-            color: #d8e6ef;
+            color: #e6edf3;
             font-size: 16px;
         }
 
@@ -636,7 +719,7 @@ html,
         }
 
         .counter {
-            color: #a5b5c1;
+            color: #c9d1d9;
             font-size: 13px;
             font-variant-numeric: tabular-nums;
         }
@@ -651,7 +734,7 @@ html,
             place-items: center;
             width: 44px;
             height: 44px;
-            border: 1px solid #353d44;
+            border: 1px solid #3d444d;
             border-radius: 50%;
             background: transparent;
             color: var(--text);
@@ -712,9 +795,47 @@ html,
         }
 
         .contact-note {
-            color: var(--muted);
+            color: #b1bac4;
             font-size: 11px;
             line-height: 1.6;
+        }
+
+        .portrait-contact {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+            margin-top: 14px;
+            text-align: left;
+        }
+
+        .portrait-contact .social-links {
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .portrait-contact .social-link {
+            width: 32px;
+            height: 32px;
+        }
+
+        .portrait-contact .social-link svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .portrait-contact .contact-note {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #b1bac4;
+            min-width: 0;
+            flex: 1 1 180px;
+        }
+
+        .mobile-contact {
+            display: none;
         }
 
         /* ------------------------------------------------------------ mobile
@@ -745,27 +866,70 @@ html,
             .portrait {
                 width: 100%;
                 display: flex;
+                flex-direction: row;
                 align-items: center;
-                gap: 18px;
+                gap: 16px;
                 justify-self: start;
+                order: 0;
+                margin-top: 0;
+            }
+
+            .about-content {
+                order: 0;
             }
 
             .portrait-stage {
-                width: 125px;
+                width: 110px;
                 flex-shrink: 0;
             }
 
             .portrait img {
                 width: 100%;
-                height: 135px;
+                height: 120px;
                 max-height: none;
                 object-fit: contain;
             }
 
-            .portrait-footer {
-                display: grid;
-                gap: 9px;
-                padding: 0;
+            .mobile-profile-intro {
+                display: block;
+                min-width: 0;
+                flex: 1 1 auto;
+                padding-left: 4px;
+            }
+
+            .mobile-profile-intro .panel-title {
+                margin: 0;
+                font-size: clamp(17px, 4.8vw, 21px);
+                line-height: 1.3;
+                letter-spacing: 0;
+                text-align: left;
+                max-width: 100%;
+            }
+
+            .mobile-profile-intro .panel-title br {
+                display: none;
+            }
+
+            .mobile-profile-intro .panel-title .panel-accent {
+                font-size: 0.92em;
+                line-height: 1.4;
+                display: block;
+                margin: 0 0 4px;
+                text-align: left;
+                word-break: keep-all;
+                overflow-wrap: normal;
+            }
+
+            .mobile-profile-intro .panel-title .panel-primary {
+                display: block;
+                font-size: 1em;
+                line-height: 1.3;
+                font-weight: 500;
+                text-align: left;
+            }
+
+            #panelProfile .panel-title {
+                display: none;
             }
 
             .cover-name {
@@ -776,11 +940,6 @@ html,
             .cover-caption,
             .portrait-cover::before {
                 display: none;
-            }
-
-            .photo-toggle {
-                min-height: 40px;
-                font-size: 12px;
             }
 
             .tabs {
@@ -854,14 +1013,53 @@ html,
                 padding-top: 12px;
             }
 
+            .portrait-contact {
+                display: none;
+            }
+
+            .mobile-profile-intro .mobile-contact {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px 10px;
+                margin-top: 10px;
+            }
+
+            .mobile-profile-intro .mobile-social-links {
+                display: flex;
+                gap: 6px;
+            }
+
+            .mobile-profile-intro .mobile-social-links .social-link {
+                width: 34px;
+                height: 34px;
+            }
+
+            .mobile-profile-intro .mobile-social-links .social-link svg {
+                width: 15px;
+                height: 15px;
+            }
+
+            .mobile-profile-intro .mobile-contact-note {
+                font-size: 10px;
+                line-height: 1.4;
+                color: #b1bac4;
+            }
+
             .contact-row {
-                margin-top: 12px;
+                display: none;
             }
         }
 
         /* ------------------------------------------------------------ short desktop screens
            Layar desktop pendek.
            Short desktop screens. */
+
+        @media (min-width: 701px) {
+            .contact-row {
+                display: none;
+            }
+        }
 
         @media (max-height: 700px) and (min-width: 701px) {
             .about-layout {

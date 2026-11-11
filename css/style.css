@@ -153,13 +153,13 @@
 
 
 body {
-    font-family: 'Inter', 'Noto Naskh Arabic', 'Amiri', sans-serif;
-    color: #c9d1d9;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
+    color: var(--text, #e6edf3);
     max-width: 1000px;
     margin: 0 auto;
     padding: 40px 20px;
-    background-color: #0d1117;
-    line-height: 1.7;
+    background-color: var(--bg, #0d1117);
+    line-height: 1.75;
     font-size: 17px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -244,10 +244,10 @@ main.read-container {
     margin-bottom: 30px;
 }
 
-#content { font-family: 'Lora', 'Amiri', 'Noto Naskh Arabic', serif; font-size: 18px; color: #c9d1d9; line-height: 1.9; overflow-wrap: break-word; word-wrap: break-word; }
-#content p { text-align: justify; }
+#content { font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif; font-size: 18px; color: var(--text, #e6edf3); line-height: 1.8; overflow-wrap: break-word; word-wrap: break-word; }
+#content p { text-align: left; }
 #content a { word-break: break-all; }
-#content h1, #content h2 { border-bottom: 1px solid #21262d; padding-bottom: 0.3em; margin-bottom: 16px; margin-top: 24px; color: #c9d1d9; }
+#content h1, #content h2 { border-bottom: 1px solid var(--line, #30363d); padding-bottom: 0.3em; margin-bottom: 16px; margin-top: 24px; color: var(--text, #e6edf3); }
 #content img { max-width: 100%; box-sizing: content-box; background-color: #0d1117; margin: 15px 0; border: 1px solid #30363d; border-radius: 6px; }
 #content pre { box-sizing: border-box; max-width: 100%; background-color: #161b22; padding: 16px; overflow-x: auto; border-radius: 6px; border: 1px solid #30363d; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; line-height: 1.45; color: #c9d1d9; }
 #content code { background-color: rgba(240,246,252,0.15); padding: 0.2em 0.4em; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; }
@@ -320,7 +320,7 @@ body.blog-page {
     max-width: none;
     margin: 0;
     padding: 0;
-    background-color: #080808;
+    background-color: var(--bg, #0d1117);
 }
 
 

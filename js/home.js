@@ -81,9 +81,11 @@
                 if (name === 'about') {
                     const activeTab = tabs[selectedPanel];
                     const activePanel = activeTab ? document.getElementById(activeTab.getAttribute('aria-controls')) : null;
-                    startCalmText(activePanel || pages.about);
+                    setCalmText(pages.about);
+                    startChaos();
                 } else {
                     stopCalmText();
+                    stopChaos();
                 }
 
                 window.scrollTo({
@@ -218,7 +220,7 @@ if (name === 'home') {
                 const activePanel = document.getElementById(
                     tabs[next].getAttribute('aria-controls')
                 );
-                startCalmText(activePanel);
+                setCalmText(activePanel);
 
                 if (focusTab) {
                     tabs[next].focus({ preventScroll: true });
@@ -605,21 +607,286 @@ if (name === 'home') {
                Portrait curtain: the open-close animation for the about page. */
 
             const portrait = document.getElementById('portrait');
-            const photoToggle = document.getElementById('photoToggle');
 
-            photoToggle.addEventListener('click', () => {
-                const covered =
-                    portrait.classList.toggle('covered');
+            /* ------------------------------------------------------------ logo digital rain
+               Hujan logo ala digital rain di belakang konten About.
+               Digital-rain logo field behind About content. */
 
-                photoToggle.textContent =
-                    covered ? 'Show photo' : 'Hide photo';
+            const chaosField = document.getElementById('logoChaosField');
+            const aboutLayout = document.getElementById('aboutLayout');
+            const CHAOS_LOGO_BASE = 'https://cdn.jsdelivr.net/gh/iMoon07/logo-svg@main/';
+            // Curated set (60) — valid paths from iMoon07/logo-svg, balanced for performance.
+            const chaosLogos = [
+                // security — recon/scan/osint (14)
+                "security/amass.svg",        "security/nmap.svg",         "security/masscan.svg",       "security/ffuf.svg",
+                "security/gobuster.svg",     "security/nikto.svg",        "security/whatweb.svg",       "security/theharvester.svg",
+                "security/spiderfoot.svg",   "security/recon-ng.svg",     "security/dnsenum.svg",       "security/dnsrecon.svg",
+                "security/fierce.svg",       "security/netdiscover.svg",
 
-                photoToggle.setAttribute(
-                    'aria-label',
-                    covered
-                        ? 'Show profile photo'
-                        : 'Hide profile photo'
-                );
+                // security — web/proxy/fuzz (10)
+                "security/burp-suite.svg",   "security/zaproxy.svg",      "security/sqlmap.svg",        "security/wfuzz.svg",
+                "security/commix.svg",       "security/wpscan.svg",       "security/dirb.svg",          "security/dirbuster.svg",
+                "security/wapiti.svg",       "security/wafw00f.svg",
+
+                // security — exploit/AD/post-ex/C2 (18)
+                "security/metasploit.svg",   "security/impacket.svg",     "security/crackmapexec.svg",  "security/responder.svg",
+                "security/bloodhound.svg",   "security/mimikatz.svg",     "security/evil-winrm.svg",    "security/beef-xss.svg",
+                "security/setoolkit.svg",    "security/armitage.svg",     "security/powershell-empire.svg", "security/havoc.svg",
+                "security/covenant.png",     "security/exploit-db.svg",   "security/enum4linux.svg",    "security/smbmap.svg",
+                "security/peass.svg",        "security/powersploit.svg",
+
+                // security — creds/cracking (9)
+                "security/john.svg",         "security/hashcat.svg",      "security/hydra.svg",         "security/medusa.svg",
+                "security/ophcrack.svg",     "security/cewl.svg",         "security/crunch.svg",        "security/hash-identifier.svg",
+                "security/hashid.svg",
+
+                // security — wireless/network/sniff/MITM (15)
+                "security/aircrack-ng.svg",  "security/wifite.svg",       "security/airgeddon.svg",     "security/reaver.svg",
+                "security/kismet.svg",       "security/bully.svg",        "security/fern-wifi-cracker.svg", "security/bettercap.svg",
+                "security/wireshark.svg",    "security/tcpdump.svg",      "security/ettercap.svg",      "security/mitmproxy.svg",
+                "security/netcat.svg",       "security/ncat.svg",         "security/proxychains.svg",
+
+                // security — RE/mobile/forensics (11)
+                "security/ghidra.svg",       "security/radare2.svg",      "security/apktool.svg",       "security/jadx.svg",
+                "security/cutter.svg",       "security/binwalk.svg",      "security/volatility.svg",    "security/autopsy.svg",
+                "security/foremost.svg",     "security/yara.svg",         "security/clamav.svg",
+
+                // security — vuln/defense/platform (13)
+                "security/trivy.svg",        "security/wazuh.svg",        "security/openvas.svg",       "security/gvm.svg",
+                "security/nessus.svg",       "security/lynis.svg",        "security/snort.svg",         "security/owasp.svg",
+                "security/kali-linux.svg",   "security/hackthebox.svg",   "security/tryhackme.svg",     "security/virustotal.svg",
+                "security/maltego.svg",
+
+                // stack (18)
+                "stack/linux.svg",           "stack/arch-linux.svg",      "stack/debian.svg",           "stack/ubuntu.svg",
+                "stack/windows.svg",         "stack/android.svg",         "stack/docker.svg",           "stack/kubernetes.svg",
+                "stack/terraform.svg",       "stack/ansible.svg",         "stack/aws.svg",              "stack/nginx.svg",
+                "stack/postgresql.svg",      "stack/redis.svg",           "stack/git.svg",              "stack/github.svg",
+                "stack/grafana.svg",         "stack/prometheus.svg",
+
+                // programming (12)
+                "programming/python.svg",    "programming/bash.svg",      "programming/c.svg",          "programming/cplusplus.svg",
+                "programming/go.svg",        "programming/rust.svg",      "programming/javascript.svg", "programming/typescript.svg",
+                "programming/php.svg",       "programming/java.svg",      "programming/powershell.svg", "programming/lua.svg"
+            ];
+
+            let chaos = { items: [], raf: null, active: false, built: false, builtCount: 0, last: 0, busy: false };
+
+            function chaosEnabled() {
+                return chaosField && aboutLayout;
+            }
+
+            function chaosCount() {
+                return window.innerWidth <= 700 ? 32 : chaosLogos.length;
+            }
+
+            function shuffle(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function chaosLabel(path) {
+                const base = path.split('/').pop().replace(/\.[^.]+$/, '');
+                return base.replace(/[-_.]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            }
+
+            let chaosTip = null;
+            let chaosTipItem = null;
+            let chaosTipTimer = null;
+
+            function ensureChaosTip() {
+                if (chaosTip || !chaosField) return;
+                chaosTip = document.createElement('div');
+                chaosTip.className = 'chaos-tooltip';
+                chaosTip.setAttribute('aria-hidden', 'true');
+                chaosField.appendChild(chaosTip);
+            }
+
+            function positionChaosTip() {
+                if (!chaosTip || !chaosTipItem || !chaosTip.classList.contains('show')) return;
+                const it = chaosTipItem;
+                const w = aboutLayout.clientWidth || 1;
+                let x = it.x + it.size / 2;
+                let y = it.y - 10;
+                x = Math.max(40, Math.min(w - 40, x));
+                y = Math.max(18, y);
+                chaosTip.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) translate(-50%, -100%)';
+            }
+
+            function showChaosTip(it, autoHide) {
+                ensureChaosTip();
+                if (!chaosTip) return;
+                if (chaosTipTimer) { clearTimeout(chaosTipTimer); chaosTipTimer = null; }
+                chaosTipItem = it;
+                chaosTip.textContent = it.el.dataset.label || '';
+                chaosTip.classList.add('show');
+                positionChaosTip();
+                if (autoHide) {
+                    chaosTipTimer = setTimeout(() => { hideChaosTip(); }, 1400);
+                }
+            }
+
+            function hideChaosTip() {
+                if (chaosTipTimer) { clearTimeout(chaosTipTimer); chaosTipTimer = null; }
+                chaosTipItem = null;
+                if (chaosTip) chaosTip.classList.remove('show');
+            }
+
+            function analyzeLogoTone(img) {
+                try {
+                    const c = document.createElement('canvas');
+                    const s = 24;
+                    c.width = s; c.height = s;
+                    const ctx = c.getContext('2d', { willReadFrequently: true });
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, s, s);
+                    ctx.drawImage(img, 0, 0, s, s);
+                    const data = ctx.getImageData(0, 0, s, s).data;
+                    let r = 0, g = 0, b = 0, n = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const a = data[i + 3];
+                        if (a < 40) continue;
+                        r += data[i]; g += data[i + 1]; b += data[i + 2];
+                        n++;
+                    }
+                    if (!n) return;
+                    r /= n; g /= n; b /= n;
+                    const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+                    img.classList.add(luma > 0.72 ? 'logo-light' : 'logo-dark');
+                } catch (_) {
+                    img.classList.add('logo-dark');
+                }
+            }
+
+            function buildChaos() {
+                if (!chaosEnabled() || (chaos.built && chaos.builtCount === chaosCount())) return;
+                chaosField.innerHTML = '';
+                chaos.items = [];
+                const names = shuffle(chaosLogos.slice()).slice(0, chaosCount());
+                const frag = document.createDocumentFragment();
+                names.forEach((name) => {
+                    const img = document.createElement('img');
+                    img.className = 'chaos-logo';
+                    img.crossOrigin = 'anonymous';
+                    img.alt = '';
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    img.draggable = false;
+
+                    const depth = 0.35 + Math.random() * 0.65; // 0.35..1
+                    const mobile = window.innerWidth <= 700;
+                    const base = mobile ? 22 : 28;
+                    const span = mobile ? 16 : 22;
+                    const size = Math.round(base + depth * span);
+                    const speed = 16 + (1 - depth) * 22 + Math.random() * 16;
+                    const opacity = '0.52';
+                    const it = {
+                        el: img,
+                        x: 0, y: 0, size, speed,
+                        col: 0
+                    };
+                    img.style.setProperty('--size', size + 'px');
+                    img.style.setProperty('--base-opacity', opacity);
+                    img.dataset.label = chaosLabel(name);
+                    img.addEventListener('load', () => analyzeLogoTone(img), { once: true });
+                    img.addEventListener('error', () => img.classList.add('logo-dark'), { once: true });
+                    img.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') showChaosTip(it, false); });
+                    img.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') hideChaosTip(); });
+                    img.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') showChaosTip(it, true); });
+                    img.src = CHAOS_LOGO_BASE + name;
+                    frag.appendChild(img);
+                    chaos.items.push(it);
+                });
+                chaosField.appendChild(frag);
+                chaos.built = true;
+                chaos.builtCount = names.length;
+            }
+
+            function layoutChaos() {
+                if (!chaosEnabled() || !chaos.items.length) return;
+                const w = aboutLayout.clientWidth || 1;
+                const h = aboutLayout.clientHeight || 1;
+                const mobile = window.innerWidth <= 700;
+                const colW = mobile ? 48 : 68;
+                const cols = Math.max(5, Math.floor(w / colW));
+                const colX = (c) => (c + 0.5) * (w / cols);
+
+                chaos.items.forEach((it, i) => {
+                    const col = i % cols;
+                    it.col = col;
+                    const jitter = (Math.random() - 0.5) * (w / cols) * 0.4;
+                    it.x = colX(col) + jitter - it.size / 2;
+                    it.y = Math.random() * (h + it.size * 2) - it.size;
+                    it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' + it.y.toFixed(1) + 'px,0) scale(var(--logo-scale, 1))';
+                });
+            }
+
+            function chaosStep(ts) {
+                if (!chaos.active) return;
+                if (!chaos.last) chaos.last = ts;
+                const dt = Math.min((ts - chaos.last) / 1000, 0.05);
+                chaos.last = ts;
+                const w = aboutLayout.clientWidth || 1;
+                const h = aboutLayout.clientHeight || 1;
+                const mobile = window.innerWidth <= 700;
+                const colW = mobile ? 48 : 68;
+                const cols = Math.max(5, Math.floor(w / colW));
+                const colX = (c) => (c + 0.5) * (w / cols);
+
+                for (const it of chaos.items) {
+                    it.y += it.speed * dt;
+                    if (it.y > h + it.size) {
+                        const jitter = (Math.random() - 0.5) * (w / cols) * 0.4;
+                        it.col = Math.floor(Math.random() * cols);
+                        it.x = colX(it.col) + jitter - it.size / 2;
+                        it.y = -it.size - Math.random() * h * 0.35;
+                        it.speed = 16 + Math.random() * 30;
+                    }
+                    it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' + it.y.toFixed(1) + 'px,0) scale(var(--logo-scale, 1))';
+                }
+                positionChaosTip();
+                chaos.raf = requestAnimationFrame(chaosStep);
+            }
+
+            function startChaos() {
+                if (!chaosEnabled() || chaos.active) return;
+                buildChaos();
+                layoutChaos();
+                chaos.active = true;
+                chaos.last = 0;
+                chaosField.classList.add('active');
+                if (!chaos.raf) chaos.raf = requestAnimationFrame(chaosStep);
+            }
+
+            function stopChaos() {
+                chaos.active = false;
+                hideChaosTip();
+                if (chaos.raf) { cancelAnimationFrame(chaos.raf); chaos.raf = null; }
+                if (chaosField) chaosField.classList.remove('active');
+            }
+
+            function syncChaos() {
+                if (!chaosEnabled()) { stopChaos(); return; }
+                if (activePage === 'about') startChaos();
+                else stopChaos();
+            }
+
+            window.addEventListener('resize', () => {
+                if (!chaos.built) return;
+                if (chaos.builtCount !== chaosCount()) {
+                    const wasActive = chaos.active;
+                    stopChaos();
+                    chaos.built = false;
+                    chaos.builtCount = 0;
+                    chaos.items = [];
+                    if (chaosField) chaosField.innerHTML = '';
+                    if (wasActive) startChaos();
+                } else {
+                    layoutChaos();
+                }
             });
 
             /* ------------------------------------------------------------ local artwork fallback
@@ -783,40 +1050,15 @@ if (name === 'home') {
                 calmTimers = [];
             }
 
-            function startCalmText(container = document) {
-                stopCalmText();
-                const nodes = Array.from(container.querySelectorAll('[data-calm-text]'));
-                nodes.forEach((node, i) => {
-                    const text = node.dataset.calmText || '';
-                    if (reducedMotion.matches) {
-                        node.textContent = text;
-                        return;
-                    }
-                    let idx = 0;
-                    let deleting = false;
-                    node.textContent = '';
-                    const tick = () => {
-                        if (!deleting) {
-                            idx++;
-                            node.textContent = text.slice(0, idx);
-                            if (idx >= text.length) {
-                                deleting = true;
-                                calmTimers.push(setTimeout(tick, 2600));
-                                return;
-                            }
-                            calmTimers.push(setTimeout(tick, 95));
-                        } else {
-                            idx--;
-                            node.textContent = text.slice(0, idx);
-                            if (idx <= 0) {
-                                deleting = false;
-                                calmTimers.push(setTimeout(tick, 700));
-                                return;
-                            }
-                            calmTimers.push(setTimeout(tick, 45));
-                        }
-                    };
-                    calmTimers.push(setTimeout(tick, 300 + i * 180));
+            function setCalmText(container = document) {
+                const scope = container || document;
+                const nodes = Array.from(scope.querySelectorAll('[data-calm-text]'));
+                nodes.forEach((node) => {
+                    const text = node.dataset.calmText || node.textContent || '';
+                    if (!text) return;
+                    node.textContent = text;
+                    node.style.opacity = '';
+                    node.style.transition = '';
                 });
             }
 
@@ -841,6 +1083,10 @@ if (name === 'home') {
                 if (target === 'home') {
                     startTypewriter();
                     startSubtitle();
+                }
+                if (target === 'about') {
+                    setCalmText(pages.about);
+                    startChaos();
                 }
 
                 const activeTab = tabs[selectedPanel];

@@ -56,7 +56,8 @@
                 aria-label="About Kurnia"
                 hidden
             >
-                <div class="about-layout">
+                <div class="about-layout" id="aboutLayout">
+                    <div class="logo-chaos-field" id="logoChaosField" aria-hidden="true"></div>
                     <figure class="portrait" id="portrait">
                         <div class="portrait-stage">
                             <img
@@ -72,19 +73,46 @@
                                 </span>
                             </div>
                         </div>
-
-                        <figcaption class="portrait-footer">
-                            <span>@iMoon07</span>
-
-                            <button
-                                class="photo-toggle"
-                                id="photoToggle"
-                                type="button"
-                                aria-label="Hide profile photo"
-                            >
-                                Hide photo
-                            </button>
-                        </figcaption>
+                        <div class="mobile-profile-intro">
+                            <p class="panel-title">
+                                <span class="panel-accent" dir="rtl" lang="ar" data-calm-text="اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ">اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ</span><br>
+                                <span class="panel-primary" data-calm-text="Hi, I’m Kurnia.">Hi, I’m Kurnia.</span>
+                            </p>
+                            <div class="mobile-contact" aria-label="Contact links">
+                                <div class="social-links mobile-social-links">
+                                    <a class="social-link" href="mailto:rajamuhkurset07@gmail.com" aria-label="Email Kurnia" title="Email">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+                                    </a>
+                                    <a class="social-link" href="https://github.com/iMoon07" target="_blank" rel="noopener noreferrer" aria-label="iMoon07 on GitHub" title="GitHub">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+                                    </a>
+                                    <a class="social-link" href="https://www.linkedin.com/in/raja-muhammad-kurnia-setyawan-391956449" target="_blank" rel="noopener noreferrer" aria-label="Raja Muhammad Kurnia Setyawan on LinkedIn" title="LinkedIn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                                    </a>
+                                    <a class="social-link" href="https://x.com/Rajaaaaa07_" target="_blank" rel="noopener noreferrer" aria-label="Raja Muhammad Kurnia Setyawan on X" title="X">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    </a>
+                                </div>
+                                <span class="contact-note mobile-contact-note">Copyright © 2026 Raja Muhammad Kurnia Setyawan (@iMoon07).</span>
+                            </div>
+                        </div>
+                        <div class="portrait-contact">
+                            <div class="social-links" aria-label="Contact links">
+                                <a class="social-link" href="mailto:rajamuhkurset07@gmail.com" aria-label="Email Kurnia" title="Email">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+                                </a>
+                                <a class="social-link" href="https://github.com/iMoon07" target="_blank" rel="noopener noreferrer" aria-label="iMoon07 on GitHub" title="GitHub">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+                                </a>
+                                <a class="social-link" href="https://www.linkedin.com/in/raja-muhammad-kurnia-setyawan-391956449" target="_blank" rel="noopener noreferrer" aria-label="Raja Muhammad Kurnia Setyawan on LinkedIn" title="LinkedIn">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                                </a>
+                                <a class="social-link" href="https://x.com/Rajaaaaa07_" target="_blank" rel="noopener noreferrer" aria-label="Raja Muhammad Kurnia Setyawan on X" title="X">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                            <span class="contact-note">Copyright © 2026 Raja Muhammad Kurnia Setyawan (@iMoon07).</span>
+                        </div>
                     </figure>
 
                     <div class="about-content">
@@ -1326,7 +1354,7 @@
                             >
                                 <a
                                     class="social-link"
-                                    href="mailto:rajamuhkurset07@gmail.com@gmail.com"
+                                    href="mailto:rajamuhkurset07@gmail.com"
                                     aria-label="Email Kurnia"
                                     title="Email"
                                 >
@@ -1379,6 +1407,22 @@
                                         aria-hidden="true"
                                     >
                                         <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/>
+                                    </svg>
+                                </a>
+                                <a
+                                    class="social-link"
+                                    href="https://x.com/Rajaaaaa07_"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Raja Muhammad Kurnia Setyawan on X"
+                                    title="X"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                     </svg>
                                 </a>
 

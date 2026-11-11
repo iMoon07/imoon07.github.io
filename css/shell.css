@@ -9,11 +9,11 @@
 
 :root {
     color-scheme: dark;
-    --bg: #080808;
-    --text: #e5e7e9;
-    --muted: #a9afb5;
-    --line: #292d31;
-    --accent: #b8cddc;
+    --bg: #0d1117;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --line: #30363d; /* base divider */
+    --accent: #58a6ff;
     --ease: cubic-bezier(.22, 1, .36, 1);
     --motion-enter: .55s;
     --motion-leave: .18s;
@@ -71,7 +71,7 @@
     min-height: 78px;
     padding: 18px clamp(8px, 1.8vw, 36px);
     color: var(--muted);
-    font-family: "Segoe UI", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif;
     font-size: clamp(23px, 2.7vw, 36px);
     line-height: 1.2;
     letter-spacing: -.04em;
