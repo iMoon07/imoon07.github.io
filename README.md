@@ -7,6 +7,7 @@ Personal website and portfolio of **Raja Muhammad Kurnia Setyawan (@iMoon07)** �
 - **Live site:** [imoon07.github.io](https://imoon07.github.io/)
 - **Content repository (Markdown articles & references):** [iMoon07/Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity)
 - **Logo assets (digital rain background):** [iMoon07/logo-svg](https://github.com/iMoon07/logo-svg)
+- **Template/test post (local):** [EN](file:///home/moon/Projects/imoon07.github.io/read.html?post=blog-post-template&lang=en) · [ID](file:///home/moon/Projects/imoon07.github.io/read.html?post=blog-post-template&lang=id) · [MS](file:///home/moon/Projects/imoon07.github.io/read.html?post=blog-post-template&lang=ms) · [TL](file:///home/moon/Projects/imoon07.github.io/read.html?post=blog-post-template&lang=tl)
 
 ---
 
