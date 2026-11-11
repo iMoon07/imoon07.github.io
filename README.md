@@ -1,136 +1,208 @@
 # imoon07.github.io
 
-Source code for the personal website and portfolio of **Raja Muhammad Kurnia Setyawan (@iMoon07)** — security, penetration testing, and technical writing.
+Personal website and portfolio of **Raja Muhammad Kurnia Setyawan (@iMoon07)** — security, penetration testing, and technical writing.
 
-- **Live site:** https://imoon07.github.io/
-- **Content repo (articles & references, Markdown):** https://github.com/iMoon07/Penjelajah-CyberSecurity
-- **Logo assets (digital rain):** https://github.com/iMoon07/logo-svg
+**Built portofolio to success.**
 
-> Built portofolio to success.
+- **Live site:** [imoon07.github.io](https://imoon07.github.io/)
+- **Content repository (Markdown articles & references):** [iMoon07/Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity)
+- **Logo assets (digital rain background):** [iMoon07/logo-svg](https://github.com/iMoon07/logo-svg)
 
 ---
 
-## Ringkasan teknis
+## Overview
 
-Situs ini adalah **static site** (HTML + CSS + JS murni, tanpa build step/framework). Konten artikel dan referensi **tidak disimpan di repo ini** sebagai file markdown statis, melainkan diambil (fetch) saat runtime dari repository konten terpisah melalui URL raw GitHub.
+This is a **static site** (plain HTML, CSS, and JavaScript) with **no build step and no framework**.  
+Page structure, styles, and UI logic live in this repository. **Article and reference content lives in a separate repository** and is fetched at runtime as raw Markdown from GitHub.
 
-## Font & tipografi
+## System topology
 
-Tipografi disatukan agar nyaman dibaca (UI/portofolio, blog, dan artikel teknis):
+```mermaid
+flowchart TB
+    U[Visitor Browser]
 
-| Peran | Stack / sumber | Dipakai di |
-|---|---|---|
-| **Body/UI utama** | `"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif` | Shell/nav, Home/About, Blog, Read/Docs (konsisten) |
-| **Fallback Arabic** | `Amiri`, `Noto Naskh Arabic` (Google Fonts, di-import di `css/shell.css`) | Salam/greeting & teks Arab agar glyph benar |
-| **Monospace/kode** | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace` | Blok kode & inline code (`article.css`, `style.css`) |
+    subgraph SITE[imoon07.github.io - static frontend]
+        H[index.html\nHome + About]
+        B[blog.html\nBlog listing]
+        R[read.html\nArticle reader]
+        D[references.html\nDocs hub]
 
-- **Cara kerja:** `css/shell.css` mendefinisikan token/variabel global (`--bg`, `--text`, `--muted`, `--line`, `--accent`) dan font dasar shell/nav; tiap halaman memuat stylesheet yang relevan (`home.css`, `style.css`, `article.css`, `docs.css`) sehingga tampilan konsisten namun tetap bisa diatur per konteks. Warna kanvas gelap (`#0d1117`) dipilih untuk kenyamanan baca, dengan teks `#e6edf3` dan muted `#8b949e`.
+        C[CSS\nshell.css / home.css / style.css / article.css / docs.css]
+        J[JS engines & data\nhome.js / blog-data.js / main.js / read.js\nmarkdown.js / docs-references-data.js / references.js]
+    end
 
-## Topologi sistem (bukan struktur folder)
+    subgraph CONTENT[iMoon07/Penjelajah-CyberSecurity - content repo]
+        A[Articles\n*-id.md / *-en.md]
+        M[References\nReferences/*-en.md and variants]
+    end
 
-```text
-                         ┌────────────────────────────────────┐
-                         │   Browser (imoon07.github.io)      │
-                         └─────────────────┬──────────────────┘
-                                           │ memuat HTML/CSS/JS statis
-                                           ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                        Repo ini: imoon07.github.io (static)                  │
-│                                                                              │
-│  [Halaman]              [CSS]                         [JS / Data & Engine]  │
-│  index.html  ───────▶  shell.css + home.css   ───▶  home.js                 │
-│   (Home+About)                                       (transisi/tab/panel,  │
-│                                                      logo digital rain)      │
-│  blog.html   ───────▶  shell.css + style.css  ───▶  blog-data.js (manifest) │
-│   (listing)             + docs.css                 + main.js (fetch meta,    │
-│                                                      filter, paginasi, UI)   │
-│  read.html   ───────▶  shell.css + article.css ───▶  blog-data.js + read.js  │
-│   (reader)             (+ docs.css bila perlu)       (fetch .md, marked,     │
-│                                                      DOMPurify, TOC, dll)   │
-│  references.html ───▶  shell+article+docs.css  ───▶  docs-references-data.js │
-│   (docs hub)                                         (manifest modul) +      │
-│                                                      read.js/references.js   │
-└───────────────┬───────────────────────────────────────────────┬──────────────┘
-                │ fetch raw Markdown (runtime)                  │ load logo SVG (CDN)
-                ▼                                               ▼
-┌───────────────────────────────────────┐     ┌─────────────────────────────────┐
-│ Penjelajah-CyberSecurity (GitHub)     │     │ iMoon07/logo-svg (GitHub, CDN)  │
-│ - Articles: .../*-id.md, *-en.md      │     │ jsDelivr: @main/ (digital rain  │
-│ - References: References/*-en.md      │     │ di background About/home.js)    │
-│ diambil via raw.githubusercontent.com │     └─────────────────────────────────┘
-└───────────────────────────────────────┘
+    subgraph ASSETS[iMoon07/logo-svg - assets repo]
+        L[SVG/PNG logos via jsDelivr CDN]
+    end
+
+    subgraph CDN[Runtime libraries - CDN]
+        K[marked + DOMPurify + highlight.js]
+    end
+
+    U -->|loads pages, CSS, JS| SITE
+    H --- C
+    B --- C
+    R --- C
+    D --- C
+    H --- J
+    B --- J
+    R --- J
+    D --- J
+
+    J -->|fetch raw Markdown| A
+    J -->|fetch raw Markdown| M
+    J -->|load logo sprites| L
+    R --> K
+    D --> K
 ```
 
-## Struktur & peran file penting
+## Page systems
 
-- **Halaman:** `index.html` (Home & About dalam satu dokumen), `blog.html` (daftar artikel), `read.html` (pembaca artikel/markdown), `references.html` (hub dokumentasi/referensi), `about.html` (standalone/redirect context).
-- **CSS:** `css/shell.css` (kanvas, variabel warna, nav, font global), `css/home.css` (layout Home/About, tab/panel, portrait, kontak), `css/style.css` (gaya umum & listing blog), `css/article.css` (pengalaman baca artikel), `css/docs.css` (layout docs/references).
-- **JS & data:**
-  - `js/blog-data.js` — **manifest blog**: array `myProjects` berisi entri artikel (`id`, `title`, `category`, `tags`, `publishedDate`, `rawUrl`, `repoUrl`, dll). Ini sumber daftar di blog.
-  - `js/main.js` — **mesin listing blog**: fetch metadata/konten ringkas dari `rawUrl`, filter, pencarian, paginasi, render kartu (dipakai `blog.html`).
-  - `js/read.js` — **reader**: mengambil markdown (dari `rawUrl`/`doc`/`ref`), me-resolve varian bahasa (mis. `-id.md`/`-en.md`), merender dengan **marked** + sanitasi **DOMPurify**, membangun TOC, navigasi, dan fitur baca.
-  - `js/docs-references-data.js` — **manifest docs/references**: `REFERENCE_MODULES` (id, title, group, `src` ke raw markdown di repo `Penjelajah-CyberSecurity/References/`).
-  - `js/references.js` — logika halaman/docs navigation/search di hub referensi.
-  - `js/home.js` — navigasi Home/About (SPA-like dalam satu dokumen), tab/panel, interaksi, dan **logo digital rain**.
-  - `js/markdown.js` — ekstensi/aturan markdown tambahan bila digunakan oleh reader.
+### Home & About (`index.html` + `js/home.js` + `css/home.css`)
 
-## Cara kerja data & rendering
+- Home and About share a **single document** with in-page navigation (no full reload).
+- **About** contains tabbed panels: Profile, Experience, Community, License, with slide/gesture controls and panel state managed in `home.js`.
+- Portrait/contact/social block adapts between desktop and mobile layouts.
+- **Digital rain logo effect:** `home.js` renders a curated set of logos loaded from `https://cdn.jsdelivr.net/gh/iMoon07/logo-svg@main/` (sourced from the `iMoon07/logo-svg` repository) behind/about the About visuals.
 
-1. **Home/About:** `index.html` + `home.js` mengelola perpindahan tampilan, panel (Profile/Experience/Community/License), dan animasi tanpa reload penuh. Latar “digital rain” logo mengambil SVG dari `https://cdn.jsdelivr.net/gh/iMoon07/logo-svg@main/` (repo https://github.com/iMoon07/logo-svg) dengan daftar logo terkurasi di `home.js`.
-2. **Blog listing:** `blog.html` memuat `blog-data.js` lalu `main.js`. `main.js` membaca `myProjects`, mengambil data dari `rawUrl` (raw GitHub) untuk metadata/preview, lalu menampilkan daftar terfilter/paginasi. Link artikel membuka `read.html?post=<id>`.
-3. **Reader artikel:** `read.html` + `read.js` mencari entri berdasarkan `post` di `myProjects`, menentukan sumber markdown (dan varian bahasa, mis. `-id` ↔ `-en`), fetch konten dari repo konten, lalu render HTML aman (marked + DOMPurify).
-4. **Docs/References:** `references.html` memuat manifest `docs-references-data.js` (`src` menunjuk ke `.../Penjelajah-CyberSecurity/main/References/*-en.md`) dan merender konten melalui alur reader/references.
+### Blog listing (`blog.html` + `js/blog-data.js` + `js/main.js`)
 
-## Cara pakai & menambah konten
+- `js/blog-data.js` defines the manifest `myProjects` (each entry: `id`, `title`, `category`, `tags`, `publishedDate`, `publishedTime`, `rawUrl`, `repoUrl`, etc.).
+- `js/main.js` reads the manifest, fetches article metadata/preview from each entry’s `rawUrl`, then handles search, filtering, pagination, and card rendering.
+- Selecting a post navigates to the reader: `read.html?post=<id>`.
 
-### Pratinjau lokal (tidak perlu build)
+### Article reader (`read.html` + `js/read.js` + `js/markdown.js`)
+
+- Resolves the target article from `post` (and supports doc/ref/lang parameters where applicable).
+- Chooses the Markdown source (and language variant, e.g. `-id.md` / `-en.md`) from manifest/raw URLs.
+- Fetches raw Markdown at runtime from the content repository, parses and sanitizes it, then enhances the reading experience (headings/TOC, code blocks, navigation/related UI, and other reader interactions).
+
+### Docs / References (`references.html` + `js/docs-references-data.js` + `js/references.js`)
+
+- `js/docs-references-data.js` defines `REFERENCE_MODULES` (`id`, `title`, `group`, `src` pointing to raw `*-en.md` files under `References/` in `Penjelajah-CyberSecurity`, with language-variant resolution).
+- `references.js` powers the docs hub (materials navigation, filtering/search, layout behavior) and loads content through the reader/render pipeline.
+
+## Content & rendering flow
+
+```mermaid
+flowchart LR
+    subgraph BlogFlow[Blog]
+        BD[blog-data.js\nmyProjects manifest] --> MJ[main.js\nfetch meta, filter, paginate]
+        MJ --> BL[blog.html cards]
+        BL -->|post=id| RD[read.html]
+    end
+
+    subgraph ReadFlow[Read / Render]
+        RD --> RJ[read.js\nresolve source & lang]
+        RJ -->|fetch raw .md| CR[Penjelajah-CyberSecurity]
+        CR --> RJ
+        RJ --> MK[marked parse]
+        MK --> DP[DOMPurify sanitize]
+        DP --> HL[highlight.js + markdown.js\ncode/TOC/enhance]
+        HL --> OUT[Rendered article]
+    end
+
+    subgraph DocsFlow[Docs]
+        DM[docs-references-data.js\nREFERENCE_MODULES] --> RF[references.js + reader]
+        RF -->|fetch raw .md| CR
+        CR --> OUT
+    end
+```
+
+## Markdown stack (reader requirements)
+
+Used by `read.html` and `references.html` to render remote Markdown safely and readably:
+
+| Library / file | Version / source | Purpose |
+|---|---|---|
+| **marked** | `15.0.12` (jsDelivr CDN) | Parse Markdown to HTML (GFM options enabled in reader) |
+| **DOMPurify** | `3.2.4` (jsDelivr CDN) | Sanitize parsed HTML before insertion (XSS-safe rendering) |
+| **highlight.js** | `11.11.1` (cdn-release via jsDelivr, loaded on demand) | Syntax highlighting for code blocks |
+| **js/markdown.js** | local | Project markdown extensions/helpers used by the reader pipeline |
+
+> The reader fetches `.md` content over the network at runtime; Markdown rendering depends on the libraries above being available.
+
+## Typography & theme
+
+- **UI/body font stack:** `Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif` (consistent across Home/About, Blog, Read, Docs).
+- **Arabic fallback:** `Amiri` and `Noto Naskh Arabic` (imported in `css/shell.css`) for correct Arabic/greeting glyphs.
+- **Monospace (code):** `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`.
+- **Theme tokens (`css/shell.css`):** dark canvas tuned for reading comfort (e.g. `--bg: #0d1117`, `--text: #e6edf3`, `--muted: #8b949e`, accent/lines aligned across pages).
+
+## How to use
+
+### Local preview
+
+No build step. Serve the folder or open `index.html`:
 
 ```bash
+git clone https://github.com/iMoon07/imoon07.github.io.git
 cd imoon07.github.io
 python3 -m http.server 8000
-# buka http://localhost:8000
+# open http://localhost:8000
 ```
 
-> Catatan: fetch konten blog/docs mengambil markdown dari GitHub raw (repo `Penjelajah-CyberSecurity`) sehingga butuh koneksi internet; beberapa perilaku fetch bisa berbeda saat dibuka langsung via `file://`.
+> Note: Blog/Docs/Read content is fetched from raw GitHub URLs in the content repository, so an internet connection is required for remote Markdown to load.
 
-### Upload / menambah posting blog
+### Add or upload a blog post
 
-Konten markdown blog dikelola di repo **Penjelajah-CyberSecurity**; repo situs ini hanya menyimpan manifest & tampilannya.
+1. **Create the Markdown in the content repo:** add and push the article file (follow language naming such as `your-post-id.md` / `your-post-en.md`) to [iMoon07/Penjelajah-CyberSecurity](https://github.com/iMoon07/Penjelajah-CyberSecurity).
+2. **Register it in this site:** edit `js/blog-data.js` and append an entry to `myProjects`:
 
-1. **Tulis & push markdown** ke repo `Penjelajah-CyberSecurity` (ikuti konvensi penamaan bahasa, mis. `nama-artikel-id.md` dan/atau `nama-artikel-en.md`).
-2. **Daftarkan di situs**: edit `js/blog-data.js`, tambahkan objek ke `myProjects`, contoh:
+```js
+{
+  id: "unique-post-slug",
+  title: "Post Title",
+  category: "web-security",
+  tags: ["tag-a", "tag-b"],
+  publishedDate: "YYYY-MM-DD",
+  publishedTime: "HH:mm",
+  rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/path/to/post-id.md",
+  repoUrl: "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/path/to/folder"
+}
+```
 
-   ```js
-   {
-     id: "slug-unik-artikel",
-     title: "Judul Artikel",
-     category: "web-security",
-     tags: ["tag1", "tag2"],
-     publishedDate: "YYYY-MM-DD",
-     publishedTime: "HH:mm",
-     rawUrl: "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/path/ke/file-id.md",
-     repoUrl: "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/path/ke/folder",
-   }
-   ```
+3. **Publish:** commit and push this repository — GitHub Pages serves the update at [imoon07.github.io](https://imoon07.github.io/).
 
-3. **Commit & push** repo `imoon07.github.io` — GitHub Pages akan menyajikan perubahan ke https://imoon07.github.io/.
+### Add a Docs/Reference module
 
-### Menambah referensi/docs
+1. Add the Markdown file under `References/` in the content repository (e.g. `*-en.md`).
+2. Register it in `js/docs-references-data.js` inside `REFERENCE_MODULES` with `id`, `title`, `group`, and `src` (raw GitHub URL).
 
-Tambahkan entri pada `REFERENCE_MODULES` di `js/docs-references-data.js` dengan `id`, `title`, `group`, dan `src` (raw URL ke file `*-en.md` di `Penjelajah-CyberSecurity/References/`), lalu pastikan file markdown-nya ada di repo konten.
+### Update About content (current)
 
-## Catatan pengembangan (next)
+About content and panels are defined in `index.html` with behavior/styles in `js/home.js` and `css/home.css`.
 
-- **Modular config About:** rencanakan pemisahan data About (profil, pengalaman, komunitas, lisensi, tautan sosial) ke satu sumber/konfigurasi terpusat (mis. file data/config JS) agar pembaruan konten & urutan panel lebih mudah tanpa mengubah banyak markup—memudahkan gonta-ganti isi.
+## Responsive & mobile view
 
-## SEO & aset pendukung
+- **Home/About:** desktop uses a two-column layout (portrait and content); on mobile the portrait stays on the left with the greeting/name and contact row aligned to the right, and panels stack below.
+- **Blog:** listing, filters/search, and pagination adapt to smaller screens with mobile-friendly navigation and header controls.
+- **Read (articles):** single-column reading layout optimized for small screens with responsive typography, media, and TOC/navigation behavior.
+- **Docs/References:** responsive docs layout with collapsible navigation/contents patterns for mobile and tablet.
+- Shared shell navigation and spacing scale across breakpoints for phones, tablets, and desktop.
 
-`robots.txt`, `sitemap.xml`, `BingSiteAuth.xml`, dan verifikasi Google disertakan untuk kebutuhan indexing. Aset gambar/logo lokal berada di `assets/`.
+## Roadmap / Next
 
-## Lisensi
+- **Modular About config:** centralize About data (profile, experience, community, license, links) in a single config/data source for easier edits and reordering.
+- **Light & dark mode:** add theme support with a light/dark toggle, persisted user preference, and accessible contrast across all pages.
 
-Lihat [LICENSE](LICENSE).
+## Repository structure (key files)
+
+- `index.html` — Home & About; `about.html` — About page context; `blog.html` — listing; `read.html` — reader; `references.html` — docs hub
+- `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`
+- `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`
+- `assets/` — images and static assets
+- `robots.txt`, `sitemap.xml` — indexing/SEO helpers
+
+## License
+
+See [LICENSE](LICENSE).
 
 ---
 
-Built portofolio to success.
+**Built portofolio to success.**
