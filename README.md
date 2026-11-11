@@ -123,6 +123,7 @@ Used by `read.html` and `references.html` to render remote Markdown safely and r
 | **marked** | `15.0.12` (jsDelivr CDN) | Parse Markdown to HTML (GFM options enabled in reader) |
 | **DOMPurify** | `3.2.4` (jsDelivr CDN) | Sanitize parsed HTML before insertion (XSS-safe rendering) |
 | **highlight.js** | `11.11.1` (cdn-release via jsDelivr, loaded on demand) | Syntax highlighting for code blocks |
+| **mermaid** | `10.9.1` (jsDelivr CDN, loaded on demand) | Render ```mermaid blocks to SVG with an interactive viewer (zoom/pan/fit, source/copy, fullscreen), responsive on mobile and desktop |
 | **js/markdown.js** | local | Project markdown extensions/helpers used by the reader pipeline |
 
 > The reader fetches `.md` content over the network at runtime; Markdown rendering depends on the libraries above being available.

@@ -877,19 +877,149 @@ html {
    Wadah diagram Mermaid yang sudah dirender jadi SVG.
    The Mermaid diagram container, already rendered to SVG. */
 
-.mermaid-block {
+.mermaid-viewer {
     margin: 1.7em 0;
-    padding: 18px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #0d1117;
+    overflow: hidden;
+}
+
+.mermaid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.02);
+    flex-wrap: wrap;
+}
+
+.mermaid-toolbar-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.mermaid-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 32px;
+    padding: 4px 10px;
     border: 1px solid var(--line);
     border-radius: 6px;
-    background: #0d1117;
-    overflow-x: auto;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mermaid-btn:hover,
+.mermaid-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    outline: none;
+}
+
+.mermaid-btn[aria-pressed="true"] {
+    background: rgba(88, 166, 255, 0.15);
+    border-color: rgba(88, 166, 255, 0.4);
+    color: #e6edf3;
+}
+
+.mermaid-zoom-label {
+    min-width: 44px;
     text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.mermaid-stage {
+    position: relative;
+    height: 420px;
+    min-height: 260px;
+    max-height: 70vh;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+    background:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0) 0 0 / 20px 20px,
+        #0d1117;
+}
+
+.mermaid-stage:active {
+    cursor: grabbing;
+}
+
+.mermaid-canvas {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+    will-change: transform;
+}
+
+.mermaid-diagram {
+    display: inline-block;
+}
+
+.mermaid-block svg,
+.mermaid-diagram svg {
+    max-width: none;
+    height: auto;
+}
+
+.mermaid-source {
+    margin: 0;
+    padding: 14px 16px;
+    max-height: 420px;
+    overflow: auto;
+    background: #0b0f14;
+    color: #e6edf3;
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
     font-size: 13px;
     line-height: 1.6;
-    white-space: pre-wrap;
-    color: var(--muted);
+    white-space: pre;
+}
+
+.mermaid-source[hidden] {
+    display: none !important;
+}
+
+.mermaid-viewer.is-fullscreen .mermaid-stage,
+.mermaid-stage:fullscreen {
+    height: 100vh;
+    max-height: none;
+}
+
+@media (max-width: 700px) {
+    .mermaid-toolbar {
+        padding: 8px;
+        gap: 6px;
+    }
+    .mermaid-btn {
+        min-height: 34px;
+        padding: 6px 9px;
+        font-size: 12px;
+    }
+    .mermaid-stage {
+        height: 320px;
+        min-height: 220px;
+        max-height: 60vh;
+    }
+    .mermaid-zoom-label {
+        min-width: 38px;
+        font-size: 11px;
+    }
 }
 
 .mermaid-block svg {
