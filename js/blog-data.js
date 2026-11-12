@@ -15,6 +15,18 @@ const myProjects = [
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/SQL-Injection",
   },
   {
+    id: "nosql-injection-portswigger",
+    title: "NoSQL Injection — PortSwigger Web Security Academy",
+    category: "web-security",
+    tags: ["nosql-injection", "portswigger", "mongodb", "database"],
+    publishedDate: "2026-11-12",
+    publishedTime: "19:00",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Port-Swigger/Web-Security-Academy/NoSQL-Injection/nosql-injection-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/NoSQL-Injection",
+  },
+  {
     id: "setup-burpsuite-community",
     title: "How to Setup Burpsuite Community in Browser",
     category: "tools",
