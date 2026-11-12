@@ -1472,7 +1472,11 @@ function loadMermaid() {
         window.mermaid.initialize({
             startOnLoad: false,
             theme: 'dark',
-            securityLevel: 'strict',
+            // 'loose' diperlukan supaya direktif click pada diagram Mermaid
+            // aktif. Isi artikel adalah konten tepercaya milik situs ini.
+            // 'loose' is required so Mermaid click directives work. Article
+            // content is trusted, first-party material.
+            securityLevel: 'loose',
             fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif'
         });
 
