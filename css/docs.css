@@ -3,7 +3,7 @@
    left nav drawer, inline collapsible "On this page" (closed by default). Scoped to .docs-page. */
 .docs-page {
   --docs-bg: var(--bg);
-  --docs-bg-soft: #0c1014;
+  --docs-bg-soft: #111827;
   --docs-border: rgba(184,205,220,.13);
   --docs-border-strong: rgba(184,205,220,.22);
   --docs-surface: rgba(184,205,220,.035);

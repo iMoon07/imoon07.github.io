@@ -671,6 +671,31 @@ if (name === 'home') {
             ];
 
             let chaos = { items: [], raf: null, active: false, built: false, builtCount: 0, last: 0, busy: false };
+            const CHAOS_STATE_KEY = 'imoon07_chaos_rain_v1';
+
+            function saveChaosState() {
+                if (!chaos.built || !chaos.items.length) return;
+                try {
+                    const data = {
+                        builtCount: chaos.builtCount,
+                        items: chaos.items.map(it => ({
+                            name: it.name, x: it.x, y: it.y, size: it.size, speed: it.speed, col: it.col || 0
+                        }))
+                    };
+                    sessionStorage.setItem(CHAOS_STATE_KEY, JSON.stringify(data));
+                } catch (_) {}
+            }
+
+            function loadChaosState() {
+                try {
+                    const raw = sessionStorage.getItem(CHAOS_STATE_KEY);
+                    if (!raw) return null;
+                    const data = JSON.parse(raw);
+                    if (!data || !Array.isArray(data.items)) return null;
+                    if (data.builtCount !== chaosCount() || data.items.length !== chaosCount()) return null;
+                    return data;
+                } catch (_) { return null; }
+            }
 
             function chaosEnabled() {
                 return chaosField && aboutLayout;
@@ -762,12 +787,20 @@ if (name === 'home') {
             }
 
             function buildChaos() {
-                if (!chaosEnabled() || (chaos.built && chaos.builtCount === chaosCount())) return;
+                if (!chaosEnabled() || (chaos.built && chaos.builtCount === chaosCount())) return false;
                 chaosField.innerHTML = '';
                 chaos.items = [];
-                const names = shuffle(chaosLogos.slice()).slice(0, chaosCount());
+                const saved = loadChaosState();
+                let sources, restored = false;
+                if (saved) {
+                    sources = saved.items;
+                    restored = true;
+                } else {
+                    sources = shuffle(chaosLogos.slice()).slice(0, chaosCount()).map(name => ({ name }));
+                }
                 const frag = document.createDocumentFragment();
-                names.forEach((name) => {
+                sources.forEach((src) => {
+                    const name = src.name;
                     const img = document.createElement('img');
                     img.className = 'chaos-logo';
                     img.crossOrigin = 'anonymous';
@@ -776,17 +809,27 @@ if (name === 'home') {
                     img.decoding = 'async';
                     img.draggable = false;
 
-                    const depth = 0.35 + Math.random() * 0.65; // 0.35..1
-                    const mobile = window.innerWidth <= 700;
-                    const base = mobile ? 22 : 28;
-                    const span = mobile ? 16 : 22;
-                    const size = Math.round(base + depth * span);
-                    const speed = 16 + (1 - depth) * 22 + Math.random() * 16;
+                    let size, speed;
+                    if (restored) {
+                        size = src.size;
+                        speed = src.speed;
+                    } else {
+                        const depth = 0.35 + Math.random() * 0.65; // 0.35..1
+                        const mobile = window.innerWidth <= 700;
+                        const base = mobile ? 22 : 28;
+                        const span = mobile ? 16 : 22;
+                        size = Math.round(base + depth * span);
+                        speed = 16 + (1 - depth) * 22 + Math.random() * 16;
+                    }
                     const opacity = '0.52';
                     const it = {
                         el: img,
-                        x: 0, y: 0, size, speed,
-                        col: 0
+                        name,
+                        x: restored ? src.x : 0,
+                        y: restored ? src.y : 0,
+                        size,
+                        speed,
+                        col: restored ? (src.col || 0) : 0
                     };
                     img.style.setProperty('--size', size + 'px');
                     img.style.setProperty('--base-opacity', opacity);
@@ -802,7 +845,9 @@ if (name === 'home') {
                 });
                 chaosField.appendChild(frag);
                 chaos.built = true;
-                chaos.builtCount = names.length;
+                chaos.builtCount = sources.length;
+                if (!restored) saveChaosState();
+                return restored;
             }
 
             function layoutChaos() {
@@ -822,6 +867,7 @@ if (name === 'home') {
                     it.y = Math.random() * (h + it.size * 2) - it.size;
                     it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' + it.y.toFixed(1) + 'px,0) scale(var(--logo-scale, 1))';
                 });
+                saveChaosState();
             }
 
             function chaosStep(ts) {
@@ -853,8 +899,13 @@ if (name === 'home') {
 
             function startChaos() {
                 if (!chaosEnabled() || chaos.active) return;
-                buildChaos();
-                layoutChaos();
+                const restored = buildChaos();
+                if (!restored) layoutChaos();
+                else if (chaos.items.length) {
+                    chaos.items.forEach(it => {
+                        it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' + it.y.toFixed(1) + 'px,0) scale(var(--logo-scale, 1))';
+                    });
+                }
                 chaos.active = true;
                 chaos.last = 0;
                 chaosField.classList.add('active');
@@ -883,10 +934,16 @@ if (name === 'home') {
                     chaos.builtCount = 0;
                     chaos.items = [];
                     if (chaosField) chaosField.innerHTML = '';
+                    try { sessionStorage.removeItem(CHAOS_STATE_KEY); } catch (_) {}
                     if (wasActive) startChaos();
                 } else {
                     layoutChaos();
                 }
+            });
+
+            window.addEventListener('pagehide', saveChaosState);
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) saveChaosState();
             });
 
             /* ------------------------------------------------------------ local artwork fallback

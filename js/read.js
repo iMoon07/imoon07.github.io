@@ -1965,7 +1965,7 @@ function trendingProjects(current, limit) {
 function thumbnailPlaceholder(label) {
     const text = String(label || '·').trim().slice(0, 2).toUpperCase();
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">` +
-        `<rect width="320" height="200" fill="#0d1117"/>` +
+        `<rect width="320" height="200" fill="#111827"/>` +
         `<text x="160" y="100" fill="#333a41" font-family="sans-serif" font-size="38" text-anchor="middle" dominant-baseline="middle">${text}</text>` +
         `</svg>`;
 

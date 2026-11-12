@@ -99,7 +99,7 @@
     gap: 20px;
 }
 .post-card {
-    background: #161b22;
+    background: #1f2937;
     border: 1px solid #30363d;
     border-radius: 10px;
     padding: 24px 28px;
@@ -158,7 +158,7 @@ body {
     max-width: 1000px;
     margin: 0 auto;
     padding: 40px 20px;
-    background-color: var(--bg, #0d1117);
+    background-color: var(--bg, #111827);
     line-height: 1.75;
     font-size: 17px;
     -webkit-font-smoothing: antialiased;
@@ -238,7 +238,7 @@ nav { margin-bottom: 30px; }
    Article cards inside the listing. */
 main.read-container {
     border: 1px solid #30363d;
-    background-color: #0d1117;
+    background-color: #111827;
     border-radius: 6px;
     padding: 30px 40px;
     margin-bottom: 30px;
@@ -248,15 +248,15 @@ main.read-container {
 #content p { text-align: left; }
 #content a { word-break: break-all; }
 #content h1, #content h2 { border-bottom: 1px solid var(--line, #30363d); padding-bottom: 0.3em; margin-bottom: 16px; margin-top: 24px; color: var(--text, #e6edf3); }
-#content img { max-width: 100%; box-sizing: content-box; background-color: #0d1117; margin: 15px 0; border: 1px solid #30363d; border-radius: 6px; }
-#content pre { box-sizing: border-box; max-width: 100%; background-color: #161b22; padding: 16px; overflow-x: auto; border-radius: 6px; border: 1px solid #30363d; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; line-height: 1.45; color: #c9d1d9; }
+#content img { max-width: 100%; box-sizing: content-box; background-color: #111827; margin: 15px 0; border: 1px solid #30363d; border-radius: 6px; }
+#content pre { box-sizing: border-box; max-width: 100%; background-color: #1f2937; padding: 16px; overflow-x: auto; border-radius: 6px; border: 1px solid #30363d; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; line-height: 1.45; color: #c9d1d9; }
 #content code { background-color: rgba(240,246,252,0.15); padding: 0.2em 0.4em; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%; }
 #content pre code { background-color: transparent; padding: 0; }
 #content blockquote { padding: 0 1em; color: #8b949e; border-left: 0.25em solid #30363d; margin: 0 0 16px 0; }
 #content table { display: block; box-sizing: border-box; max-width: 100%; overflow-x: auto; border-collapse: collapse; width: 100%; margin-bottom: 15px; }
 #content table th, #content table td { border: 1px solid #30363d; padding: 6px 13px; }
-#content table tr { background-color: #0d1117; }
-#content table tr:nth-child(2n) { background-color: #161b22; }
+#content table tr { background-color: #111827; }
+#content table tr:nth-child(2n) { background-color: #1f2937; }
 
 /* ---------------------------------------------------------------- article meta
    Metadata penulis, tombol bagikan, dan Giscus.
@@ -320,7 +320,7 @@ body.blog-page {
     max-width: none;
     margin: 0;
     padding: 0;
-    background-color: var(--bg, #0d1117);
+    background-color: var(--bg, #111827);
 }
 
 
@@ -540,7 +540,7 @@ body.blog-page {
     padding: 6px;
     border: 1px solid rgba(184,205,220,.12);
     border-radius: 12px;
-    background: color-mix(in srgb, #0d1117 86%, transparent);
+    background: color-mix(in srgb, #111827 86%, transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 16px 36px rgba(0, 0, 0, .45);
@@ -714,7 +714,7 @@ body.blog-page {
     max-height: 28vh;
     max-height: 28svh;
     overflow: hidden;
-    background: #0d1117;
+    background: #111827;
 }
 
 .blog-page .post-media img {
@@ -941,7 +941,7 @@ body.blog-page {
     display: block;
     height: 16px;
     border-radius: 2px;
-    background: #11151a;
+    background: #1f2937;
     animation: skeleton-pulse 1.6s ease-in-out infinite;
 }
 
@@ -984,7 +984,7 @@ body.blog-page {
 .blog-page .skeleton-media {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: #11151a;
+    background: #1f2937;
     animation: skeleton-pulse 1.6s ease-in-out infinite;
 }
 
@@ -998,7 +998,7 @@ body.blog-page {
     display: block;
     height: 14px;
     border-radius: 2px;
-    background: #11151a;
+    background: #1f2937;
     animation: skeleton-pulse 1.6s ease-in-out infinite;
 }
 
@@ -1148,7 +1148,7 @@ body.blog-page {
     margin-top: 30px;
     padding: 20px;
     border-left: 4px solid #58a6ff;
-    background-color: #161b22;
+    background-color: #1f2937;
     color: #c9d1d9;
     border-radius: 4px;
     font-size: 15px;
@@ -1229,7 +1229,7 @@ body.blog-page {
 }
 .tag-btn.active {
     background: #58a6ff;
-    color: #0d1117;
+    color: #111827;
     font-weight: 600;
 }
 
@@ -1253,7 +1253,7 @@ body.blog-page {
 .blog-command-dialog {
   position: relative; width: min(640px, calc(100vw - 24px)); margin: min(10vh, 72px) auto 0;
   border: 1px solid rgba(184,205,220,.14); border-radius: 14px;
-  background: color-mix(in srgb, #0d1117 86%, transparent); backdrop-filter: blur(14px) saturate(120%); -webkit-backdrop-filter: blur(14px) saturate(120%);
+  background: color-mix(in srgb, #111827 86%, transparent); backdrop-filter: blur(14px) saturate(120%); -webkit-backdrop-filter: blur(14px) saturate(120%);
   box-shadow: 0 24px 80px rgba(0,0,0,.42); overflow: hidden;
 }
 .blog-command-input-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(184,205,220,.1); background: transparent; cursor: text; }

@@ -134,7 +134,7 @@ Used by `read.html` and `references.html` to render remote Markdown safely and r
 - **UI/body font stack:** `Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Naskh Arabic", "Amiri", sans-serif` (consistent across Home/About, Blog, Read, Docs).
 - **Arabic fallback:** `Amiri` and `Noto Naskh Arabic` (imported in `css/shell.css`) for correct Arabic/greeting glyphs.
 - **Monospace (code):** `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`.
-- **Theme tokens (`css/shell.css`):** dark canvas tuned for reading comfort (e.g. `--bg: #0d1117`, `--text: #e6edf3`, `--muted: #8b949e`, accent/lines aligned across pages).
+- **Theme tokens (`css/shell.css`):** dark canvas tuned for reading comfort (e.g. `--bg: #111827`, `--text: #e6edf3`, `--muted: #8b949e`, accent/lines aligned across pages).
 
 ## How to use
 
