@@ -40,6 +40,8 @@ Top-level keys:
 | Key | Required | Meaning |
 | --- | --- | --- |
 | `title` | no | Accessible name for the diagram (not drawn). |
+| `caption` | no | Visible heading above the canvas; pair with `captionHref` to link it. |
+| `captionHref` | no | Link target for `caption`. |
 | `columns` | yes | Left-to-right columns; `[ids]` or `{ "nodes": [ids], "grid"?: 2 \| 3 \| 4 }`. |
 | `nodes` | yes | Map of `id -> node` (object or compact array). Every id used in `columns` or `edges` must exist. |
 | `edges` | no | `[from, to, badge?, back?]` or `{ "from", "to", "badge"?, "back"?, "style"? }`. |
@@ -47,6 +49,7 @@ Top-level keys:
 | `legend` | no | Direction key rendered under the diagram: `{ "flow": "Order", "back": "Return" }`. |
 | `facilities` | no | `[label, [icon, label], …]`. |
 | `vertical` | no | `true` forces the top-to-bottom layout on every viewport. |
+| `dense` | no | `true` compacts the diagram for many narrow columns (small nodes, tight gaps, text-only members). |
 
 ---
 
@@ -327,6 +330,34 @@ A static grid has no dots and no legend: there is no direction to explain.
 
 Use `groups` for a caption over a set, and `facilities` for surrounding context.
 
+### 7.7 Dense menu
+
+A single diagram that lists many categories at once: one column per language,
+the language on top, its stacks below. `"dense": true` shrinks the nodes, lays
+the columns out as a grid on narrow screens, and keeps several component logos
+per stack visible.
+
+```json
+{
+  "caption": "Solution Stack",
+  "captionHref": "https://en.wikipedia.org/wiki/Solution_stack",
+  "title": "Solution Stack",
+  "dense": true,
+  "columns": [
+    ["js", "mean", "mern"],
+    ["php", "laravel", "lamp"]
+  ],
+  "nodes": {
+    "js": ["JS / TS", "", "si-javascript", "out", "https://en.wikipedia.org/wiki/JavaScript"],
+    "lamp": ["LAMP", "", ["si-linux", "si-apache", "si-mysql", "si-php"], "tech", "https://…"]
+  }
+}
+```
+
+Keep the language labels short (one or two words): the whole diagram is about
+nine columns wide, so a long label widens every column. Put the component logos
+in `icons` so the acronym stacks read as what they are made of.
+
 ---
 
 ## 8. Checklist before committing
@@ -356,9 +387,10 @@ python3 verify.py              # all languages, desktop + mobile
 ```
 
 `verify.py` prints `OK` when the expected diagram count is present
-(`topo == 11` for the server-single-tier-stack article), `mermaid == 0`, and
-there are no overlapping nodes in any block. A non-zero overlap or a missing
-diagram means the spec or the layout regressed.
+(`topo == 3` for the server-single-tier-stack article: flow, combined stack
+menu, platform), `mermaid == 0`, and there are no overlapping nodes in any
+block. A non-zero overlap or a missing diagram means the spec or the layout
+regressed.
 
 For a single block, `python3 measure.py <blockIndex>` prints canvas size, scale,
 and per-node rects. Use it to check that bus trunks stay in the gaps and that no

@@ -130,6 +130,7 @@
         root.innerHTML = '';
         root.classList.add('topo');
         if (spec.vertical) root.classList.add('topo--vertical');
+        if (spec.dense) root.classList.add('topo--dense');
         root.setAttribute('role', 'group');
         root.setAttribute('aria-label', spec.title || 'Diagram topologi');
 
@@ -170,6 +171,17 @@
 
         canvas.appendChild(svg);
         canvas.appendChild(columns);
+        if (spec.caption) {
+            const cap = document.createElement(spec.captionHref ? 'a' : 'div');
+            cap.className = 'topo-caption';
+            if (spec.captionHref) {
+                cap.href = spec.captionHref;
+                cap.target = '_blank';
+                cap.rel = 'noopener noreferrer';
+            }
+            cap.textContent = spec.caption;
+            stage.appendChild(cap);
+        }
         stage.appendChild(canvas);
 
         /* Footer: legenda arah + fasilitas/tempat. Footer: direction legend and
@@ -291,7 +303,10 @@
         function addPath(d, cls, marker) {
             const id = 'topo-e-' + (++edgeSeq);
             const attrs = { d: d, class: cls, id: id };
-            if (marker) attrs['marker-end'] = 'url(#topo-arrow-' + marker + ')';
+            if (marker) {
+                const arrowId = marker === 'back' ? arrowBack : arrowFlow;
+                attrs['marker-end'] = 'url(#' + arrowId + ')';
+            }
             const p = svgEl('path', attrs);
             gEdges.appendChild(p);
             return p;
@@ -391,14 +406,16 @@
         function backV(s, t, depth) {
             /* Jalur balik vertikal: keluar dari sisi kiri, naik di jalur khusus
                di luar simpul, lalu masuk ke sisi kiri tujuan. Tidak melintasi
-               teks simpul. Vertical return path: exit the left edge, climb a
-               dedicated lane outside the nodes, and enter the target's left. */
-            const lane = 14 + depth;
+               teks simpul. Jalur memakai x tetap supaya semua lintasan sejajar.
+               Vertical return path: exit the left edge, climb a dedicated lane
+               outside the nodes, and enter the target's left. A fixed lane x
+               keeps every return path parallel. */
+            const lane = 16 + depth;
             const x1 = s.x, y1 = s.y + 6;
             const x2 = t.x, y2 = t.y + t.h - 6;
             return 'M ' + x1 + ' ' + y1 +
-                ' C ' + (x1 - lane) + ' ' + (y1 - 10) + ', ' +
-                      (x2 - lane) + ' ' + (y2 + 10) + ', ' +
+                ' C ' + lane + ' ' + (y1 - 10) + ', ' +
+                      lane + ' ' + (y2 + 10) + ', ' +
                       x2 + ' ' + y2;
         }
 
@@ -723,8 +740,7 @@
                     const tone = isBack ? '#3fb950' : '#58a6ff';
                     if (vertical) {
                         if (isBack) {
-                            addBadge(Math.min(sr.x, tr.x) - (14 + depth) / 2 - 2,
-                                (sr.y + tr.y + tr.h) / 2, e.badge, tone);
+                            addBadge(16 + depth, (sr.y + tr.y + tr.h) / 2, e.badge, tone);
                         } else {
                             addBadge((sr.cx + tr.cx) / 2 + 16, (sr.y + sr.h + tr.y) / 2, e.badge, tone);
                         }

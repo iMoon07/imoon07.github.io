@@ -414,3 +414,179 @@ a.topo-node:focus-visible {
     gap: 44px;
     padding: 20px 12px 20px 56px;
 }
+/* Alur vertikal: simpul tidak melebar penuh, ditaruh di tengah.
+   Vertical flow: nodes keep a readable width and sit centred. */
+.topo--vertical .topo-col:not([data-grid]) .topo-node {
+    max-width: 320px;
+    margin-inline: auto;
+    justify-content: center;
+}
+
+/* Diagram padat: banyak kolom kategori dalam satu kanvas.
+   Dense diagram: many category columns on one canvas. */
+.topo--dense .topo-columns {
+    gap: 10px;
+    padding: 10px 8px;
+}
+
+.topo--dense .topo-col {
+    gap: 6px;
+}
+
+.topo--dense .topo-node {
+    min-width: 70px;
+    max-width: 104px;
+    padding: 4px 6px;
+    gap: 5px;
+    border-radius: 6px;
+}
+
+.topo--dense .topo-node-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+}
+
+.topo--dense .topo-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.topo--dense .topo-node-label {
+    font-size: 10px;
+    line-height: 1.2;
+}
+
+.topo--dense .topo-node-sub {
+    display: none;
+}
+
+.topo--narrow.topo--dense .topo-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+
+.topo--narrow.topo--dense .topo-col {
+    width: 100%;
+}
+
+/* Anggota stack: teks saja, tanpa ikon, supaya sembilan kolom muat.
+   Stack members: text only, so nine columns fit the article width. */
+.topo--dense .topo-node--tech .topo-node-icon {
+    display: none;
+}
+
+.topo--dense .topo-node--tech {
+    justify-content: center;
+    text-align: center;
+}
+
+.topo--dense .topo-node--tech .topo-node-label {
+    font-size: 10px;
+}
+
+.topo--dense .topo-columns {
+    gap: 6px;
+    padding: 8px 6px;
+}
+
+.topo--dense .topo-node {
+    max-width: 96px;
+    padding: 4px 5px;
+}
+
+.topo--dense .topo-node-label {
+    font-size: 9.5px;
+}
+
+.topo--dense .topo-columns {
+    gap: 4px;
+    padding: 6px 4px;
+}
+
+.topo--dense .topo-node {
+    max-width: 92px;
+}
+
+/* Semua ketua sejajar di atas.
+   All leaders line up along the top edge. */
+.topo--dense .topo-columns {
+    align-items: flex-start;
+}
+
+.topo--narrow.topo--dense .topo-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.topo--narrow.topo--dense .topo-col {
+    align-items: center;
+}
+
+/* Lebar simpul alur seragam supaya panah dan label rata.
+   Uniform node width keeps arrows and labels aligned. */
+.topo--vertical .topo-col:not([data-grid]) .topo-node {
+    width: 280px;
+    max-width: 280px;
+}
+
+/* Ketua (bahasa) ditonjolkan; anggota (stack) teks biasa.
+   Leaders (languages) stand out; members (stacks) stay plain. */
+.topo--dense .topo-node--out .topo-node-label {
+    color: var(--topo-accent);
+    font-weight: 700;
+}
+
+/* Judul kecil di atas kanvas (mis. "Solution Stack").
+   Small caption above the canvas (e.g. "Solution Stack"). */
+.topo-caption {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--topo-text);
+    text-decoration: none;
+    margin: 0 0 6px;
+}
+
+a.topo-caption:hover {
+    color: var(--topo-accent);
+}
+
+/* Anggota stack menampilkan logo komponen di atas label.
+   Stack members show their component logos above the label. */
+.topo--dense .topo-node--tech .topo-node-icon {
+    display: inline-flex;
+}
+
+.topo--dense .topo-node--multi {
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.topo--dense .topo-node-icon--multi {
+    gap: 2px;
+}
+
+.topo--dense .topo-node-icon--multi .topo-icon {
+    width: 11px;
+    height: 11px;
+}
+
+.topo--dense .topo-node-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.topo--dense .topo-node-label {
+    font-size: 9px;
+}
+
+/* Baris logo multi tidak boleh dipaksa selebar ikon tunggal.
+   The multi-logo row must size to its icons, not to a single icon. */
+.topo--dense .topo-node-icon--multi {
+    width: auto;
+}
