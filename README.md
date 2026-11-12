@@ -188,16 +188,65 @@ About content and panels are defined in `index.html` with behavior/styles in `js
 - **Docs/References:** responsive docs layout with collapsible navigation/contents patterns for mobile and tablet.
 - Shared shell navigation and spacing scale across breakpoints for phones, tablets, and desktop.
 
+## Topology diagrams
+
+Articles can embed diagrams with a fenced ` ```topology ` block (JSON). The renderer
+(`js/topology.js` + `css/topology.css`) is static and responsive: it sits at the article
+column width, stacks vertically on narrow screens, and draws solid edges with arrowheads
+(no dashes). Optional flow dots travel along each edge and `live` nodes pulse; both stop
+under `prefers-reduced-motion`. See **[docs/topology-guide.md](docs/topology-guide.md)** for
+the full authoring guide, recipes, and verification steps.
+
+```topology
+{
+  "title": "Alur",
+  "vertical": true,
+  "columns": [["C"], ["P"]],
+  "nodes": {
+    "C": ["Pelanggan", "Datang", "customer", "actor", "https://…"],
+    "P": ["Pelayan", "Meneruskan", "waiter", "process"]
+  },
+  "edges": [["C", "P", "1"]],
+  "groups": [["Satu Lokasi", ["C", "P"]]]
+}
+```
+
+- **columns** — left-to-right groups; `[ids]` or `{ "nodes": [ids], "grid": 2 | 3 | 4 }`. A grid lays its nodes row-major and scales down to the article width. `"vertical": true` forces the top-to-bottom layout on every viewport (stacked columns, downward forward edges, return paths in a left lane) for short linear flows.
+- **nodes** — compact array `[label, sub, iconOrIcons, kind, href, live]` (trailing items optional) or an object. `icon` is one sprite id: a concept icon (`user-round`, `server`, `database`, `shield`, `store`, `wifi`, `wrench`, `trash-2`, …), a profession icon (`customer`, `waiter`, `chef`, `cook`, `baker`, `courier`, `mechanic`, `plumber`, `detective`, …), or a brand logo `si-<slug>` (`si-javascript`, `si-docker`, `si-postgresql`, `si-laravel`, …). `icons` holds several ids for one node — LAMP becomes `["si-linux", "si-apache", "si-mysql", "si-php"]` — and the logos stack above the label. `kind` sets the accent: actor, process, store, choice, out, tech, host, database, cloud, security, network. `hidden: true` reserves a grid cell without drawing a node. `live: true` pulses the icon; `live: "cook"` stirs it like a cooking pot.
+- **edges** — compact `[from, to, badge?, back?]` or an object. `back: true` draws a return path (solid green with an arrowhead, routed orthogonally below all nodes); `style: "link"` draws a plain connector. A small dot travels along each edge to show direction (blue forward, green back, fading at both ends). Two or more edges from one source (or into one target) are routed as a bus: one vertical trunk in the column gap and one arrowed stub per node. Multi-column grids get one trunk per column, fed by a header above the grid, so no line crosses a node.
+- **groups** — compact `[label, [ids], icon?]` or an object; renders a caption above the set (no box).
+- **legend** — `{ "flow": "…", "back": "…" }`; renders a direction key under the diagram.
+- **facilities** — `[label, [icon, label], …]`; renders place/tool chips under the diagram.
+
+### Icon library
+
+`js/topology-icons.js` is generated — do not edit by hand. It inlines three families:
+
+- **concept icons** — Lucide stroke icons (currentColor). Hand-written symbols survive rebuilds; drop a new `tools/icons/<name>.svg` (Lucide format) and rerun to add one.
+- **profession icons** — real role marks for people/agents (`customer`, `waiter`, `chef`, `cook`, `baker`, `cashier`, `courier`, `mechanic`, `plumber`, `detective`, `hacker`, `teacher`, `doctor`, …), from the same Lucide pipeline.
+- **brand icons** — Simple Icons / devicon logos discovered automatically from `programming/` and `stack/` in the local logo repo, emitted as `i-si-<slug>`. A small allowlist (`BRAND_EXTRA`) also pulls selected logos from the large `security/` folder (currently `wazuh`). Drop a new SVG in the repo and rerun; no script edit needed. Brand colours are preserved; single-colour logos too dark for the dark background are lightened, and badge-style logos (JavaScript) keep their dark glyphs. Internal `<defs>` ids are namespaced per symbol.
+
+```bash
+python3 tools/build_topology_icons.py     # rebuild the sprite (auto-discovers logos)
+# add a logo:    drop the SVG in ../logo/programming or ../logo/stack, rerun
+# add a concept: drop tools/icons/<name>.svg, rerun
+```
+
 ## Roadmap / Next
 
 - **Modular About config:** centralize About data (profile, experience, community, license, links) in a single config/data source for easier edits and reordering.
 - **Light & dark mode:** add theme support with a light/dark toggle, persisted user preference, and accessible contrast across all pages.
+- **Topology / diagram system:** extend the ` ```topology ` DSL with more node kinds (computer, network, cloud, security) and edge styles (link, flow, back, bus); add sequence/stack/network diagram types.
+- **Logo library expansion:** grow the Simple Icons set via `tools/build_topology_icons.py`; cover more languages, frameworks, databases, and security tools. Add concept icons by dropping Lucide SVGs in `tools/icons/`.
 
 ## Repository structure (key files)
 
 - `index.html` — Home & About; `about.html` — About page context; `blog.html` — listing; `read.html` — reader; `references.html` — docs hub
-- `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`
-- `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`
+- `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`, `topology.css`
+- `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`, `topology.js`, `topology-icons.js`
+- `tools/build_topology_icons.py` — regenerates the topology icon sprite from the logo repo
+- `tools/icons/` — extra Lucide concept icons picked up by the sprite builder
+- `docs/topology-guide.md` — full guide for authoring ` ```topology ` diagrams
 - `assets/` — images and static assets
 - `robots.txt`, `sitemap.xml` — indexing/SEO helpers
 

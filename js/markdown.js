@@ -253,6 +253,24 @@
                 renderer(token) {
                     return `<span class="math-inline" data-math="${escapeHtml(token.text)}">${escapeHtml(token.text)}</span>`;
                 }
+            },
+
+            /* Topology diagram: ```topology dengan JSON
+               Diagram topologi: dirender oleh js/topology.js. */
+            {
+                name: 'topology',
+                level: 'block',
+                start(src) {
+                    return src.indexOf('```topology');
+                },
+                tokenizer(src) {
+                    const match = /^```topology[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    if (!match) return;
+                    return { type: 'topology', raw: match[0], spec: match[1].trim() };
+                },
+                renderer(token) {
+                    return `<div class="topology" data-spec="${escapeHtml(token.spec)}"></div>`;
+                }
             }
         ]
     });
