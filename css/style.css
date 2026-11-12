@@ -387,15 +387,9 @@ body.blog-page {
     margin-left: auto;
     padding: 10px 2px;
     border: 0;
-    border-bottom: 1px solid rgba(184,205,220,.12);
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    transition: border-color .2s;
-}
-
-.blog-search:focus-within {
-    border-bottom-color: rgba(184,205,220,.32);
 }
 
 .blog-search-icon {
@@ -484,13 +478,6 @@ body.blog-page {
     gap: 4px 14px;
     margin: 0;
     min-width: 0;
-}
-
-.blog-divider {
-    width: 1px;
-    height: 14px;
-    background: rgba(184,205,220,.12);
-    flex: 0 0 auto;
 }
 
 .blog-tag-group .blog-tab {
@@ -702,8 +689,6 @@ body.blog-page {
 
 .blog-page .post-item + .post-item {
     margin-top: 30px;
-    padding-top: 30px;
-    border-top: 1px solid var(--line);
 }
 
 .blog-page .post-media {

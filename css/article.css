@@ -2089,7 +2089,6 @@ html {
     align-items: center;
     gap: calc(16px * var(--rel-scale));
     padding: calc(15px * var(--rel-scale)) 0;
-    border-bottom: 1px solid var(--line);
     text-decoration: none;
     transition: opacity .2s;
 }
@@ -2113,7 +2112,6 @@ html {
     justify-content: space-between;
     margin-top: 24px;
     padding-top: 16px;
-    border-top: 1px solid var(--line);
     gap: 16px;
     flex-wrap: wrap;
 }

@@ -1149,7 +1149,7 @@ if (name === 'home') {
                 const activeTab = tabs[selectedPanel];
                 if (activeTab) {
                     const activePanel = document.getElementById(activeTab.getAttribute('aria-controls'));
-                    startCalmText(activePanel);
+                    setCalmText(activePanel);
                 }
             }
 

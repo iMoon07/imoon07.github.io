@@ -768,30 +768,31 @@
 
         .social-links {
             display: flex;
-            gap: 9px;
+            align-items: center;
+            gap: 12px;
         }
 
         .social-link {
-            display: grid;
-            place-items: center;
-            width: 44px;
-            height: 44px;
-            border: 1px solid #353b42;
-            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: none;
             color: #d0d9e0;
-            transition:
-                background .2s,
-                transform .25s var(--ease);
+            transition: color .2s, opacity .2s;
         }
 
         .social-link svg {
-            width: 19px;
-            height: 19px;
+            width: 20px;
+            height: 20px;
+            display: block;
         }
 
         .social-link:hover {
-            background: #1b252d;
-            transform: translateY(-3px);
+            color: var(--text);
+            opacity: 0.85;
         }
 
         .contact-note {
@@ -812,18 +813,13 @@
         }
 
         .portrait-contact .social-links {
-            gap: 6px;
+            gap: 10px;
             flex-shrink: 0;
         }
 
-        .portrait-contact .social-link {
-            width: 32px;
-            height: 32px;
-        }
-
         .portrait-contact .social-link svg {
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
         }
 
         .portrait-contact .contact-note {
@@ -1027,17 +1023,13 @@
 
             .mobile-profile-intro .mobile-social-links {
                 display: flex;
-                gap: 6px;
-            }
-
-            .mobile-profile-intro .mobile-social-links .social-link {
-                width: 34px;
-                height: 34px;
+                align-items: center;
+                gap: 10px;
             }
 
             .mobile-profile-intro .mobile-social-links .social-link svg {
-                width: 15px;
-                height: 15px;
+                width: 16px;
+                height: 16px;
             }
 
             .mobile-profile-intro .mobile-contact-note {
