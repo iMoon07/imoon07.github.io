@@ -34,20 +34,88 @@
         return el;
     }
 
+    /* Ikon sebagai elemen (bukan string HTML) supaya tiap logo bisa dibungkus
+       tautan sendiri. Icon as an element so each logo can carry its own link. */
+    function iconEl(name) {
+        const svg = svgEl('svg', { class: 'topo-icon' });
+        svg.setAttribute('aria-hidden', 'true');
+        const use = svgEl('use');
+        use.setAttribute('href', '#i-' + name);
+        svg.appendChild(use);
+        return svg;
+    }
+
+    /* Tautan eksternal dibuka di tab baru; jangkar dalam halaman (#...) tetap
+       di tab yang sama. External links open in a new tab; in-page anchors stay. */
+    function linkAttrs(a, href) {
+        a.href = href;
+        if (/^https?:/i.test(href)) {
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+        }
+    }
+
     function icon(name) {
         return '<svg class="topo-icon" aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
     }
 
+    /* Satu simpul dari sintaks ringkas. One node from compact syntax.
+       `icons` menerima string, [ikon, href], atau {ikon, href, label}. */
+    function nodeSpec(v) {
+        if (!Array.isArray(v)) return v;
+        const n = { label: v[0], sub: v[1] || '' };
+        if (Array.isArray(v[2])) n.icons = v[2];
+        else n.icon = v[2];
+        n.kind = v[3] || 'process';
+        if (v[4]) n.href = v[4];
+        if (v[5]) n.live = v[5];
+        return n;
+    }
+
+    /* Satu entri ikon -> daftar logo + tautan. String yang cocok dengan kunci
+       di spec.components dibuka jadi komponen (label + logo + href); string lain
+       tetap id sprite; [ikon, href] tetap logo tanpa teks. A string that names a
+       component in spec.components resolves to a labelled component; any other
+       string is a sprite id, and [icon, href] stays a bare logo. */
+    function iconItems(data, spec) {
+        const comps = (spec && spec.components) || {};
+        const raw = data.icons && data.icons.length
+            ? data.icons
+            : [data.icon || KIND_ICON[data.kind] || 'circle-dot'];
+        const out = [];
+        raw.forEach(it => {
+            if (typeof it === 'string') {
+                if (Object.prototype.hasOwnProperty.call(comps, it)) {
+                    const c = comps[it];
+                    const label = Array.isArray(c) ? (c[0] || '') : (c.label || '');
+                    const logo = Array.isArray(c) ? c[1] : c.icon;
+                    const href = Array.isArray(c) ? c[2] : c.href;
+                    (Array.isArray(logo) ? logo : [logo]).filter(Boolean).forEach(x => {
+                        out.push({ icon: x, href: href || null, label: label, key: it });
+                    });
+                    return;
+                }
+                out.push({ icon: it, href: null, label: '', key: null });
+                return;
+            }
+            if (Array.isArray(it)) {
+                const href = it[1] || null;
+                (Array.isArray(it[0]) ? it[0] : [it[0]]).filter(Boolean).forEach(x => {
+                    out.push({ icon: x, href: href, label: it[2] || '', key: null });
+                });
+                return;
+            }
+            if (it && typeof it === 'object') {
+                (Array.isArray(it.icon) ? it.icon : [it.icon]).filter(Boolean).forEach(x => {
+                    out.push({ icon: x, href: it.href || null, label: it.label || '', key: it.key || null });
+                });
+            }
+        });
+        return out;
+    }
+
     /* Penghitung id panah unik per diagram. Unique arrow-id counter per diagram. */
     render.seq = 0;
-
-    function esc(value) {
-        return String(value == null ? '' : value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
 
     function ensureSprite() {
         if (!window.TOPOLOGY_SPRITE) return;
@@ -76,20 +144,11 @@
 
         const nodes = {};
         Object.keys(out.nodes || {}).forEach(id => {
-            const v = out.nodes[id];
-            if (Array.isArray(v)) {
-                const n = { label: v[0], sub: v[1] || '' };
-                if (Array.isArray(v[2])) n.icons = v[2];
-                else n.icon = v[2];
-                n.kind = v[3] || 'process';
-                if (v[4]) n.href = v[4];
-                if (v[5]) n.live = v[5];
-                nodes[id] = n;
-            } else {
-                nodes[id] = v;
-            }
+            nodes[id] = nodeSpec(out.nodes[id]);
         });
         out.nodes = nodes;
+
+        if (out.root) out.root = nodeSpec(out.root);
 
         if (Array.isArray(out.edges)) {
             out.edges = out.edges.map(e => Array.isArray(e)
@@ -174,11 +233,7 @@
         if (spec.caption) {
             const cap = document.createElement(spec.captionHref ? 'a' : 'div');
             cap.className = 'topo-caption';
-            if (spec.captionHref) {
-                cap.href = spec.captionHref;
-                cap.target = '_blank';
-                cap.rel = 'noopener noreferrer';
-            }
+            if (spec.captionHref) linkAttrs(cap, spec.captionHref);
             cap.textContent = spec.caption;
             stage.appendChild(cap);
         }
@@ -232,6 +287,104 @@
 
         const nodeEls = new Map();
 
+        /* Bangun satu simpul. Bila `href` ada, seluruh kartu jadi tautan; bila
+           tiap logo punya href sendiri, simpul jadi div dan tiap logo dibungkus
+           tautan agar bisa diklik terpisah. Build one node: the whole card is a
+           link when only `href` is set; when each logo has its own href the card
+           becomes a div and every logo is wrapped in its own anchor. */
+        function buildNode(id, data) {
+            const items = iconItems(data, spec);
+            const hasIconHref = items.some(it => it.href);
+            const wrap = !!data.href && !hasIconHref;
+            const el = document.createElement(wrap ? 'a' : 'div');
+            el.className = 'topo-node topo-node--' + (data.kind || 'process');
+            if (data.live) {
+                el.classList.add('topo-node--live');
+                if (data.live === 'cook') el.classList.add('topo-node--cook');
+            }
+            if (wrap) linkAttrs(el, data.href);
+            el.dataset.node = id;
+            const multi = items.length > 1;
+            if (multi) el.classList.add('topo-node--multi');
+
+            const iconRow = document.createElement('span');
+            iconRow.className = 'topo-node-icon' + (multi ? ' topo-node-icon--multi' : '');
+            items.forEach(it => {
+                let node = iconEl(it.icon);
+                if (it.href) {
+                    const a = document.createElement('a');
+                    a.className = 'topo-node-icon-link';
+                    linkAttrs(a, it.href);
+                    a.title = it.label || it.icon;
+                    a.setAttribute('aria-label', it.label || it.icon);
+                    a.appendChild(node);
+                    node = a;
+                }
+                iconRow.appendChild(node);
+            });
+            el.appendChild(iconRow);
+
+            const body = document.createElement('span');
+            body.className = 'topo-node-body';
+            const label = document.createElement('span');
+            label.className = 'topo-node-label';
+            label.textContent = data.label;
+            if (!wrap && data.href) {
+                const a = document.createElement('a');
+                a.className = 'topo-node-label-link';
+                linkAttrs(a, data.href);
+                a.appendChild(label);
+                body.appendChild(a);
+            } else {
+                body.appendChild(label);
+            }
+            if (data.sub) {
+                const sub = document.createElement('span');
+                sub.className = 'topo-node-sub';
+                sub.textContent = data.sub;
+                body.appendChild(sub);
+            }
+            /* Nama komponen sebagai teks kecil yang bisa diklik. Bila label
+               komponen sama dengan judul simpul, tidak diulang. Component names
+               as small clickable text; a label equal to the node title is not
+               repeated. */
+            const parts = [];
+            const seen = new Set();
+            items.forEach(it => {
+                if (!it.label || !it.key) return;
+                if (it.label.toLowerCase() === String(data.label || '').toLowerCase()) return;
+                if (seen.has(it.key)) return;
+                seen.add(it.key);
+                parts.push(it);
+            });
+            if (parts.length) {
+                const row = document.createElement('span');
+                row.className = 'topo-parts';
+                parts.forEach(it => {
+                    const a = document.createElement('a');
+                    a.className = 'topo-part';
+                    a.textContent = it.label;
+                    if (it.href) linkAttrs(a, it.href);
+                    row.appendChild(a);
+                });
+                body.appendChild(row);
+            }
+            el.appendChild(body);
+            return el;
+        }
+
+        /* Simpul induk opsional di atas seluruh kolom, lengkap dengan kabel ke
+           tiap kolom. Optional root above every column, wired down to each one. */
+        if (spec.root) {
+            const rootRow = document.createElement('div');
+            rootRow.className = 'topo-root-row';
+            const rootEl = buildNode('__root__', spec.root);
+            rootEl.classList.add('topo-root-node');
+            rootRow.appendChild(rootEl);
+            canvas.insertBefore(rootRow, columns);
+            nodeEls.set('__root__', rootEl);
+        }
+
         spec.columns.forEach(col => {
             const colEl = document.createElement('div');
             colEl.className = 'topo-col';
@@ -252,31 +405,7 @@
                     return;
                 }
 
-                const el = document.createElement(data.href ? 'a' : 'div');
-                el.className = 'topo-node topo-node--' + (data.kind || 'process');
-                if (data.live) {
-                    el.classList.add('topo-node--live');
-                    if (data.live === 'cook') el.classList.add('topo-node--cook');
-                }
-                if (data.href) {
-                    el.href = data.href;
-                    el.target = '_blank';
-                    el.rel = 'noopener noreferrer';
-                }
-                el.dataset.node = id;
-                const iconList = data.icons && data.icons.length
-                    ? data.icons
-                    : [data.icon || KIND_ICON[data.kind] || 'circle-dot'];
-                const multi = iconList.length > 1;
-                if (multi) el.classList.add('topo-node--multi');
-                el.innerHTML =
-                    '<span class="topo-node-icon' + (multi ? ' topo-node-icon--multi' : '') + '">' +
-                        iconList.map(icon).join('') +
-                    '</span>' +
-                    '<span class="topo-node-body">' +
-                        '<span class="topo-node-label">' + esc(data.label) + '</span>' +
-                        (data.sub ? '<span class="topo-node-sub">' + esc(data.sub) + '</span>' : '') +
-                    '</span>';
+                const el = buildNode(id, data);
                 colEl.appendChild(el);
                 nodeEls.set(id, el);
             });
@@ -300,6 +429,7 @@
 
         let edgeSeq = 0;
         let backBase = 0;
+        let backLaneX = 0;
         function addPath(d, cls, marker) {
             const id = 'topo-e-' + (++edgeSeq);
             const attrs = { d: d, class: cls, id: id };
@@ -317,17 +447,31 @@
            Flow dot: a dot that travels along the edge to show direction. */
         function addFlowDot(pathEl, kind) {
             if (!pathEl || !pathEl.id) return;
-            const dot = svgEl('circle', {
-                r: '2.4',
-                class: 'topo-dot topo-dot--' + kind,
-                fill: kind === 'back' ? '#3fb950' : '#58a6ff'
-            });
-            /* Durasi mengikuti panjang path supaya kecepatan titik konsisten
-               dan terukur di semua diagram. Duration scales with path length so
-               the dot speed is consistent and measurable across diagrams. */
+            /* Satu titik per path; sapuan akhir di draw() memastikan tidak ada
+               edge yang tertinggal tanpa animasi. One dot per path; the final
+               sweep in draw() guarantees no edge is left unanimated. */
+            if (pathEl.dataset && pathEl.dataset.flow === '1') return;
+            if (pathEl.dataset) pathEl.dataset.flow = '1';
+            const color = kind === 'back' ? '#3fb950' : '#58a6ff';
+            const g = svgEl('g', { class: 'topo-dot' });
+            /* Halo tipis supaya titik terbaca di kabel panjang tanpa filter.
+               A soft halo keeps the dot readable on long cables without a filter. */
+            g.appendChild(svgEl('circle', {
+                r: '8',
+                fill: color,
+                opacity: '0.2'
+            }));
+            g.appendChild(svgEl('circle', {
+                r: '3.6',
+                fill: color
+            }));
+            /* Durasi mengikuti panjang path dengan kecepatan tetap, jadi semua
+               titik bergerak dengan laju yang sama di seluruh diagram.
+               Duration follows path length at a constant speed, so every dot
+               moves at the same rate across the diagram. */
             let len = 0;
             try { len = pathEl.getTotalLength(); } catch (err) { len = 0; }
-            const dur = Math.max(0.9, Math.min(3.2, len / 55)).toFixed(2) + 's';
+            const dur = Math.max(0.6, Math.min(6, len / 55)).toFixed(2) + 's';
             const anim = svgEl('animateMotion', {
                 path: pathEl.getAttribute('d'),
                 dur: dur,
@@ -335,7 +479,7 @@
                 rotate: 'auto',
                 calcMode: 'linear'
             });
-            dot.appendChild(anim);
+            g.appendChild(anim);
             /* Muncul dan hilang halus di ujung path supaya titik tidak terlihat
                seperti benda yang tiba-tiba nongol. Fade in/out at both ends. */
             const fade = svgEl('animate', {
@@ -345,19 +489,23 @@
                 dur: dur,
                 repeatCount: 'indefinite'
             });
-            dot.appendChild(fade);
-            gEdges.appendChild(dot);
+            g.appendChild(fade);
+            gEdges.appendChild(g);
         }
 
         function addBadge(x, y, text, color) {
             const tone = color || '#58a6ff';
             const g = svgEl('g');
-            g.appendChild(svgEl('circle', {
+            const bg = svgEl('circle', {
                 cx: x, cy: y, r: 9,
                 fill: 'none',
                 stroke: tone,
                 'stroke-width': '1.5'
-            }));
+            });
+            /* Cakram belakang menutup kabel yang lewat di belakang angka.
+               The backing disc hides any cable running behind the number. */
+            bg.style.fill = 'var(--topo-bg, #111827)';
+            g.appendChild(bg);
             const t = svgEl('text', {
                 x: x, y: y + 3.5,
                 'text-anchor': 'middle',
@@ -397,26 +545,52 @@
                 ' L ' + (leftward ? t.x + t.w : t.x) + ' ' + t.cy;
         }
 
-        function forwardV(s, t) {
-            const x1 = s.cx, y1 = s.y + s.h, x2 = t.cx, y2 = t.y;
+        function forwardV(s, t, off) {
+            const dx = off || 0;
+            const x1 = s.cx + dx, y1 = s.y + s.h, x2 = t.cx + dx, y2 = t.y;
             const dy = Math.max(24, (y2 - y1) / 2);
             return 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 + dy) + ', ' + x2 + ' ' + (y2 - dy) + ', ' + x2 + ' ' + y2;
         }
 
-        function backV(s, t, depth) {
-            /* Jalur balik vertikal: keluar dari sisi kiri, naik di jalur khusus
-               di luar simpul, lalu masuk ke sisi kiri tujuan. Tidak melintasi
-               teks simpul. Jalur memakai x tetap supaya semua lintasan sejajar.
-               Vertical return path: exit the left edge, climb a dedicated lane
-               outside the nodes, and enter the target's left. A fixed lane x
-               keeps every return path parallel. */
-            const lane = 16 + depth;
-            const x1 = s.x, y1 = s.y + 6;
-            const x2 = t.x, y2 = t.y + t.h - 6;
-            return 'M ' + x1 + ' ' + y1 +
-                ' C ' + lane + ' ' + (y1 - 10) + ', ' +
-                      lane + ' ' + (y2 + 10) + ', ' +
-                      x2 + ' ' + y2;
+        /* Jalur balik vertikal. Bila tujuan tepat di atas sumber (satu kolom,
+           bersisihan), kabel sejajar kabel maju: keluar dari tepi atas sumber,
+           naik lurus, masuk ke tepi bawah tujuan. Bila simpul lain menghalangi,
+           pakai gutter kanan bersama.
+           Vertical return. When the target sits directly above the source in the
+           same column, the cable mirrors the forward cable: it leaves the
+           source's top edge, climbs straight, and enters the target's bottom
+           edge. When other nodes block the way, it uses the shared right
+           gutter. */
+        function backCable(s, t, depth) {
+            const sameCol = Math.abs(s.x - t.x) < 2 && Math.abs(s.w - t.w) < 2;
+            /* Jarak antar simpul vertikal adalah gap flex (~44px), jadi ambang
+               "bersisihan" harus melewati gap itu tetapi tetap menolak simpul
+               yang terpisah satu simpul lain (~88px+). The vertical flex gap is
+               ~44px, so the adjacency threshold must clear that gap while still
+               rejecting nodes separated by another node. */
+            const adjacent = sameCol && Math.abs(s.y - (t.y + t.h)) < 60;
+            if (adjacent) {
+                /* Dua kabel (maju + balik) ditaruh simetris mengapit garis
+                   tengah simpul, bukan menempel ke satu sisi. The forward and
+                   return cables straddle the node's centre line. */
+                const x = s.cx + 13;
+                const y1 = s.y;
+                const y2 = t.y + t.h;
+                return {
+                    d: 'M ' + x + ' ' + y1 + ' L ' + x + ' ' + y2,
+                    bx: x + 15,
+                    by: (y1 + y2) / 2
+                };
+            }
+            const lane = (backLaneX || (s.x + s.w + 18)) + depth * 12;
+            return {
+                d: 'M ' + (s.x + s.w) + ' ' + s.cy +
+                    ' L ' + lane + ' ' + s.cy +
+                    ' L ' + lane + ' ' + t.cy +
+                    ' L ' + (t.x + t.w) + ' ' + t.cy,
+                bx: lane + 15,
+                by: (s.cy + t.cy) / 2
+            };
         }
 
         function busOutH(fromId, edges) {
@@ -572,20 +746,36 @@
            berjalan mendatar di atas/di bawah grid lalu turun per kolom. Narrow
            mode: parent above and target below the grid, so the bus runs
            horizontally above/below the grid and drops per column. */
+        /* Trunk tidak boleh keluar kanvas walau grid mepet tepi. Keep the trunk
+           inside the canvas even when the grid touches the edge. */
+        function clampX(x) {
+            const W = canvas.offsetWidth || 0;
+            if (!W) return x;
+            return Math.max(4, Math.min(W - 4, x));
+        }
+
         function busOutGridV(fromId, toIds) {
             const g = gridInfo(toIds);
             if (!g) { busOutV(fromId, toIds.map(id => ({ to: id }))); return; }
             const s = rectOf(nodeEls.get(fromId));
-            const headerY = g.top - 10;
-            const trunks = g.cols.map(c => c.x - 14);
-            const last = trunks[trunks.length - 1];
-            addPath('M ' + s.cx + ' ' + (s.y + s.h) + ' L ' + s.cx + ' ' + headerY, 'topo-edge--bus');
-            addPath('M ' + trunks[0] + ' ' + headerY + ' L ' + last + ' ' + headerY, 'topo-edge--bus');
+            const headerY = g.top - 12;
+            /* Trunk di sisi luar kolom pertama dan terakhir supaya bus header
+               simetris terhadap kanvas. Outer trunks keep the header bus
+               symmetric around the canvas. */
+            const trunks = g.cols.map((c, i) => clampX(i === 0 ? c.x - 14 : c.right + 14));
+            const minT = Math.min.apply(null, trunks);
+            const maxT = Math.max.apply(null, trunks);
+            const spine = addPath('M ' + s.cx + ' ' + (s.y + s.h) + ' L ' + s.cx + ' ' + headerY, 'topo-edge--bus');
+            addFlowDot(spine, 'flow');
+            addPath('M ' + minT + ' ' + headerY + ' L ' + maxT + ' ' + headerY, 'topo-edge--bus');
             g.cols.forEach((c, i) => {
+                const leftSide = i === 0;
                 const maxCy = Math.max.apply(null, c.rects.map(r => r.cy));
-                addPath('M ' + trunks[i] + ' ' + headerY + ' L ' + trunks[i] + ' ' + maxCy, 'topo-edge--bus');
+                const trunk = addPath('M ' + trunks[i] + ' ' + headerY + ' L ' + trunks[i] + ' ' + maxCy, 'topo-edge--bus');
+                if (i === 0 || i === g.cols.length - 1) addFlowDot(trunk, 'flow');
                 c.rects.forEach((r, ri) => {
-                    const p = addPath('M ' + trunks[i] + ' ' + r.cy + ' L ' + r.x + ' ' + r.cy,
+                    const x1 = leftSide ? r.x : r.x + r.w;
+                    const p = addPath('M ' + x1 + ' ' + r.cy + ' L ' + trunks[i] + ' ' + r.cy,
                         'topo-edge--flow', 'flow');
                     if (ri === 0) addFlowDot(p, 'flow');
                 });
@@ -596,21 +786,90 @@
             const g = gridInfo(fromIds);
             if (!g) { busInV(toId, fromIds.map(id => ({ from: id }))); return; }
             const t = rectOf(nodeEls.get(toId));
-            const footY = g.bottom + 10;
-            const trunks = g.cols.map(c => c.right + 14);
+            const footY = g.bottom + 12;
+            const trunks = g.cols.map((c, i) => clampX(i === 0 ? c.x - 14 : c.right + 14));
+            const minT = Math.min.apply(null, trunks);
+            const maxT = Math.max.apply(null, trunks);
             g.cols.forEach((c, i) => {
+                const leftSide = i === 0;
                 const minCy = Math.min.apply(null, c.rects.map(r => r.cy));
-                const maxCy = Math.max.apply(null, c.rects.map(r => r.cy));
                 c.rects.forEach((r, ri) => {
-                    const p = addPath('M ' + (r.x + r.w) + ' ' + r.cy + ' L ' + trunks[i] + ' ' + r.cy,
+                    const x1 = leftSide ? r.x : r.x + r.w;
+                    const p = addPath('M ' + x1 + ' ' + r.cy + ' L ' + trunks[i] + ' ' + r.cy,
                         'topo-edge--flow');
                     if (ri === 0) addFlowDot(p, 'flow');
                 });
-                addPath('M ' + trunks[i] + ' ' + minCy + ' L ' + trunks[i] + ' ' + footY, 'topo-edge--bus');
+                const trunk = addPath('M ' + trunks[i] + ' ' + minCy + ' L ' + trunks[i] + ' ' + footY, 'topo-edge--bus');
+                if (i === 0 || i === g.cols.length - 1) addFlowDot(trunk, 'flow');
             });
-            addPath('M ' + trunks[0] + ' ' + footY + ' L ' + trunks[trunks.length - 1] + ' ' + footY, 'topo-edge--bus');
-            /* Turun ke tepi atas simpul tujuan. Drop into the target's top edge. */
-            addPath('M ' + t.cx + ' ' + footY + ' L ' + t.cx + ' ' + t.y, 'topo-edge--flow', 'flow');
+            addPath('M ' + minT + ' ' + footY + ' L ' + maxT + ' ' + footY, 'topo-edge--bus');
+            /* Turun dari tengah bus ke tepi atas simpul tujuan. Drop from the
+               middle of the foot bus into the target's top edge. */
+            const drop = addPath('M ' + t.cx + ' ' + footY + ' L ' + t.cx + ' ' + t.y, 'topo-edge--flow', 'flow');
+            addFlowDot(drop, 'flow');
+        }
+
+        /* Kabel induk: satu simpul di atas, satu bus mendatar, lalu satu kabel
+           turun ke tiap kolom. Di layar sempit kolom berbaris, jadi kabel
+           induk turun di gutter kiri lalu masuk ke tiap baris. Root wire: one
+           node above, one horizontal bus, then a drop to each column. On narrow
+           screens the columns wrap, so the root drops down the left gutter and
+           enters each row. */
+        function busOutRoot(fromId, toIds) {
+            const s = rectOf(nodeEls.get(fromId));
+            const targets = toIds.map(id => rectOf(nodeEls.get(id)));
+            const narrow = root.classList.contains('topo--narrow');
+            const busY = s.y + s.h + 16;
+
+            if (narrow) {
+                /* Gutter kiri: 8px di luar tepi kolom paling kiri. Left gutter:
+                   8px outside the leftmost column edge. */
+                const lane = Math.max(4, Math.min.apply(null, targets.map(t => t.x)) - 8);
+                const ys = targets.map(t => t.cy);
+                const maxY = Math.max.apply(null, ys);
+                const lead = addPath('M ' + s.cx + ' ' + (s.y + s.h) +
+                    ' L ' + s.cx + ' ' + busY + ' L ' + lane + ' ' + busY, 'topo-edge--bus');
+                addFlowDot(lead, 'flow');
+                const trunk = addPath('M ' + lane + ' ' + busY + ' L ' + lane + ' ' + maxY, 'topo-edge--bus');
+                addFlowDot(trunk, 'flow');
+                targets.forEach(t => {
+                    const p = addPath('M ' + lane + ' ' + t.cy + ' L ' + t.x + ' ' + t.cy,
+                        'topo-edge--flow', 'flow');
+                    if (t.cy < maxY - 4) addFlowDot(p, 'flow');
+                });
+                return;
+            }
+
+            const xs = targets.map(t => t.cx);
+            const minX = Math.min.apply(null, xs);
+            const maxX = Math.max.apply(null, xs);
+            const spine = addPath('M ' + s.cx + ' ' + (s.y + s.h) + ' L ' + s.cx + ' ' + busY, 'topo-edge--bus');
+            addFlowDot(spine, 'flow');
+            addPath('M ' + minX + ' ' + busY + ' L ' + maxX + ' ' + busY, 'topo-edge--bus');
+            targets.forEach(t => {
+                const p = addPath('M ' + t.cx + ' ' + busY + ' L ' + t.cx + ' ' + t.y, 'topo-edge--flow', 'flow');
+                addFlowDot(p, 'flow');
+            });
+        }
+
+        /* Perlu gutter kanan? Hanya bila ada edge balik yang tidak bisa naik
+           lurus karena simpul lain menghalangi. Needs the right gutter only
+           when a return edge cannot climb straight because another node sits
+           between the two. */
+        function needsBackGutter() {
+            const edges = spec.edges || [];
+            for (let i = 0; i < edges.length; i++) {
+                const e = edges[i];
+                if (!e.back) continue;
+                const s = nodeEls.get(e.from);
+                const t = nodeEls.get(e.to);
+                if (!s || !t) return true;
+                const sr = rectOf(s), tr = rectOf(t);
+                const sameCol = Math.abs(sr.x - tr.x) < 2 && Math.abs(sr.w - tr.w) < 2;
+                const adjacent = sameCol && Math.abs(sr.y - (tr.y + tr.h)) < 60;
+                if (!adjacent) return true;
+            }
+            return false;
         }
 
         function draw() {
@@ -618,7 +877,8 @@
             clear(gEdges);
             clear(gBadges);
 
-            const vertical = root.classList.contains('topo--narrow');
+            const vertical = root.classList.contains('topo--vertical')
+                || root.classList.contains('topo--narrow');
 
             /* Sisakan ruang untuk garis balik (back edge) yang melengkung ke
                bawah pada layout horizontal, supaya tidak menimpa paragraf.
@@ -641,6 +901,28 @@
             } else {
                 backBase = 0;
                 columns.style.paddingBottom = '';
+            }
+
+            /* Mode vertikal: gutter kanan hanya bila ada balikan yang tidak
+               bisa naik lurus (simpul lain menghalangi). Vertical mode: the
+               right gutter is reserved only when a return edge cannot climb
+               straight because another node blocks it. */
+            if (vertical && backCount && needsBackGutter()) {
+                columns.style.paddingRight = '34px';
+            } else {
+                columns.style.paddingRight = '';
+            }
+
+            /* Posisi lane balik: 18px di kanan simpul paling kanan. Return lane
+               sits 18px right of the rightmost node. */
+            backLaneX = 0;
+            if (vertical && backCount && needsBackGutter()) {
+                let maxRight = 0;
+                nodeEls.forEach(function (n) {
+                    const r = rectOf(n);
+                    if (r.x + r.w > maxRight) maxRight = r.x + r.w;
+                });
+                backLaneX = Math.round(maxRight + 18);
             }
 
             /* Sisakan strip atas untuk header bus grid dan label grup.
@@ -708,6 +990,15 @@
                 else busInH(toId, objs);
             });
 
+            /* Kabel dari simpul induk ke tiap kolom (mis. Solution Stack ke
+               semua bahasa). Wires from the root node down to every column. */
+            if (spec.root && nodeEls.has('__root__')) {
+                const rootIds = (spec.columns || [])
+                    .map(c => c.nodes && c.nodes[0])
+                    .filter(id => id && nodeEls.has(id));
+                if (rootIds.length) busOutRoot('__root__', rootIds);
+            }
+
             let backIndex = 0;
             edges.forEach((e, i) => {
                 const s = nodeEls.get(e.from);
@@ -715,34 +1006,59 @@
                 if (!s || !t) return;
 
                 const sr = rectOf(s), tr = rectOf(t);
+                const isBack = e.back || e.style === 'back';
                 let depth = 0;
+                let backGeom = null;
 
                 if (!covered.has(i)) {
-                    const isBack = e.back || e.style === 'back';
                     if (isBack) {
-                        depth = vertical ? backIndex * 16 : backIndex * 14;
-                        const p = addPath(vertical ? backV(sr, tr, depth) : backH(sr, tr, depth),
-                            'topo-edge--back', 'back');
-                        addFlowDot(p, 'back');
+                        depth = vertical ? backIndex : backIndex * 14;
+                        if (vertical) {
+                            /* Kabel balik: sejajar kabel maju bila bersisihan,
+                               atau gutter kanan bila terhalang simpul lain.
+                               Return cable: parallel to the forward cable when
+                               adjacent, or the right gutter when blocked. */
+                            backGeom = backCable(sr, tr, depth);
+                            const p = addPath(backGeom.d, 'topo-edge--back', 'back');
+                            addFlowDot(p, 'back');
+                        } else {
+                            const p = addPath(backH(sr, tr, depth),
+                                'topo-edge--back', 'back');
+                            addFlowDot(p, 'back');
+                        }
                         backIndex++;
-                    } else if (e.style === 'link') {
-                        addPath(vertical ? forwardV(sr, tr) : forwardH(sr, tr),
-                            'topo-edge--flow', 'flow');
                     } else {
-                        const p = addPath(vertical ? forwardV(sr, tr) : forwardH(sr, tr),
+                        /* Bila ada edge balik untuk pasangan yang sama, kabel
+                           maju digeser ke kiri supaya sepasang kabel seimbang
+                           di sekitar garis tengah. If a return edge exists for
+                           the same pair, the forward cable shifts left so the
+                           pair is balanced around the centre line. */
+                        const twinBack = (spec.edges || []).some(o =>
+                            o !== e && o.from === e.to && o.to === e.from &&
+                            (o.back || o.style === 'back'));
+                        const p = addPath(
+                            vertical ? forwardV(sr, tr, twinBack ? -13 : 0) : forwardH(sr, tr),
                             'topo-edge--flow', 'flow');
                         addFlowDot(p, 'flow');
                     }
                 }
 
-                if (e.badge) {
-                    const isBack = e.back || e.style === 'back';
+                if (e.badge && spec.badges !== false) {
                     const tone = isBack ? '#3fb950' : '#58a6ff';
                     if (vertical) {
                         if (isBack) {
-                            addBadge(16 + depth, (sr.y + tr.y + tr.h) / 2, e.badge, tone);
+                            /* Angka ditaruh di sisi kabel, bukan menempel di
+                               atasnya, supaya garis tidak memotong digit.
+                               Badges sit beside the cable so the line never
+                               cuts through the number. */
+                            const bx = backGeom ? backGeom.bx : (backLaneX || sr.x + sr.w + 18) + 15;
+                            const by = backGeom ? backGeom.by : (sr.cy + tr.cy) / 2;
+                            addBadge(bx, by, e.badge, tone);
                         } else {
-                            addBadge((sr.cx + tr.cx) / 2 + 16, (sr.y + sr.h + tr.y) / 2, e.badge, tone);
+                            /* Badge maju di kiri kabel, badge balik di kanan,
+                               supaya kedua angka tidak berdesakan. Forward
+                               badge on the left, return badge on the right. */
+                            addBadge((sr.cx + tr.cx) / 2 - 16, (sr.y + sr.h + tr.y) / 2, e.badge, tone);
                         }
                     } else {
                         if (isBack) {
@@ -753,14 +1069,28 @@
                     }
                 }
             });
+
+            /* Sapuan akhir: setiap path yang belum punya titik diberi satu, jadi
+               semua koneksi bergerak dengan efek dan arah yang sama. Final
+               sweep: give every path without a dot one, so all connections
+               animate with the same effect and direction. */
+            Array.prototype.forEach.call(gEdges.querySelectorAll('path'), function (p) {
+                if (p.dataset && p.dataset.flow === '1') return;
+                const back = (p.getAttribute('class') || '').indexOf('topo-edge--back') >= 0;
+                addFlowDot(p, back ? 'back' : 'flow');
+            });
         }
 
         function relayout() {
             const forced = root.classList.contains('topo--vertical');
-            const narrow = forced || (root.clientWidth > 0 && root.clientWidth < NARROW_MIN);
+            /* Narrow hanya soal lebar, bukan arah alur: diagram vertikal di
+               layar lebar tetap memakai grid penuh. Narrow is about width only,
+               not flow direction: a vertical diagram on a wide screen keeps its
+               full grid. */
+            const narrow = root.clientWidth > 0 && root.clientWidth < NARROW_MIN;
             root.classList.toggle('topo--narrow', narrow);
 
-            if (narrow) {
+            if (forced || narrow) {
                 canvas.style.zoom = '1';
                 canvas.style.width = '100%';
                 canvas.style.margin = '0';

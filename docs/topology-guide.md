@@ -40,16 +40,19 @@ Top-level keys:
 | Key | Required | Meaning |
 | --- | --- | --- |
 | `title` | no | Accessible name for the diagram (not drawn). |
+| `root` | no | Optional parent node drawn above every column, wired down to the first node of each column (see §7.8). |
 | `caption` | no | Visible heading above the canvas; pair with `captionHref` to link it. |
 | `captionHref` | no | Link target for `caption`. |
 | `columns` | yes | Left-to-right columns; `[ids]` or `{ "nodes": [ids], "grid"?: 2 \| 3 \| 4 }`. |
+| `components` | no | Shared component registry: `id -> [label, icon, href]` (icon may be a list). Nodes reference these by key instead of repeating every logo and link. |
 | `nodes` | yes | Map of `id -> node` (object or compact array). Every id used in `columns` or `edges` must exist. |
-| `edges` | no | `[from, to, badge?, back?]` or `{ "from", "to", "badge"?, "back"?, "style"? }`. |
+| `edges` | no | `[from, to, badge?, back?]` or `{ "from", "to", "badge"?, "back"? }`. |
+| `badges` | no | `false` hides every edge number for the diagram; default `true`. |
 | `groups` | no | Labelled node sets, drawn as a caption (no box). |
 | `legend` | no | Direction key rendered under the diagram: `{ "flow": "Order", "back": "Return" }`. |
 | `facilities` | no | `[label, [icon, label], …]`. |
 | `vertical` | no | `true` forces the top-to-bottom layout on every viewport. |
-| `dense` | no | `true` compacts the diagram for many narrow columns (small nodes, tight gaps, text-only members). |
+| `dense` | no | `true` compacts the diagram for many narrow columns (small nodes, tight gaps, component logos). |
 
 ---
 
@@ -83,9 +86,9 @@ Object form (use when you need `hidden` or prefer named fields):
 | `label` | Main text. Required. |
 | `sub` | Optional second line (smaller, muted). |
 | `icon` | One sprite id without the `i-` prefix. See §5. |
-| `icons` | Several sprite ids shown together inside one node, e.g. `["si-linux", "si-apache", "si-mysql", "si-php"]` for LAMP. The node stacks the logos above the text. |
+| `icons` | Several logos shown together inside one node. Entries are component keys from `components`, sprite ids, `[id, href]` pairs, or `{icon, href, label}`. A component key resolves to its logo **and** its text label: the label is drawn as a small clickable line under the logos, so names like Linux, Apache, MySQL and PHP are readable and clickable even when the node is narrow. |
 | `kind` | Accent colour: `actor`, `process`, `store`, `choice`, `out`, `tech`, `host`, `database`, `cloud`, `security`, `network`. |
-| `href` | Optional link; the node becomes an `<a>` that opens in a new tab. |
+| `href` | Optional link; the node becomes an `<a>` that opens in a new tab (an in-page `#anchor` stays in the same tab). |
 | `hidden` | `true` reserves a grid cell without drawing a node. Use it only to keep a grid row aligned. |
 | `live` | Optional motion: `true` pulses the icon; `"cook"` also stirs it like a cooking pot. Use sparingly, on the active step only. |
 
@@ -95,6 +98,42 @@ Rules:
 - Prefer short, stable ids (`mean`, `laravel`, `promgraf`) over long ones.
 - `sub` is optional; omit it for dense grids to keep rows short.
 - Every node should have an `icon`. A node without one renders a blank square.
+
+### 2.1 Shared components (the short syntax)
+
+A stack diagram repeats the same parts across many nodes: Linux, Apache, MySQL
+and PHP appear in LAMP, LEMP, WAMP, WIMP and FAMP; MongoDB, Express, Angular and
+Node.js appear in MEAN, MERN and MEVN. Instead of repeating every logo and link,
+declare each part once in `components` and let nodes reference the key:
+
+```json
+{
+  "components": {
+    "linux": ["Linux", "si-linux", "https://www.kernel.org/"],
+    "apache": ["Apache", "si-apache", "https://httpd.apache.org/"],
+    "mysql": ["MySQL", "si-mysql", "https://www.mysql.com/"],
+    "php": ["PHP", "si-php", "https://www.php.net/"]
+  },
+  "nodes": {
+    "lamp": ["LAMP", "", ["linux", "apache", "mysql", "php"], "tech", "https://en.wikipedia.org/wiki/LAMP_(software_bundle)"],
+    "lemp": ["LEMP", "", ["linux", "nginx", "mysql", "php"], "tech", "https://…"]
+  }
+}
+```
+
+Rules:
+
+- A component is `[label, icon, href]`; `icon` may be a list for a component
+  with several marks (e.g. `["si-microsoft", "si-azure"]`).
+- An icon string that matches a `components` key resolves to the component; any
+  other string stays a sprite id, so old diagrams keep working unchanged.
+- `[id, href]` pairs and `{icon, href, label}` objects are still accepted.
+- The component label is drawn under the logos as a small clickable line, so the
+  text names (Linux, Apache, PHP, MariaDB/MySQL, Manager, Indexer, Dashboard…)
+  are readable and clickable, not only the marks.
+- A label equal to the node label is not repeated (e.g. the `php` node's own
+  "PHP" part is hidden).
+- The node's own `href` still links the card/label; component links are separate.
 
 ---
 
@@ -110,9 +149,11 @@ Rules:
 - On narrow screens (below 600px) every column stacks vertically and a `grid: 3`
   or `grid: 4` becomes `grid: 2`.
 - `"vertical": true` forces the top-to-bottom layout on every viewport: columns
-  stack, forward edges run downward, and return edges use a dedicated left lane.
-  Use it for short linear flows (3–5 steps) whose horizontal edges would be too
-  short to read.
+  stack, forward edges run downward, and return edges climb as a parallel cable
+  beside the forward one (a blocked return falls back to the right gutter). It
+  does **not** force narrow mode, so a `grid: 3` column keeps its three columns
+  on a wide screen. Use it for short linear flows (3–5 steps) whose horizontal
+  edges would be too short to read.
 
 Choose the column count by width, not by height:
 
@@ -132,14 +173,16 @@ Choose the column count by width, not by height:
 ```
 
 - Forward edges are blue with an arrowhead at the target.
-- `back: true` (or `"style": "back"`) draws a solid green return edge with an
-  arrowhead, routed below the nodes on desktop.
-- `badge` draws a small outlined number at the middle of the edge.
-- `"style": "link"` draws a plain connector with no badge.
+- `back: true` draws a solid green return edge with an arrowhead, routed below
+  the nodes on desktop.
+- `badge` draws a small outlined number at the middle of the edge. Set the
+  top-level `"badges": false` to hide all numbers for a cleaner look; the
+  edges themselves are unchanged.
 - A small dot travels along every forward and return edge to show direction.
   Its colour matches the edge (blue forward, green back), its speed scales with
   the path length, and it fades in and out at the ends so it never looks like a
-  stray mark. Static grids (no edges) have no dots.
+  stray mark. Every drawn connection is animated, including bus trunks, header
+  buses, and drop wires.
 
 ### 4.2 Fan-out and fan-in
 
@@ -165,10 +208,13 @@ the column gap, run below the lowest node, and enter the target's side. They
 never pass through a node stacked under the source, and the canvas reserves
 bottom padding for them.
 
-With `"vertical": true` (and on narrow screens) they instead leave the source's
-left edge, climb a dedicated lane in the left padding, and enter the target's
-left edge. The canvas reserves 56px of left padding so the lanes never cross the
-node text.
+With `"vertical": true` (and on narrow screens) a return edge between two
+neighbouring nodes in the same column runs as a **parallel cable**: it leaves
+the source's top edge, climbs straight beside the forward cable, and enters the
+target's bottom edge, so the response reads as a second cable going up. If
+another node sits between the two, the edge uses a shared gutter on the right
+instead. A badge, when enabled, is placed beside the cable, never on top of it,
+so the line never cuts through the number.
 
 ### 4.4 Adjacent columns
 
@@ -207,6 +253,21 @@ item). This is the right choice for acronym stacks whose name is made of
 components rather than one product, for example
 `["si-linux", "si-apache", "si-mysql", "si-php"]` for LAMP. The logos stack in a
 row above the label; keep it to two to four icons.
+
+Give a logo its own link with the pair form `[id, href]`:
+
+```json
+"lamp": ["LAMP", "", [
+  ["si-linux", "https://www.kernel.org/"],
+  ["si-apache", "https://httpd.apache.org/"],
+  ["si-mysql", "https://www.mysql.com/"],
+  ["si-php", "https://www.php.net/"]
+], "tech", "https://cloud.google.com/mysql/lamp"]
+```
+
+Every logo becomes a separate anchor; the label still links to the node `href`.
+Keep the `href` on each logo pointing at that component's own page, not at the
+stack's landing page.
 
 To add one:
 
@@ -334,36 +395,68 @@ Use `groups` for a caption over a set, and `facilities` for surrounding context.
 
 A single diagram that lists many categories at once: one column per language,
 the language on top, its stacks below. `"dense": true` shrinks the nodes, lays
-the columns out as a grid on narrow screens, and keeps several component logos
-per stack visible.
+the language rows out one per line on narrow screens, and keeps several
+component logos per stack visible.
 
 ```json
 {
-  "caption": "Solution Stack",
-  "captionHref": "https://en.wikipedia.org/wiki/Solution_stack",
+  "root": ["Solution Stack", "", "layers", "out", "https://en.wikipedia.org/wiki/Solution_stack"],
   "title": "Solution Stack",
   "dense": true,
+  "components": {
+    "javascript": ["JavaScript", "si-javascript", "https://developer.mozilla.org/en-US/docs/Web/JavaScript"],
+    "typescript": ["TypeScript", "si-typescript", "https://www.typescriptlang.org/"],
+    "linux": ["Linux", "si-linux", "https://www.kernel.org/"],
+    "apache": ["Apache", "si-apache", "https://httpd.apache.org/"],
+    "mysql": ["MySQL", "si-mysql", "https://www.mysql.com/"],
+    "php": ["PHP", "si-php", "https://www.php.net/"]
+  },
   "columns": [
     ["js", "mean", "mern"],
     ["php", "laravel", "lamp"]
   ],
   "nodes": {
-    "js": ["JS / TS", "", "si-javascript", "out", "https://en.wikipedia.org/wiki/JavaScript"],
-    "lamp": ["LAMP", "", ["si-linux", "si-apache", "si-mysql", "si-php"], "tech", "https://…"]
+    "js": ["JS / TS", "", ["javascript", "typescript"], "out", "https://en.wikipedia.org/wiki/JavaScript"],
+    "mean": ["MEAN", "", ["mongodb", "express", "angular", "nodejs"], "tech", "https://…"],
+    "lamp": ["LAMP", "", ["linux", "apache", "mysql", "php"], "tech", "https://…"]
   }
 }
 ```
 
 Keep the language labels short (one or two words): the whole diagram is about
-nine columns wide, so a long label widens every column. Put the component logos
-in `icons` so the acronym stacks read as what they are made of.
+nine columns wide, so a long label widens every column. Put the shared parts in
+`components` and reference the keys in `icons`; each node then stays one line and
+the same Linux/Apache/MySQL/PHP set is written once instead of five times. Each
+component's label is rendered as clickable text under the logos, so the names
+stay readable on a narrow node.
+
+### 7.8 Root node and wires
+
+`root` draws one parent node above every column and wires it to the first node
+of each column:
+
+- Desktop: a vertical spine from the root, one horizontal bus, then a short
+  drop into each column's first node.
+- Narrow: the bus drops down a left gutter and enters each language row, so the
+  wire never crosses a node.
+
+Use it when every column is a child of one concept (`Solution Stack` above the
+languages). The first node of each column is the child; put the language there
+and the stacks below it. A `root` node takes the same compact array as any other
+node (`[label, sub, iconOrIcons, kind, href, live]`).
 
 ---
 
 ## 8. Checklist before committing
 
 - [ ] Every id in `columns`/`edges` exists in `nodes`.
+- [ ] Every component key used in `icons` exists in `components`, and every component icon resolves in the sprite.
 - [ ] Every node has an `icon` or `icons`, and every icon id resolves in the sprite.
+- [ ] Every multi-logo node either has no `href` (logos are decorative) or gives each logo its own `[id, href]` or component key; no logo is left unclickable when the node is a `div`.
+- [ ] Component text labels are present and link to their own page (e.g. Grafana to grafana.com, not Prometheus).
+- [ ] An in-page `#anchor` link stays in the same tab (no `target="_blank"`).
+- [ ] A vertical flow with `back` edges keeps each return cable parallel to its forward cable (upward); a blocked return uses the shared right gutter. Edge numbers are either meaningful or hidden with `"badges": false`.
+- [ ] If `root` is set, its wires reach the first node of every column and no wire crosses a node on mobile.
 - [ ] No duplicate node ids and no duplicate labels that would confuse readers.
 - [ ] No dangling edges (a `from`/`to` that does not exist).
 - [ ] No orphan nodes (a node with no edge, unless it is intentionally a legend chip).
