@@ -8,11 +8,11 @@
     { id: 'index', title: 'Overview', group: 'Start', src: RAW + 'index-en.md' },
 
     /* iMoon07 docs: source-code documentation mirrored from the site repo and
-       the logo library. Listed right below the overview. */
-    { id: 'imoon-topology', title: 'Topology Diagrams', group: 'iMoon07 Docs', src: RAW + 'imoon-topology-en.md' },
-    { id: 'imoon-alur-draw', title: 'Alur Visual Engine & draw.html', group: 'iMoon07 Docs', src: RAW + 'imoon-alur-draw-en.md' },
-    { id: 'imoon-ai-tools', title: 'ai-tools Pipeline', group: 'iMoon07 Docs', src: RAW + 'imoon-ai-tools-en.md' },
-    { id: 'imoon-logo-svg', title: 'Logo & Icon Library', group: 'iMoon07 Docs', src: RAW + 'imoon-logo-svg-en.md' },
+       the logo library. Grouped under Start so they sit right below Overview. */
+    { id: 'imoon-topology', title: 'Topology Diagrams', group: 'Start', src: RAW + 'imoon-topology-en.md' },
+    { id: 'imoon-alur-draw', title: 'Alur Visual Engine & draw.html', group: 'Start', src: RAW + 'imoon-alur-draw-en.md' },
+    { id: 'imoon-ai-tools', title: 'ai-tools Pipeline', group: 'Start', src: RAW + 'imoon-ai-tools-en.md' },
+    { id: 'imoon-logo-svg', title: 'Logo & Icon Library', group: 'Start', src: RAW + 'imoon-logo-svg-en.md' },
 
     { id: 'standards', title: 'Standards & Core Protocols', group: 'Core', src: RAW + 'standards-en.md' },
 
