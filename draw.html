@@ -728,6 +728,8 @@
     gap: 5px;
     max-height: 300px;
     overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 2px;
     scrollbar-width: thin;
     scrollbar-color: #2a323d transparent;
@@ -754,7 +756,11 @@
   .logo-tile img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
   .logo-tile:hover { opacity: 1; transform: translateY(-1px); }
   .logo-tile.is-on { opacity: 1; filter: drop-shadow(0 0 4px rgba(88, 166, 255, .55)); }
-  .logo-tile { touch-action: none; cursor: grab; }
+  /* A tile fills its grid cell, so `touch-action: none` made the whole logo
+     list unscrollable on touch: every swipe started a drag instead of a scroll.
+     `pan-y` hands vertical swipes back to the scroller and still allows a
+     horizontal drag onto the canvas. */
+  .logo-tile { touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
   .logo-tile.is-dragging { opacity: .3; }
   .logo-drag-ghost {
     position: fixed;
@@ -1661,6 +1667,18 @@
       min-width: 0;
       max-width: calc(100vw - 16px);
     }
+    /* The Assets sheet also carries the Scene section, so the grid must not
+       claim the whole height: cap it and let the sheet scroll the rest. */
+    #panelAssets .dock-body { min-height: 0; }
+    .logo-grid {
+      max-height: min(300px, 42vh);
+      -webkit-overflow-scrolling: touch;
+    }
+    /* Scene & blocks is ~1300 px tall and would bury the logos ~1450 px down
+       the sheet. On a phone the assets come first, the scene controls second. */
+    #panelAssets .dock-body { display: flex; flex-direction: column; }
+    #logoPanel { order: 1; }
+    #sceneSection { order: 2; }
 
     .shape-panel {
       top: auto;
