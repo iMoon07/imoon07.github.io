@@ -78,10 +78,11 @@
     }
 
     function categories() {
+        var labels = { 'security-icons': 'Security Icons', 'security-3d': 'Security 3D', 'security-illustration': 'Security Illustration' };
         return (data.categories || []).map(function (cat) {
             return {
                 id: cat,
-                label: cat.charAt(0).toUpperCase() + cat.slice(1),
+                label: labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1),
                 count: data.logos.filter(function (e) { return e.category === cat; }).length
             };
         });
