@@ -34,9 +34,35 @@
         return el;
     }
 
+    /* Logo file dari katalog Alur (575 logo). The topology sprite only covers
+       Lucide/Simple Icons; file logos resolve through AlurLogos. */
+    function logoFile(name) {
+        const logos = window.AlurLogos;
+        const res = logos && logos.resolve ? logos.resolve(name) : null;
+        return res && res.kind === 'file' ? res.href : null;
+    }
+
+    function fileIconEl(name) {
+        const href = logoFile(name);
+        if (!href) return null;
+        const svg = svgEl('svg', { class: 'topo-icon topo-icon--file' });
+        svg.setAttribute('aria-hidden', 'true');
+        const img = svgEl('image');
+        img.setAttribute('href', href);
+        img.setAttribute('x', '0');
+        img.setAttribute('y', '0');
+        img.setAttribute('width', '100%');
+        img.setAttribute('height', '100%');
+        img.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        svg.appendChild(img);
+        return svg;
+    }
+
     /* Ikon sebagai elemen (bukan string HTML) supaya tiap logo bisa dibungkus
        tautan sendiri. Icon as an element so each logo can carry its own link. */
     function iconEl(name) {
+        const file = fileIconEl(name);
+        if (file) return file;
         const svg = svgEl('svg', { class: 'topo-icon' });
         svg.setAttribute('aria-hidden', 'true');
         const use = svgEl('use');
@@ -56,6 +82,13 @@
     }
 
     function icon(name) {
+        const href = logoFile(name);
+        if (href) {
+            const safe = href.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+            return '<svg class="topo-icon topo-icon--file" aria-hidden="true">' +
+                '<image href="' + safe + '" x="0" y="0" width="100%" height="100%" ' +
+                'preserveAspectRatio="xMidYMid meet"></image></svg>';
+        }
         return '<svg class="topo-icon" aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
     }
 

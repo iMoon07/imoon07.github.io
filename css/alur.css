@@ -1,0 +1,749 @@
+/* Alur — visual explainer engine styles.
+   Kabel, simpul, titik data, dan efek gerak. Satu sumber untuk semua modul.
+
+   Cables, nodes, data dots, and motion. One source for every module. */
+
+@font-face {
+    font-family: 'Excalifont';
+    src: url('https://excalidraw.nyc3.cdn.digitaloceanspaces.com/fonts/Excalifont-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.alur {
+    margin: 22px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    overflow: visible;
+    color: #e6edf3;
+    font-family: 'Excalifont', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    box-shadow: none;
+}
+
+.alur text,
+.alur tspan {
+    font-family: 'Excalifont', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+}
+
+.alur + .alur { margin-top: 18px; }
+
+.alur[data-title]::before {
+    content: attr(data-title);
+    display: block;
+    margin: 0 0 8px 2px;
+    color: #8b949e;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.alur-host {
+    position: relative;
+    width: 100%;
+}
+
+.alur-caption {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid #21262d;
+    color: #8b949e;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.alur-caption::before {
+    content: 'ⓘ';
+    flex: 0 0 auto;
+    color: #58a6ff;
+}
+
+/* Grafana-style hover tooltip for chart data points. */
+.alur-chart-tip {
+    position: absolute;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transform: translate(-50%, calc(-100% - 8px));
+    padding: 5px 8px;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    background: rgba(13, 17, 23, .96);
+    color: #e6edf3;
+    font-family: 'Excalifont', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .9);
+}
+
+.alur-chart-tip[hidden] { display: none; }
+
+.alur-chart-tip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.alur-chart-tip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #30363d;
+}
+
+.alur-chart-tip[data-place="below"] {
+    transform: translate(-50%, 8px);
+}
+
+.alur-chart-tip[data-place="below"]::after {
+    top: auto;
+    bottom: 100%;
+    border-top-color: transparent;
+    border-bottom-color: #30363d;
+}
+
+/* Hovered data mark lights up; the rest of the series dims. */
+.alur-chart [data-tip] { cursor: crosshair; }
+
+.alur-hit { cursor: crosshair; }
+
+.alur-bar.is-hover,
+.alur-bar-seg.is-hover,
+.alur-scatter-dot.is-hover,
+.alur-bubble.is-hover,
+.alur-line-dot.is-hover,
+.alur-donut-seg.is-hover,
+.alur-funnel-seg.is-hover,
+.alur-treemap-cell.is-hover,
+.alur-range-dot.is-hover,
+.alur-dumbbell-dot.is-hover,
+.alur-process-dot.is-hover,
+.alur-cycle-node.is-hover,
+.alur-timeline-dot.is-hover {
+    filter: brightness(1.35) drop-shadow(0 0 5px rgba(88, 166, 255, .65));
+}
+
+.alur-bar.is-hover,
+.alur-bar-seg.is-hover {
+    stroke: #e6edf3;
+    stroke-width: 1.5;
+}
+
+.alur-line-dot.is-hover,
+.alur-scatter-dot.is-hover,
+.alur-bubble.is-hover,
+.alur-donut-seg.is-hover,
+.alur-funnel-seg.is-hover,
+.alur-treemap-cell.is-hover,
+.alur-range-dot.is-hover,
+.alur-dumbbell-dot.is-hover,
+.alur-process-dot.is-hover,
+.alur-cycle-node.is-hover,
+.alur-timeline-dot.is-hover {
+    stroke: #e6edf3;
+    stroke-width: 2;
+}
+
+.alur-chart:has([data-tip]:hover) [data-tip]:not(:hover):not(.alur-hit) {
+    opacity: .5;
+}
+
+/* A larger invisible hit target sits before the visible mark. */
+.alur-hit:hover + .alur-line-dot,
+.alur-hit.is-hover + .alur-line-dot,
+.alur-hit:hover + .alur-scatter-dot,
+.alur-hit.is-hover + .alur-scatter-dot,
+.alur-hit:hover + .alur-bubble,
+.alur-hit.is-hover + .alur-bubble {
+    filter: brightness(1.35) drop-shadow(0 0 5px rgba(88, 166, 255, .65));
+    opacity: 1 !important;
+}
+
+.alur-hit:hover + .alur-line-dot,
+.alur-hit.is-hover + .alur-line-dot,
+.alur-hit:hover + .alur-scatter-dot,
+.alur-hit.is-hover + .alur-scatter-dot {
+    stroke: #e6edf3;
+    stroke-width: 2;
+}
+
+.alur-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.alur-error {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(248, 81, 73, 0.12);
+    color: #ffb3ae;
+    font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- simpul */
+
+.alur-node-box {
+    fill: #151b23;
+    stroke: #30363d;
+    stroke-width: 1;
+    transition: stroke 0.15s ease, filter 0.15s ease;
+}
+
+.alur-node { transition: filter 0.15s ease; }
+
+.alur-node:hover .alur-node-box {
+    filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.22));
+}
+
+.alur-node-accent { stroke: none; }
+
+.alur-node-icon { stroke: none; }
+
+.alur-node-icon-dot { stroke: none; }
+
+.alur-logo-img { pointer-events: none; }
+
+.alur-node-label {
+    fill: #e6edf3;
+    font-size: 13px;
+    font-weight: 650;
+    dominant-baseline: middle;
+    letter-spacing: 0.1px;
+}
+
+.alur-node-sub {
+    fill: #8b949e;
+    font-size: 10.5px;
+    dominant-baseline: middle;
+}
+
+.alur-node.is-active .alur-node-box {
+    stroke: #58a6ff;
+    filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.45));
+}
+
+.alur-chip {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---------------------------------------------------------------- kabel */
+
+.alur-cable {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.alur-cable-group { pointer-events: none; }
+
+.alur-cable--solid { opacity: 0.92; }
+.alur-cable--dashed { opacity: 0.9; }
+.alur-cable--dotted { opacity: 0.9; }
+.alur-cable--dash { opacity: 0.9; }
+.alur-cable--circuit { stroke-linejoin: round; opacity: 0.95; }
+
+.alur-cable--double {
+    stroke-width: 8;
+    opacity: 0.16;
+}
+
+.alur-cable--glow {
+    stroke-width: 9;
+    opacity: 0.22;
+    filter: blur(3px);
+}
+
+.alur-cable--neon {
+    stroke-width: 10;
+    opacity: 0.34;
+    filter: blur(4px);
+}
+
+.alur-cable--ribbon {
+    stroke-width: 7;
+    opacity: 0.35;
+}
+
+.alur-cable--beam {
+    stroke-width: 11;
+    opacity: 0.16;
+}
+
+.alur-cable--bundle {
+    stroke-width: 2;
+    opacity: 0.9;
+}
+
+.alur-cable--broken { opacity: 0.75; }
+.alur-cable--relay { opacity: 0.3; }
+
+.alur-cable--pulse {
+    animation: alur-cable-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes alur-cable-pulse {
+    0%, 100% { stroke-width: 2; opacity: 0.55; }
+    50% { stroke-width: 4.5; opacity: 1; }
+}
+
+.alur-cable-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-anchor: middle;
+    opacity: 0.9;
+    paint-order: stroke;
+    stroke: #0d1117;
+    stroke-width: 3px;
+}
+
+/* ---------------------------------------------------------------- gerak */
+
+.alur-dot {
+    filter: drop-shadow(0 0 4px currentColor);
+    pointer-events: none;
+}
+
+.alur-comet,
+.alur-relay {
+    fill: none;
+    stroke-linecap: round;
+    pointer-events: none;
+}
+
+.alur-packet {
+    pointer-events: none;
+}
+
+/* Efek transform butuh origin yang benar di SVG. */
+.alur-node-inner,
+.alur-node-box {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .alur-cable--pulse { animation: none; }
+    .alur-dot, .alur-comet, .alur-relay, .alur-packet { display: none; }
+}
+/* ---------------------------------------------------------------- chart */
+
+.alur-chart-grid {
+    stroke: #21262d;
+    stroke-width: 1;
+}
+
+.alur-chart-axis-line {
+    stroke: #30363d;
+    stroke-width: 1;
+}
+
+.alur-chart-tick {
+    fill: #8b949e;
+    font-size: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.alur-chart-value {
+    fill: #e6edf3;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.alur-bar,
+.alur-bar-seg,
+.alur-line-dot,
+.alur-scatter-dot,
+.alur-bubble {
+    transition: filter .15s ease, opacity .15s ease, stroke-width .15s ease;
+}
+
+.alur-legend-value {
+    fill: #8b949e;
+    font-size: 10px;
+}
+
+.alur-bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+}
+
+.alur-bar--h {
+    transform-box: fill-box;
+    transform-origin: left;
+}
+
+.alur-funnel-stage {
+    transform-box: fill-box;
+    transform-origin: left;
+}
+
+.alur-line {
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.alur-area {
+    stroke: none;
+}
+
+.alur-donut-seg {
+    fill: none;
+    stroke-linecap: butt;
+}
+
+.alur-treemap-cell {
+    stroke: #0d1117;
+    stroke-width: 1;
+}
+
+.alur-dot {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* ---------------------------------------------------------------- chart */
+
+.alur-grid-line {
+    stroke: #21262d;
+    stroke-width: 1;
+}
+
+.alur-axis-num,
+.alur-axis-label,
+.alur-axis-title {
+    fill: #8b949e;
+    font-size: 10px;
+}
+
+.alur-axis-title { font-size: 11px; }
+
+.alur-bar {
+    stroke: none;
+    transform-box: fill-box;
+    transform-origin: bottom;
+}
+
+.alur-bar-seg { stroke: none; }
+
+.alur-bar-value {
+    fill: #e6edf3;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.alur-line {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.alur-line-dot {
+    stroke: #0d1117;
+    stroke-width: 1;
+}
+
+.alur-area { stroke: none; }
+
+.alur-donut-seg {
+    fill: none;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .45));
+    transition: stroke-width .16s ease, opacity .16s ease, filter .16s ease;
+}
+
+.alur-donut-track {
+    opacity: .5;
+}
+
+.alur-donut-seg.is-hover {
+    stroke-width: 32;
+    filter: brightness(1.28) drop-shadow(0 0 8px rgba(88, 166, 255, .55));
+}
+
+.alur-chart:has(.alur-donut-seg.is-hover) .alur-donut-seg:not(.is-hover) {
+    opacity: .28 !important;
+}
+
+.alur-chart:has(.alur-donut-seg.is-hover) .alur-legend-swatch,
+.alur-chart:has(.alur-donut-seg.is-hover) .alur-legend-label {
+    opacity: .55;
+}
+
+.alur-donut-total,
+.alur-donut-label {
+    transition: fill .15s ease;
+}
+
+.alur-donut-total {
+    fill: #e6edf3;
+    font-size: 22px;
+    font-weight: 750;
+}
+
+.alur-donut-label {
+    fill: #8b949e;
+    font-size: 10px;
+}
+
+.alur-legend-swatch { stroke: none; }
+
+.alur-legend-label {
+    fill: #c9d1d9;
+    font-size: 10.5px;
+}
+
+.alur-gauge-track { fill: none; }
+
+.alur-gauge-fill { fill: none; }
+
+.alur-gauge-value {
+    fill: #e6edf3;
+    font-size: 30px;
+    font-weight: 750;
+}
+
+.alur-gauge-label {
+    fill: #8b949e;
+    font-size: 11px;
+}
+
+.alur-scatter-dot { stroke: none; }
+
+.alur-funnel-seg { stroke: none; }
+
+.alur-funnel-value {
+    fill: #0d1117;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.alur-kpi-value {
+    fill: #e6edf3;
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.alur-kpi-label {
+    fill: #8b949e;
+    font-size: 12px;
+}
+
+.alur-kpi-delta {
+    fill: #3fb950;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- graph & pipeline */
+
+.alur-graph-node {
+    transition: opacity 0.35s ease;
+}
+
+.alur-graph-circle {
+    transition: stroke 0.25s ease, stroke-width 0.25s ease;
+}
+
+.alur-graph-label {
+    fill: #e6edf3;
+    font-size: 11px;
+    font-weight: 650;
+    pointer-events: none;
+}
+
+.alur-edge-weight {
+    fill: #8b949e;
+    font-size: 9px;
+    paint-order: stroke;
+    stroke: #0d1117;
+    stroke-width: 3px;
+}
+
+.alur-pipeline-stage {
+    transition: filter 0.25s ease;
+}
+
+.alur-pipeline-stage.is-active .alur-node-box {
+    stroke: #58a6ff;
+    filter: drop-shadow(0 0 7px rgba(88, 166, 255, 0.4));
+}
+
+/* ---------------------------------------------------------------- chart extras */
+
+.alur-marker-line {
+    stroke: #f85149;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+}
+
+.alur-treemap-cell { stroke: none; }
+
+.alur-treemap-label {
+    fill: #e6edf3;
+    font-size: 10px;
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: #0d1117;
+    stroke-width: 3px;
+}
+
+.alur-box-whisker { stroke: #8b949e; stroke-width: 1.4; }
+.alur-box-range { stroke: none; }
+.alur-box-median { stroke: #e6edf3; stroke-width: 2; }
+
+.alur-range-line { stroke-linecap: round; }
+.alur-range-dot { stroke: none; }
+
+.alur-slope-line { stroke-width: 2; }
+
+.alur-timeline-line { stroke: #30363d; stroke-width: 2; }
+.alur-timeline-dot { stroke: none; }
+
+.alur-bubble { stroke: none; }
+
+.alur-dumbbell-line { stroke-linecap: round; }
+.alur-dumbbell-dot { stroke: none; }
+
+.alur-quad-line { stroke: #30363d; stroke-width: 1.4; stroke-dasharray: 4 5; }
+
+.alur-process-dot { stroke: none; }
+
+.alur-process-num {
+    fill: #e6edf3;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.alur-process-arrow { stroke: #30363d; stroke-width: 2; }
+
+.alur-cycle-guide { stroke: #30363d; stroke-width: 1.5; }
+
+.alur-cycle-node { stroke: none; }
+
+.alur-cycle-num {
+    fill: #e6edf3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.alur-progress-seg { stroke: none; }
+
+.alur-table-head {
+    fill: #8b949e;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.alur-table-cell {
+    fill: #e6edf3;
+    font-size: 11px;
+}
+
+.alur-table-line { stroke: #21262d; stroke-width: 1; }
+
+@media (max-width: 600px) {
+    .alur {
+        margin: 16px 0;
+        padding: 10px 10px 8px;
+        border-radius: 12px;
+    }
+
+    .alur[data-title]::before { font-size: 10px; }
+}
+
+/* ---------------------------------------------------------- sentuhan / hover
+   Setiap diagram Alur (flow, reverse proxy, pipeline, graph, chart, canvas)
+   memberi respons saat disentuh: simpul menyala, kabel berdenyut, dan kanvas
+   mendapat cahaya halus. Efek tidak mengubah ukuran/posisi.
+   Hover is a Grafana-style highlight: the node under the pointer glows.
+   The diagram itself stays still; layout never shifts. */
+
+.alur {
+    touch-action: manipulation;
+}
+
+.alur-node:hover .alur-node-box {
+    stroke: #58a6ff;
+    filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.28));
+}
+
+.alur-node:hover .alur-node-label {
+    fill: #ffffff;
+}
+
+.alur:hover .alur-chart-grid,
+.alur.is-touched .alur-chart-grid {
+    stroke: rgba(88, 166, 255, .34);
+}
+
+@keyframes alur-touch-node {
+    0%, 100% { filter: none; }
+    50% { filter: drop-shadow(0 0 7px rgba(88, 166, 255, .55)); }
+}
+
+@keyframes alur-touch-cable {
+    0%, 100% { filter: none; opacity: .88; }
+    50% { filter: drop-shadow(0 0 5px rgba(88, 166, 255, .7)); opacity: 1; }
+}
+
+@keyframes alur-touch-canvas {
+    0%, 100% { filter: none; }
+    50% { filter: drop-shadow(0 0 7px rgba(88, 166, 255, .18)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .alur:hover .alur-node .alur-node-box,
+    .alur.is-touched .alur-node .alur-node-box,
+    .alur:hover .alur-cable,
+    .alur.is-touched .alur-cable,
+    .alur:hover .alur-svg,
+    .alur.is-touched .alur-svg {
+        animation: none;
+    }
+}
+
+/* Article diagrams sit directly on the page, with no card shell. */
+.alur {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+/* Article flow nodes are line art, not filled cards. */
+.prose .alur-node-box {
+    fill: transparent;
+    stroke: rgba(139, 148, 158, .55);
+    stroke-width: 1.1;
+}
+
+.prose .alur-node-box:hover {
+    stroke: #58a6ff;
+}

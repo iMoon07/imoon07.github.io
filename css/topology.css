@@ -792,3 +792,67 @@ a.topo-caption:hover {
 .topo--narrow.topo--dense .topo-columns {
     padding-left: 18px;
 }
+
+/* ---------------------------------------------------------- sentuhan / hover
+   Diagram terasa hidup saat disentuh atau disentuh pointer. Efek ringan:
+   border, cahaya ikon, dan denyut kabel. Tidak mengubah layout.
+   The diagram wakes up on hover/touch with a light border, icon pulse, and
+   cable glow. It never changes layout. */
+
+.topo-node {
+    touch-action: manipulation;
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease,
+        transform .18s ease;
+}
+
+.topo-node:hover,
+.topo-node:focus-within,
+.topo.is-touched .topo-node {
+    border-color: var(--topo-accent);
+    background: rgba(88, 166, 255, .08);
+    box-shadow:
+        0 0 0 1px rgba(88, 166, 255, .18),
+        0 8px 20px -16px rgba(88, 166, 255, .8);
+    transform: translateY(-1px);
+}
+
+.topo:hover .topo-node .topo-icon,
+.topo-node:hover .topo-icon,
+.topo-node:focus-within .topo-icon,
+.topo.is-touched .topo-node .topo-icon {
+    animation: topo-touch-pulse .95s ease-in-out infinite;
+}
+
+.topo:hover .topo-edge,
+.topo.is-touched .topo-edge {
+    animation: topo-touch-edge 1.35s ease-in-out infinite;
+}
+
+.topo:hover .topo-facility,
+.topo.is-touched .topo-facility {
+    border-color: var(--topo-accent);
+}
+
+@keyframes topo-touch-pulse {
+    0%, 100% { transform: scale(1); filter: none; }
+    50% { transform: scale(1.16); filter: drop-shadow(0 0 5px rgba(88, 166, 255, .75)); }
+}
+
+@keyframes topo-touch-edge {
+    0%, 100% { opacity: .82; filter: none; }
+    50% { opacity: 1; filter: drop-shadow(0 0 4px rgba(88, 166, 255, .65)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .topo:hover .topo-node .topo-icon,
+    .topo-node:hover .topo-icon,
+    .topo-node:focus-within .topo-icon,
+    .topo.is-touched .topo-node .topo-icon,
+    .topo:hover .topo-edge,
+    .topo.is-touched .topo-edge {
+        animation: none;
+    }
+}

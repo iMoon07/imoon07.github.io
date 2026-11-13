@@ -271,6 +271,24 @@
                 renderer(token) {
                     return `<div class="topology" data-spec="${escapeHtml(token.spec)}"></div>`;
                 }
+            },
+
+            /* Alur visual: ```alur dengan JSON
+               Alur explainer visual, rendered by js/alur/. */
+            {
+                name: 'alur',
+                level: 'block',
+                start(src) {
+                    return src.indexOf('```alur');
+                },
+                tokenizer(src) {
+                    const match = /^```alur[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    if (!match) return;
+                    return { type: 'alur', raw: match[0], spec: match[1].trim() };
+                },
+                renderer(token) {
+                    return `<div class="alur" data-spec="${escapeHtml(token.spec)}"></div>`;
+                }
             }
         ]
     });

@@ -2388,6 +2388,7 @@ function renderArticle(markdown, project) {
     enhanceYouTube(el.content);
 
     if (window.Topology) window.Topology.init();
+    if (window.Alur) window.Alur.init(el.content);
 
     const headings = enhanceHeadings(el.content);
     renderToc(headings);
@@ -2600,3 +2601,39 @@ if (!redirected) {
     // Safety net: the page always becomes readable, even if something stalls
     setTimeout(revealArticle, 8000);
 }
+
+/* ---------------------------------------------------------- diagram wake
+   Diagram Alur dan Topology merespons sentuhan, klik, dan fokus keyboard.
+   Hover sudah ditangani CSS; kelas is-touched dipakai untuk perangkat sentuh
+   dan fokus, lalu dilepas setelah denyut selesai.
+   Alur and Topology diagrams respond to touch, click, and keyboard focus.
+   Hover is handled by CSS; is-touched covers touch screens and focus, then
+   clears after the pulse finishes. */
+(function () {
+    var wakeTimer = null;
+
+    function wakeDiagram(target) {
+        var diagram = target && target.closest ? target.closest('.alur, .topo') : null;
+        if (!diagram) return;
+
+        document.querySelectorAll('.alur.is-touched, .topo.is-touched').forEach(function (item) {
+            if (item !== diagram) item.classList.remove('is-touched');
+        });
+
+        diagram.classList.add('is-touched');
+
+        if (wakeTimer) clearTimeout(wakeTimer);
+        wakeTimer = setTimeout(function () {
+            diagram.classList.remove('is-touched');
+            wakeTimer = null;
+        }, 1700);
+    }
+
+    document.addEventListener('pointerdown', function (event) {
+        wakeDiagram(event.target);
+    }, { passive: true });
+
+    document.addEventListener('focusin', function (event) {
+        wakeDiagram(event.target);
+    });
+})();

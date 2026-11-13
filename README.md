@@ -29,7 +29,7 @@ flowchart TB
         D[references.html\nDocs hub]
 
         C[CSS\nshell.css / home.css / style.css / article.css / docs.css]
-        J[JS engines & data\nhome.js / blog-data.js / main.js / read.js\nmarkdown.js / docs-references-data.js / references.js]
+        J[JS engines & data\nhome.js / blog-data.js / main.js / read.js\nmarkdown.js / docs-references-data.js / references.js\ntopology.js / alur/*]
     end
 
     subgraph CONTENT[iMoon07/Penjelajah-CyberSecurity - content repo]
@@ -225,31 +225,86 @@ the full authoring guide, recipes, and verification steps.
 
 `js/topology-icons.js` is generated — do not edit by hand. It inlines three families:
 
-- **concept icons** — Lucide stroke icons (currentColor). Hand-written symbols survive rebuilds; drop a new `tools/icons/<name>.svg` (Lucide format) and rerun to add one.
+- **concept icons** — Lucide stroke icons (currentColor). Hand-written symbols survive rebuilds; drop a new `ai-tools/tools/icons/<name>.svg` (Lucide format) and rerun to add one.
 - **profession icons** — real role marks for people/agents (`customer`, `waiter`, `chef`, `cook`, `baker`, `cashier`, `courier`, `mechanic`, `plumber`, `detective`, `hacker`, `teacher`, `doctor`, …), from the same Lucide pipeline.
 - **brand icons** — Simple Icons / devicon logos discovered automatically from `programming/` and `stack/` in the local logo repo, emitted as `i-si-<slug>`. A small allowlist (`BRAND_EXTRA`) also pulls selected logos from the large `security/` folder (currently `wazuh`). Drop a new SVG in the repo and rerun; no script edit needed. Brand colours are preserved; single-colour logos too dark for the dark background are lightened, and badge-style logos (JavaScript) keep their dark glyphs. Internal `<defs>` ids are namespaced per symbol.
 
 ```bash
-python3 tools/build_topology_icons.py     # rebuild the sprite (auto-discovers logos)
+python3 ai-tools/tools/build_topology_icons.py     # rebuild the sprite (auto-discovers logos)
 # add a logo:    drop the SVG in ../logo/programming or ../logo/stack, rerun
-# add a concept: drop tools/icons/<name>.svg, rerun
+# add a concept: drop ai-tools/tools/icons/<name>.svg, rerun
 ```
 
 ## Roadmap / Next
 
 - **Modular About config:** centralize About data (profile, experience, community, license, links) in a single config/data source for easier edits and reordering.
 - **Light & dark mode:** add theme support with a light/dark toggle, persisted user preference, and accessible contrast across all pages.
-- **Topology / diagram system:** extend the ` ```topology ` DSL with more node kinds (computer, network, cloud, security) and edge styles (link, flow, back, bus); add sequence/stack/network diagram types.
-- **Logo library expansion:** grow the Simple Icons set via `tools/build_topology_icons.py`; cover more languages, frameworks, databases, and security tools. Add concept icons by dropping Lucide SVGs in `tools/icons/`.
+- **Topology / diagram system:** extend the ` ```topology ` DSL with more node kinds (computer, network, cloud, security) and edge styles; add sequence/stack/network diagram types. For animated explainers, use the Alur engine (` ```alur `) and its cable/motion catalog.
+- **Logo library expansion:** grow the Simple Icons set via `ai-tools/tools/build_topology_icons.py`; cover more languages, frameworks, databases, and security tools. Add concept icons by dropping Lucide SVGs in `ai-tools/tools/icons/`.
+
+## Alur visual engine
+
+**Alur** is the site's visual explainer engine: animated cables, motion
+effects, and live protocol/algorithm modules. It is a sibling of the topology
+renderer, kept separate so architecture diagrams and explainer visuals can grow
+without coupling.
+
+- **Engine source:** `js/alur/` — `core.js` (registry/mount), `kit.js` (SVG
+  helpers/palette/logo `<image>`), `logos.js` (logo catalogue), `cables.js`
+  (14 cable styles), `motions.js` (13 motion effects), `modules/` (canvas,
+  flow, reverse-proxy, chart, pipeline, graph).
+  `canvas` is a free-form editor (grid, box/pill/circle/plain shapes, freehand
+  drawings); `chart` renders 29 chart types; `pipeline` shows ordered stages;
+  `graph` animates a BFS frontier.
+- **Logos:** remote from [`iMoon07/logo-svg`](https://github.com/iMoon07/logo-svg) via
+  `raw.githubusercontent.com`; the site only ships the generated
+  `js/logo-manifest.js` (no local logo files). Logo images need access to
+  `raw.githubusercontent.com`. Local test override:
+  `preview.html?localLogos=1` after copying/symlinking
+  `ai-tools/assets/logos/` to `imoon07.github.io/assets/logos/`.
+- **Styles:** `css/alur.css`.
+- **Playground:** `preview.html` — full-viewport infinite canvas
+  (space/middle-drag pan, wheel pan, Ctrl+wheel zoom, minimap), floating
+  Properties/Assets/Layers/Scene panels, command palette (`Ctrl+K`), context
+  menu, focus mode, multi-select/marquee/alignment/snapping, copy/paste/
+  duplicate, undo/redo, templates, 29 chart types, cable/motion/speed, and the
+  575-logo library. Every change renders instantly; responsive down to phones.
+- **Docs:** `docs/alur-guide.md` — full authoring guide, cable/motion catalog,
+  and how to add a module, cable, or motion.
+
+A Markdown article embeds a visual with a fenced ` ```alur ` block (JSON):
+
+```alur
+{
+  "module": "flow",
+  "title": "Request path",
+  "cable": "neon",
+  "motion": "comet",
+  "columns": [["client"], ["proxy"], ["db"]],
+  "nodes": {
+    "client": { "label": "Client", "color": "blue" },
+    "proxy":  { "label": "Proxy",  "color": "cyan" },
+    "db":     { "label": "DB",     "color": "purple" }
+  },
+  "edges": [{ "from": "client", "to": "proxy" }, { "from": "proxy", "to": "db" }]
+}
+```
+
+The `blog-post-template` folder stays Markdown-only; engine JavaScript never
+lives there.
 
 ## Repository structure (key files)
 
 - `index.html` — Home & About; `about.html` — About page context; `blog.html` — listing; `read.html` — reader; `references.html` — docs hub
-- `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`, `topology.css`
+- `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`, `topology.css`, `alur.css`
 - `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`, `topology.js`, `topology-icons.js`
-- `tools/build_topology_icons.py` — regenerates the topology icon sprite from the logo repo
-- `tools/icons/` — extra Lucide concept icons picked up by the sprite builder
+- `js/alur/` — visual explainer engine (`core.js`, `kit.js`, `cables.js`, `motions.js`, `modules/*.js`)
+- `../ai-tools/tools/` — local-only generators (topology icon sprite, logo manifest)
+- `../ai-tools/tools/icons/` — extra Lucide concept icons for the sprite builder
 - `docs/topology-guide.md` — full guide for authoring ` ```topology ` diagrams
+- `docs/alur-guide.md` — full guide for the Alur visual engine (cables, motions, modules)
+- `preview.html` — Alur playground (infinite canvas editor, floating panels,
+  command palette, logo library)
 - `assets/` — images and static assets
 - `robots.txt`, `sitemap.xml` — indexing/SEO helpers
 

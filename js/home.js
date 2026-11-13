@@ -494,7 +494,8 @@ if (name === 'home') {
                 list: document.getElementById('workList'),
                  owasp: document.getElementById('owaspDetail'),
                  staticWeb: document.getElementById('staticWebDetail'),
-                 portfolio: document.getElementById('portfolioDetail')
+                 portfolio: document.getElementById('portfolioDetail'),
+                 preview: document.getElementById('previewDetail')
             };
 
             const workButtons = Array.from(

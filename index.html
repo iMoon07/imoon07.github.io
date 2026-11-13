@@ -145,7 +145,6 @@
                                 Experience
                             </button>
 
-                            <!-- Selected work tab (non-active)
                             <button
                                 class="tab"
                                 id="tabWork"
@@ -157,7 +156,6 @@
                             >
                                 Selected work
                             </button>
-                            -->
 
                             <button
                                 class="tab"
@@ -171,6 +169,7 @@
                                 Community
                             </button>
 
+                            <!-- License tab (disabled)
                             <button
                                 class="tab"
                                 id="tabLicense"
@@ -182,6 +181,7 @@
                             >
                                 License
                             </button>
+                            -->
                         </div>
 
                         <div class="panel-viewport" id="panelViewport">
@@ -723,7 +723,6 @@
                             <!-- SELECTED WORK
                                  Daftar proyek pilihan.
                                  The selected work list. -->
-                            <!-- Selected work panel (non-active)
                             <section
                                 class="panel"
                                 id="panelWork"
@@ -782,6 +781,23 @@
                                         <span>
                                             <span class="experience-name">iMoon07.github.io</span>
                                             <span class="experience-description">Source code of this portfolio. Static web built with HTML, CSS, and JS.</span>
+                                        </span>
+
+                                        <span class="experience-arrow" aria-hidden="true">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="experience-entry"
+                                        type="button"
+                                        data-open-work="preview"
+                                        aria-controls="previewDetail"
+                                        aria-expanded="false"
+                                    >
+                                        <span>
+                                            <span class="experience-name">Alur Visual Lab</span>
+                                            <span class="experience-description">Interactive topology, flow, and chart playground for the blog renderer.</span>
                                         </span>
 
                                         <span class="experience-arrow" aria-hidden="true">
@@ -878,8 +894,34 @@
                                         </p>
                                     </div>
                                 </div>
+
+                                <div class="subview" id="previewDetail" hidden>
+                                    <button class="back-button" type="button" data-back-work>
+                                        ← Selected work
+                                    </button>
+
+                                    <h2 class="detail-title" tabindex="-1">Alur Visual Lab</h2>
+
+                                    <div class="entry">
+                                        <p>
+                                            Kanvas buat corat-coret. Pilih
+                                            alat, lalu gambar bebas: kotak,
+                                            panah, teks, dan coretan tangan.
+                                        </p>
+
+                                        <p class="entry-meta">
+                                            <a
+                                                class="project-link"
+                                                href="preview.html"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Open preview.html <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
                             </section>
-                            -->
 
                             <!-- COMMUNITY
                                  Komunitas dan tautan kenalan.
@@ -1157,6 +1199,7 @@
                             </section>
                             <!-- LICENSE
                                  License details for source code and published content. -->
+                            <!--
                             <section
                                 class="panel"
                                 id="panelLicense"
@@ -1315,6 +1358,7 @@
                                     </div>
                                 </div>
                             </section>
+                            -->
                         </div>
 
                         <div class="panel-controls">
