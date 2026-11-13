@@ -223,6 +223,7 @@
         root.classList.add('topo');
         if (spec.vertical) root.classList.add('topo--vertical');
         if (spec.dense) root.classList.add('topo--dense');
+        if (spec.uniform) root.classList.add('topo--uniform');
         root.setAttribute('role', 'group');
         root.setAttribute('aria-label', spec.title || 'Diagram topologi');
 
@@ -450,13 +451,21 @@
         function rectOf(el) {
             const cr = canvas.getBoundingClientRect();
             const r = el.getBoundingClientRect();
+            /* CSS zoom scales getBoundingClientRect() but not the SVG viewBox.
+               Convert back to the canvas coordinate system so edges land on
+               the nodes at every zoom level. */
+            const zoom = canvas.offsetWidth ? cr.width / canvas.offsetWidth : 1;
+            const x = (r.left - cr.left) / zoom;
+            const y = (r.top - cr.top) / zoom;
+            const w = r.width / zoom;
+            const h = r.height / zoom;
             return {
-                x: r.left - cr.left,
-                y: r.top - cr.top,
-                w: r.width,
-                h: r.height,
-                cx: r.left - cr.left + r.width / 2,
-                cy: r.top - cr.top + r.height / 2
+                x: x,
+                y: y,
+                w: w,
+                h: h,
+                cx: x + w / 2,
+                cy: y + h / 2
             };
         }
 
@@ -566,16 +575,49 @@
            Horizontal return path: exit the right side, drop in the gap, and
            enter the target's right side; never through nodes below the source. */
         function backH(s, t, depth) {
-            const dip = (backBase || (Math.max(s.y + s.h, t.y + t.h) + 16)) + depth;
             const leftward = (t.x + t.w) <= (s.x + s.w);
+            const gap = leftward ? (s.x - (t.x + t.w)) : (t.x - (s.x + s.w));
+            /* Two neighbouring cards get a clean U-turn below them. A long
+               return across the whole canvas is reserved for non-adjacent
+               columns, where it really has to cross other cards. */
+            const adjacent = Math.abs(s.cy - t.cy) < Math.max(20, Math.min(s.h, t.h) / 2)
+                && gap >= -2 && gap < 80;
+            if (adjacent) {
+                /* The old hairpin squeezed the two lanes into a 4px slot and
+                   looked like a scribble. A U below both cards is readable at
+                   any width: down from the source, across, then up into the
+                   target. */
+                const sy = s.y + s.h;
+                const ty = t.y + t.h;
+                const dip = Math.max(sy, ty) + 18 + depth;
+                const sx = s.cx;
+                const tx = t.cx;
+                const dir = tx < sx ? -1 : 1;
+                const r = Math.min(10, Math.abs(sx - tx) / 2);
+                return {
+                    d: 'M ' + sx + ' ' + sy +
+                        ' L ' + sx + ' ' + (dip - r) +
+                        ' Q ' + sx + ' ' + dip + ' ' + (sx + dir * r) + ' ' + dip +
+                        ' L ' + (tx - dir * r) + ' ' + dip +
+                        ' Q ' + tx + ' ' + dip + ' ' + tx + ' ' + (dip - r) +
+                        ' L ' + tx + ' ' + ty,
+                    bx: (sx + tx) / 2,
+                    by: dip
+                };
+            }
             const laneS = leftward ? s.x - 8 : s.x + s.w + 8;
             const laneT = leftward ? t.x + t.w + 8 : t.x - 8;
-            return 'M ' + (leftward ? s.x : s.x + s.w) + ' ' + s.cy +
+            const d = 'M ' + (leftward ? s.x : s.x + s.w) + ' ' + s.cy +
                 ' L ' + laneS + ' ' + s.cy +
-                ' L ' + laneS + ' ' + dip +
-                ' L ' + laneT + ' ' + dip +
+                ' L ' + laneS + ' ' + (backBase || (Math.max(s.y + s.h, t.y + t.h) + 16)) + depth +
+                ' L ' + laneT + ' ' + (backBase || (Math.max(s.y + s.h, t.y + t.h) + 16)) + depth +
                 ' L ' + laneT + ' ' + t.cy +
                 ' L ' + (leftward ? t.x + t.w : t.x) + ' ' + t.cy;
+            return {
+                d: d,
+                bx: (laneS + laneT) / 2,
+                by: (backBase || (Math.max(s.y + s.h, t.y + t.h) + 16)) + depth
+            };
         }
 
         function forwardV(s, t, off) {
@@ -595,7 +637,10 @@
            edge. When other nodes block the way, it uses the shared right
            gutter. */
         function backCable(s, t, depth) {
-            const sameCol = Math.abs(s.x - t.x) < 2 && Math.abs(s.w - t.w) < 2;
+            /* Compare centres, not exact edges: labels make cards a few pixels
+               wider or narrower, and a 4px difference must not send the return
+               cable around the whole canvas. */
+            const sameCol = Math.abs(s.cx - t.cx) < 14 && Math.abs(s.w - t.w) < 28;
             /* Jarak antar simpul vertikal adalah gap flex (~44px), jadi ambang
                "bersisihan" harus melewati gap itu tetapi tetap menolak simpul
                yang terpisah satu simpul lain (~88px+). The vertical flex gap is
@@ -898,7 +943,7 @@
                 const t = nodeEls.get(e.to);
                 if (!s || !t) return true;
                 const sr = rectOf(s), tr = rectOf(t);
-                const sameCol = Math.abs(sr.x - tr.x) < 2 && Math.abs(sr.w - tr.w) < 2;
+                const sameCol = Math.abs(sr.cx - tr.cx) < 14 && Math.abs(sr.w - tr.w) < 28;
                 const adjacent = sameCol && Math.abs(sr.y - (tr.y + tr.h)) < 60;
                 if (!adjacent) return true;
             }
@@ -912,6 +957,8 @@
 
             const vertical = root.classList.contains('topo--vertical')
                 || root.classList.contains('topo--narrow');
+            const edgeList = spec.edges || [];
+            const gallery = edgeList.length === 0 && (spec.groups || []).length > 1;
 
             /* Sisakan ruang untuk garis balik (back edge) yang melengkung ke
                bawah pada layout horizontal, supaya tidak menimpa paragraf.
@@ -968,15 +1015,20 @@
             svg.setAttribute('height', H);
             svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
 
-            (spec.groups || []).forEach(group => {
+            (spec.groups || []).forEach((group, groupIndex) => {
                 const rects = group.nodes.map(id => nodeEls.get(id)).filter(Boolean).map(rectOf);
                 if (!rects.length) return;
                 const x = Math.min.apply(null, rects.map(r => r.x));
+                const top = Math.min.apply(null, rects.map(r => r.y));
+                /* On narrow screens the groups stack, so each label must sit
+                   above its own group, not all on the same top row. */
+                const labelY = vertical ? Math.max(10, top - 6) : 12;
+                const iconY = labelY - 10;
                 let labelX = x;
                 if (group.icon) {
                     const use = svgEl('use', {
                         href: '#i-' + group.icon,
-                        x: x, y: 2, width: 12, height: 12,
+                        x: x, y: iconY, width: 12, height: 12,
                         class: 'topo-group-icon'
                     });
                     gGroups.appendChild(use);
@@ -984,48 +1036,22 @@
                 }
                 const label = svgEl('text', {
                     class: 'topo-group-label',
-                    x: labelX, y: 12
+                    x: labelX, y: labelY
                 });
-                label.textContent = group.label;
+                label.textContent = gallery ? (groupIndex + 1) + ' · ' + group.label : group.label;
                 gGroups.appendChild(label);
             });
 
-            const edges = spec.edges || [];
-            const outGroups = new Map();
-            const inGroups = new Map();
+            const edges = edgeList;
+            const hasRootEdges = edges.some(function (e) {
+                return e.from === '__root__' || e.to === '__root__';
+            });
             const covered = new Set();
 
-            edges.forEach((e, i) => {
-                if (e.back || e.style === 'back') return;
-                if (!outGroups.has(e.from)) outGroups.set(e.from, []);
-                outGroups.get(e.from).push(i);
-                if (!inGroups.has(e.to)) inGroups.set(e.to, []);
-                inGroups.get(e.to).push(i);
-            });
-
-            outGroups.forEach((list, fromId) => {
-                if (list.length < 2) return;
-                list.forEach(i => covered.add(i));
-                const objs = list.map(i => edges[i]);
-                const toIds = objs.map(e => e.to);
-                if (gridInfo(toIds)) (vertical ? busOutGridV : busOutGrid)(fromId, toIds);
-                else if (vertical) busOutV(fromId, objs);
-                else busOutH(fromId, objs);
-            });
-
-            inGroups.forEach((list, toId) => {
-                if (list.length < 2) return;
-                list.forEach(i => covered.add(i));
-                const objs = list.map(i => edges[i]);
-                const fromIds = objs.map(e => e.from);
-                if (gridInfo(fromIds)) (vertical ? busInGridV : busInGrid)(toId, fromIds);
-                else if (vertical) busInV(toId, objs);
-                else busInH(toId, objs);
-            });
-
-            /* Kabel dari simpul induk ke tiap kolom (mis. Solution Stack ke
-               semua bahasa). Wires from the root node down to every column. */
-            if (spec.root && nodeEls.has('__root__')) {
+            /* Root bus only when the spec did not spell out a root edge.
+               Explicit __root__ edges are drawn as ordinary direct edges so
+               rootWires:false means "do not auto-bus", not "delete the root". */
+            if (spec.root && spec.rootWires !== false && !hasRootEdges && nodeEls.has('__root__')) {
                 const rootIds = (spec.columns || [])
                     .map(c => c.nodes && c.nodes[0])
                     .filter(id => id && nodeEls.has(id));
@@ -1043,6 +1069,25 @@
                 let depth = 0;
                 let backGeom = null;
 
+                /* Root edges are vertical by definition: the root sits above the
+                   columns, so a side-to-side cable would cut across the canvas.
+                   Root edges are vertical by definition: the root sits above the
+                   columns, so a side-to-side cable would cut across the canvas. */
+                if (e.from === '__root__' && tr.y > sr.y + sr.h) {
+                    const midY = (sr.y + sr.h + tr.y) / 2;
+                    const p = addPath(
+                        'M ' + sr.cx + ' ' + (sr.y + sr.h) +
+                        ' C ' + sr.cx + ' ' + midY +
+                        ' , ' + tr.cx + ' ' + midY +
+                        ' , ' + tr.cx + ' ' + tr.y,
+                        'topo-edge--flow', 'flow');
+                    addFlowDot(p, 'flow');
+                    if (e.badge && spec.badges !== false) {
+                        addBadge((sr.cx + tr.cx) / 2, midY, e.badge, '#58a6ff');
+                    }
+                    return;
+                }
+
                 if (!covered.has(i)) {
                     if (isBack) {
                         depth = vertical ? backIndex : backIndex * 14;
@@ -1055,7 +1100,8 @@
                             const p = addPath(backGeom.d, 'topo-edge--back', 'back');
                             addFlowDot(p, 'back');
                         } else {
-                            const p = addPath(backH(sr, tr, depth),
+                            backGeom = backH(sr, tr, depth);
+                            const p = addPath(backGeom.d,
                                 'topo-edge--back', 'back');
                             addFlowDot(p, 'back');
                         }
@@ -1066,7 +1112,7 @@
                            di sekitar garis tengah. If a return edge exists for
                            the same pair, the forward cable shifts left so the
                            pair is balanced around the centre line. */
-                        const twinBack = (spec.edges || []).some(o =>
+                        const twinBack = edges.some(o =>
                             o !== e && o.from === e.to && o.to === e.from &&
                             (o.back || o.style === 'back'));
                         const p = addPath(
@@ -1095,7 +1141,13 @@
                         }
                     } else {
                         if (isBack) {
-                            addBadge((sr.x + sr.w + tr.x) / 2, Math.max(sr.y + sr.h, tr.y + tr.h) + depth, e.badge, tone);
+                            if (backGeom) {
+                                addBadge(backGeom.bx, backGeom.by, e.badge, tone);
+                            } else {
+                                addBadge((sr.x + sr.w + tr.x) / 2,
+                                    Math.max(sr.y + sr.h, tr.y + tr.h) + depth,
+                                    e.badge, tone);
+                            }
                         } else {
                             addBadge((sr.x + sr.w + tr.x) / 2, (sr.cy + tr.cy) / 2, e.badge, tone);
                         }

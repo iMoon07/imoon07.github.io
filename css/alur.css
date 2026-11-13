@@ -671,11 +671,20 @@
 @media (max-width: 600px) {
     .alur {
         margin: 16px 0;
-        padding: 10px 10px 8px;
-        border-radius: 12px;
     }
 
     .alur[data-title]::before { font-size: 10px; }
+
+    /* Keep the drawing large enough to read; the reader swipes sideways.
+       Charts and flow diagrams shrink to a thumbnail on a phone otherwise. */
+    .alur-host {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .alur-svg {
+        min-width: 620px;
+    }
 }
 
 /* ---------------------------------------------------------- sentuhan / hover
@@ -746,4 +755,77 @@
 
 .prose .alur-node-box:hover {
     stroke: #58a6ff;
+}
+
+/* ---------------------------------------------------------- draw tabs
+   Markdown ```draw-tabs renders a button bar plus one live Alur preview.
+   The buttons wrap on narrow screens so every example stays reachable. */
+.alur-draw-tabs {
+    margin: 14px 0 18px;
+    padding: 10px;
+    border: 1px solid rgba(139, 148, 158, .22);
+    border-radius: 12px;
+    background: rgba(13, 17, 23, .38);
+}
+
+.alur-tabs-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.alur-tab {
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 1px solid rgba(139, 148, 158, .28);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .035);
+    color: inherit;
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.15;
+    cursor: pointer;
+}
+
+.alur-tab:hover {
+    border-color: rgba(88, 166, 255, .65);
+    background: rgba(88, 166, 255, .12);
+}
+
+.alur-tab.is-on,
+.alur-tab[aria-selected="true"] {
+    border-color: rgba(88, 166, 255, .8);
+    background: rgba(88, 166, 255, .18);
+    color: #58a6ff;
+}
+
+.alur-tab:focus-visible {
+    outline: 2px solid #58a6ff;
+    outline-offset: 2px;
+}
+
+.alur-tab-panel[hidden] {
+    display: none;
+}
+
+.alur-tab-panel > .alur {
+    min-height: 220px;
+}
+
+@media (max-width: 600px) {
+    .alur-draw-tabs {
+        padding: 8px;
+    }
+
+    .alur-tabs-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: thin;
+    }
+
+    .alur-tab {
+        flex: 0 0 auto;
+    }
 }

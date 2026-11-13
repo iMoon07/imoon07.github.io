@@ -91,6 +91,37 @@
             ' L ' + b.x + ' ' + (b.y + b.h / 2);
     }
 
+    function edgeEnd(a, b, vertical) {
+        if (vertical) {
+            return {
+                tip: [b.x + b.w / 2, b.y],
+                from: [b.x + b.w / 2, b.y + 10]
+            };
+        }
+        var fromX = b.x < a.x ? b.x + 10 : b.x - 10;
+        return {
+            tip: [b.x, b.y + b.h / 2],
+            from: [fromX, b.y + b.h / 2]
+        };
+    }
+
+    function arrowHead(layer, end, color) {
+        if (!end) return;
+        var tip = end.tip;
+        var from = end.from;
+        var ang = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
+        var len = 9;
+        var spread = 4.5;
+        var x1 = tip[0] - len * Math.cos(ang) + spread * Math.sin(ang);
+        var y1 = tip[1] - len * Math.sin(ang) - spread * Math.cos(ang);
+        var x2 = tip[0] - len * Math.cos(ang) - spread * Math.sin(ang);
+        var y2 = tip[1] - len * Math.sin(ang) + spread * Math.cos(ang);
+        kit.path(layer,
+            'M ' + tip[0] + ' ' + tip[1] + ' L ' + x1 + ' ' + y1 +
+            ' L ' + x2 + ' ' + y2 + ' Z',
+            'alur-edge-head', { fill: color, stroke: 'none' });
+    }
+
     function drawNode(parent, box, node, palette) {
         var color = kit.color(node.color);
         var g = kit.g(parent, 'alur-node');
@@ -166,7 +197,23 @@
         var palette = (env && env.palette) || kit.palette;
         var speed = spec.speed || 1;
         var stops = [];
-        var edges = spec.edges || [];
+        /* Compact edge syntax: ["from", "to"] or ["from", "to", "label"].
+           The object form stays supported for per-edge cable/motion. */
+        var edges = (spec.edges || []).map(function (e) {
+            if (!Array.isArray(e)) return e;
+            var out = { from: e[0], to: e[1] };
+            if (e.length > 2 && e[2] != null && e[2] !== '') {
+                if (typeof e[2] === 'object') {
+                    Object.keys(e[2]).forEach(function (k) { out[k] = e[2][k]; });
+                } else {
+                    out.label = String(e[2]);
+                }
+            }
+            if (e[3] && typeof e[3] === 'object') {
+                Object.keys(e[3]).forEach(function (k) { out[k] = e[3][k]; });
+            }
+            return out;
+        });
         var nodeEls = {};
 
         /* Simpul digambar dulu supaya motion bisa menunjuk simpul tujuan.
@@ -187,6 +234,8 @@
                 width: e.width || spec.width,
                 label: e.label
             });
+            arrowHead(layerEdges, edgeEnd(a, b, lay.vertical),
+                kit.color(e.color || spec.color || 'blue'));
             var motion = e.motion || spec.motion || 'flow';
             if (motion && motion !== 'none') {
                 var stop = motions.apply(motion, layerEdges, cable, nodeEls[e.to] || null, {

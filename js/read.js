@@ -2389,6 +2389,7 @@ function renderArticle(markdown, project) {
 
     if (window.Topology) window.Topology.init();
     if (window.Alur) window.Alur.init(el.content);
+    if (window.AlurDrawTabs) window.AlurDrawTabs.init(el.content);
 
     const headings = enhanceHeadings(el.content);
     renderToc(headings);

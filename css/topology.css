@@ -167,6 +167,19 @@ a.topo-node:focus-visible {
     max-width: 152px;
 }
 
+/* Diagram yang memakai sintaks satu simpul per kolom bisa memaksa lebar seragam.
+   A one-node-per-column diagram can keep every card the same width, so the
+   chain reads as a row of equal steps instead of uneven boxes. */
+.topo--uniform .topo-col:not([data-grid]) .topo-node {
+    width: 132px;
+    max-width: 132px;
+}
+
+.topo--uniform.topo--narrow .topo-col:not([data-grid]) .topo-node {
+    width: 100%;
+    max-width: 190px;
+}
+
 .topo-col[data-grid="3"] .topo-node {
     max-width: 190px;
 }
@@ -409,14 +422,24 @@ a.topo-node:focus-visible {
     width: 100%;
 }
 
+.topo--narrow .topo-col[data-grid="2"],
 .topo--narrow .topo-col[data-grid="3"],
 .topo--narrow .topo-col[data-grid="4"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: center;
 }
 
 .topo--narrow .topo-node {
     min-width: 0;
-    max-width: none;
+    max-width: 190px;
+    margin-inline: auto;
+    height: auto;
+}
+
+.topo--narrow .topo-node-label,
+.topo--narrow .topo-node-sub {
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 
 /* Paksa susun vertikal: alur atas-ke-bawah dengan jarak cukup untuk panah.
@@ -854,5 +877,24 @@ a.topo-caption:hover {
     .topo:hover .topo-edge,
     .topo.is-touched .topo-edge {
         animation: none;
+    }
+}
+
+/* Narrow article columns: keep the labels readable without changing the
+   desktop card proportions. Mobile text was wrapping too aggressively. */
+@media (max-width: 600px) {
+    .topo-node {
+        padding: 8px 10px;
+    }
+    .topo-node-label {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+    .topo-node-sub {
+        font-size: 11.5px;
+        line-height: 1.3;
+    }
+    .topo-group-label {
+        font-size: 11px;
     }
 }

@@ -273,21 +273,44 @@
                 }
             },
 
-            /* Alur visual: ```alur dengan JSON
-               Alur explainer visual, rendered by js/alur/. */
+            /* Draw tabs: ```draw-tabs dengan array {label, spec}
+               Beberapa contoh draw dalam satu panel dengan tombol.
+               Several draw examples in one tabbed panel. */
             {
-                name: 'alur',
+                name: 'drawTabs',
                 level: 'block',
                 start(src) {
-                    return src.indexOf('```alur');
+                    return src.indexOf('```draw-tabs');
                 },
                 tokenizer(src) {
-                    const match = /^```alur[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    const match = /^```draw-tabs[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
                     if (!match) return;
-                    return { type: 'alur', raw: match[0], spec: match[1].trim() };
+                    return { type: 'drawTabs', raw: match[0], spec: match[1].trim() };
                 },
                 renderer(token) {
-                    return `<div class="alur" data-spec="${escapeHtml(token.spec)}"></div>`;
+                    return `<div class="alur-draw-tabs" data-draw-tabs="${escapeHtml(token.spec)}"></div>`;
+                }
+            },
+
+            /* Draw visual: ```draw dengan JSON
+               Draw explainer visual, rendered by js/alur/. */
+            {
+                name: 'draw',
+                level: 'block',
+                start(src) {
+                    const a = src.indexOf('```draw');
+                    const b = src.indexOf('```alur');
+                    if (a < 0) return b;
+                    if (b < 0) return a;
+                    return Math.min(a, b);
+                },
+                tokenizer(src) {
+                    const match = /^```(?:draw|alur)[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    if (!match) return;
+                    return { type: 'draw', raw: match[0], spec: match[1].trim() };
+                },
+                renderer(token) {
+                    return `<div class="alur draw" data-spec="${escapeHtml(token.spec)}"></div>`;
                 }
             }
         ]

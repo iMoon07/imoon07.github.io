@@ -1,7 +1,7 @@
 /* Alur — logo catalogue (iMoon07/logo-svg).
-   Logo dimuat langsung dari GitHub iMoon07/logo-svg (raw.githubusercontent.com).
-   Setiap logo bisa dipakai sebagai node.logo / node.logos / stage.logo.
-   Untuk uji lokal: buka preview.html?localLogos=1 (butuh assets/logos lokal).
+   Logos load directly from iMoon07/logo-svg on raw.githubusercontent.com.
+   Any logo can be used as node.logo / node.logos / stage.logo.
+   For local testing: open draw.html?localLogos=1 (requires local assets/logos).
 
    AlurLogos.resolve("stack:docker")
      -> { kind:"file", href:"https://raw.githubusercontent.com/iMoon07/logo-svg/main/stack/docker.svg" }

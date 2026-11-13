@@ -263,11 +263,35 @@
         return d;
     }
 
-    function nodeBoundaryPoint(n, towardX, towardY) {
+    function nodeVisualBounds(n) {
         var w = n.w || 160;
         var h = n.h || 60;
-        var cx = (n.x || 0) + w / 2;
-        var cy = (n.y || 0) + h / 2;
+        var x = n.x || 0;
+        var y = n.y || 0;
+        var minX = x, minY = y, maxX = x + w, maxY = y + h;
+        var ids = (n.logos && n.logos.length) ? n.logos : (n.logo ? [n.logo] : []);
+        if (ids.length) {
+            /* Same logo metrics as drawNode(): centered row, 24% / 34% of the
+               node's short side. If a logo is larger than the box, the hit
+               target and the cable end follow the visible pixels, not the box. */
+            var size = Math.max(10, Math.min(w, h) * (ids.length > 1 ? 0.24 : 0.34));
+            var total = ids.length * size + (ids.length - 1) * 2;
+            var left = x + (w - total) / 2;
+            var top = y + (h - size) / 2;
+            minX = Math.min(minX, left);
+            minY = Math.min(minY, top);
+            maxX = Math.max(maxX, left + total);
+            maxY = Math.max(maxY, top + size);
+        }
+        return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+    }
+
+    function nodeBoundaryPoint(n, towardX, towardY) {
+        var b = nodeVisualBounds(n);
+        var w = b.w;
+        var h = b.h;
+        var cx = b.x + w / 2;
+        var cy = b.y + h / 2;
         var dx = towardX - cx;
         var dy = towardY - cy;
         if (!dx && !dy) return [cx, cy];
@@ -277,14 +301,37 @@
         var shape = n.shape || 'box';
         var t;
         if (shape === 'circle') {
-            var rx = Math.max(1, w / 2 - pad);
-            var ry = Math.max(1, h / 2 - pad);
+            var rx = Math.max(1, hw);
+            var ry = Math.max(1, hh);
             t = 1 / Math.sqrt((dx * dx) / (rx * rx) + (dy * dy) / (ry * ry));
         } else if (shape === 'diamond') {
             t = 1 / (Math.abs(dx) / hw + Math.abs(dy) / hh);
         } else {
+            /* Box / pill / plain / module. For rounded shapes, intersect the
+               ray with the rounded rectangle so the head sits on the visible
+               border instead of floating at the bounding box corner. */
+            var radius = shape === 'pill' ? Math.min(hw, hh) :
+                (n.edge === 'round' ? Math.min(14, hh) : 0);
             t = Math.min(hw / Math.max(0.001, Math.abs(dx)),
                          hh / Math.max(0.001, Math.abs(dy)));
+            if (radius > 0) {
+                var px = dx * t;
+                var py = dy * t;
+                if (Math.abs(px) > hw - radius && Math.abs(py) > hh - radius) {
+                    var ccx = (px < 0 ? -1 : 1) * (hw - radius);
+                    var ccy = (py < 0 ? -1 : 1) * (hh - radius);
+                    var len = Math.sqrt(dx * dx + dy * dy);
+                    var ux = dx / len;
+                    var uy = dy / len;
+                    var bq = ux * ccx + uy * ccy;
+                    var cq = ccx * ccx + ccy * ccy - radius * radius;
+                    var disc = bq * bq - cq;
+                    if (disc >= 0) {
+                        var tc = bq + Math.sqrt(disc);
+                        if (tc > 0) t = tc / len;
+                    }
+                }
+            }
         }
         return [cx + dx * t, cy + dy * t];
     }
@@ -296,10 +343,10 @@
         var a = nodes[e.from];
         var b = nodes[e.to];
         if (!a || !b) return null;
-        var aw = a.w || 160, ah = a.h || 60;
-        var bw = b.w || 160, bh = b.h || 60;
-        var ac = [(a.x || 0) + aw / 2, (a.y || 0) + ah / 2];
-        var bc = [(b.x || 0) + bw / 2, (b.y || 0) + bh / 2];
+        var ab = nodeVisualBounds(a);
+        var bb = nodeVisualBounds(b);
+        var ac = [ab.x + ab.w / 2, ab.y + ab.h / 2];
+        var bc = [bb.x + bb.w / 2, bb.y + bb.h / 2];
         return {
             points: [
                 nodeBoundaryPoint(a, bc[0], bc[1]),
@@ -440,7 +487,8 @@
                 }
             }
             var type = e.arrowType || 'arrow';
-            var endOn = e.arrowEnd !== undefined ? e.arrowEnd : !!(e.points && e.points.length >= 2);
+            var endOn = e.arrowEnd !== undefined ? e.arrowEnd :
+                (e.points && e.points.length >= 2 ? true : !!(e.from && e.to));
             if (e.arrowStart) arrowHeadAt(edgeLayer, ends.points[0], ends.points[1], type, color, i);
             if (endOn) {
                 var last = ends.points[ends.points.length - 1];

@@ -72,7 +72,7 @@
         function grid(max, ticks) {
             for (var i = 0; i <= ticks; i++) {
                 var y = padT + ph - (ph * i / ticks);
-                kit.line(layer, padL, y, padL + pw, y, 'alur-grid-line', { 'stroke-dasharray': '2 5' });
+                kit.path(layer, kit.line(padL, y, padL + pw, y), 'alur-grid-line', { 'stroke-dasharray': '2 5' });
                 kit.text(layer, padL - 8, y + 3, fmt(max * i / ticks), 'alur-axis-num', { 'text-anchor': 'end' });
             }
         }
@@ -105,6 +105,11 @@
         } else if (type === 'hbar') {
             var hv = series[0].data;
             var hmax = niceMax(Math.max.apply(null, hv));
+            for (var hg = 0; hg <= 4; hg++) {
+                var hgx = padL + pw * hg / 4;
+                kit.path(layer, kit.line(hgx, padT, hgx, base), 'alur-grid-line', { 'stroke-dasharray': '2 5' });
+                kit.text(layer, hgx, base + 16, fmt(hmax * hg / 4), 'alur-axis-num', { 'text-anchor': 'middle' });
+            }
             var hstep = ph / hv.length;
             var bh = Math.min(26, hstep * 0.6);
             hv.forEach(function (v, i) {
@@ -358,7 +363,7 @@
             var bPath = bPts.map(function (p, i) { return (i ? 'L ' : 'M ') + p[0] + ' ' + p[1]; }).join(' ');
             kit.path(layer, bPath, 'alur-line', { stroke: series[0].color });
             var bmx = padL + pw * ((bMarker - bMin) / (bMax - bMin));
-            kit.line(layer, bmx, padT, bmx, base, 'alur-marker-line');
+            kit.path(layer, kit.line(bmx, padT, bmx, base), 'alur-marker-line');
             kit.text(layer, bmx, padT - 6, spec.markerLabel || '', 'alur-axis-label', { 'text-anchor': 'middle' });
         } else if (type === 'histogram') {
             var hBins = spec.bins || 8;
@@ -442,14 +447,14 @@
                 var xq1 = padL + (b.q1 / bTop) * pw;
                 var xq3 = padL + (b.q3 / bTop) * pw;
                 var xm = padL + (b.median / bTop) * pw;
-                kit.line(layer, x1, y, x2, y, 'alur-box-whisker');
+                kit.path(layer, kit.line(x1, y, x2, y), 'alur-box-whisker');
                 kit.rect(layer, xq1, y - 11, Math.max(2, xq3 - xq1), 22, 'alur-box-range', {
                     fill: series[0].color, opacity: 0.25, rx: 3,
                     'data-tip': (b.label || '') + ' · min ' + fmt(b.min) +
                         ' · q1 ' + fmt(b.q1) + ' · med ' + fmt(b.median) +
                         ' · q3 ' + fmt(b.q3) + ' · max ' + fmt(b.max)
                 });
-                kit.line(layer, xm, y - 11, xm, y + 11, 'alur-box-median');
+                kit.path(layer, kit.line(xm, y - 11, xm, y + 11), 'alur-box-median');
                 kit.text(layer, padL - 8, y + 3, b.label || '', 'alur-axis-label', { 'text-anchor': 'end' });
             });
         } else if (type === 'range') {
@@ -463,7 +468,7 @@
                 var y = padT + rStep * (i + 0.5);
                 var x1 = padL + (it.from / rTop) * pw;
                 var x2 = padL + (it.to / rTop) * pw;
-                kit.line(layer, x1, y, x2, y, 'alur-range-line', {
+                kit.path(layer, kit.line(x1, y, x2, y), 'alur-range-line', {
                     stroke: series[0].color, 'stroke-width': 6,
                     'data-tip': (it.label || '') + ' · ' + fmt(it.from) + '–' + fmt(it.to)
                 });
@@ -490,7 +495,7 @@
             slItems.forEach(function (it) {
                 var y1 = base - (it.before / slTop) * ph;
                 var y2 = base - (it.after / slTop) * ph;
-                kit.line(layer, slX1, y1, slX2, y2, 'alur-slope-line', { stroke: series[0].color });
+                kit.path(layer, kit.line(slX1, y1, slX2, y2), 'alur-slope-line', { stroke: series[0].color });
                 kit.circle(layer, slX1, y1, 4, 'alur-line-dot', { fill: palette.blue });
                 kit.circle(layer, slX2, y2, 4, 'alur-line-dot', { fill: palette.green });
                 kit.text(layer, slX1 - 8, y1 + 3, it.label || '', 'alur-axis-label', { 'text-anchor': 'end' });
@@ -515,7 +520,7 @@
         } else if (type === 'timeline') {
             var tEvents = spec.events || [];
             var tY = padT + ph / 2;
-            kit.line(layer, padL, tY, padL + pw, tY, 'alur-timeline-line');
+            kit.path(layer, kit.line(padL, tY, padL + pw, tY), 'alur-timeline-line');
             tEvents.forEach(function (ev, i) {
                 var x = padL + pw * (ev.at !== undefined ? ev.at : (i / Math.max(1, tEvents.length - 1)));
                 kit.circle(layer, x, tY, 5, 'alur-timeline-dot', {
@@ -553,7 +558,7 @@
                 var y = padT + dStep * (i + 0.5);
                 var xa = padL + (it.a / dTop) * pw;
                 var xb = padL + (it.b / dTop) * pw;
-                kit.line(layer, xa, y, xb, y, 'alur-dumbbell-line', { stroke: palette.slate, 'stroke-width': 3 });
+                kit.path(layer, kit.line(xa, y, xb, y), 'alur-dumbbell-line', { stroke: palette.slate, 'stroke-width': 3 });
                 kit.circle(layer, xa, y, 5, 'alur-dumbbell-dot', {
                     fill: palette.blue,
                     'data-tip': (it.label || '') + ' · ' + fmt(it.a)
@@ -569,8 +574,8 @@
             var qX = niceMax(Math.max.apply(null, qPts.map(function (p) { return p[0]; })));
             var qY = niceMax(Math.max.apply(null, qPts.map(function (p) { return p[1]; })));
             grid(qY, 4);
-            kit.line(layer, padL + pw / 2, padT, padL + pw / 2, base, 'alur-quad-line');
-            kit.line(layer, padL, padT + ph / 2, padL + pw, padT + ph / 2, 'alur-quad-line');
+            kit.path(layer, kit.line(padL + pw / 2, padT, padL + pw / 2, base), 'alur-quad-line');
+            kit.path(layer, kit.line(padL, padT + ph / 2, padL + pw, padT + ph / 2), 'alur-quad-line');
             qPts.forEach(function (p) {
                 kit.circle(layer, padL + (p[0] / qX) * pw, base - (p[1] / qY) * ph, 5, 'alur-bubble', {
                     fill: series[0].color, opacity: 0.85,
@@ -594,7 +599,7 @@
                 });
                 kit.text(layer, x, pY + 4, String(i + 1), 'alur-process-num', { 'text-anchor': 'middle' });
                 kit.text(layer, x, pY + 36, typeof s === 'string' ? s : s.label, 'alur-axis-label', { 'text-anchor': 'middle' });
-                if (i < pN - 1) kit.line(layer, x + 18, pY, x + pStep - 18, pY, 'alur-process-arrow');
+                if (i < pN - 1) kit.path(layer, kit.line(x + 18, pY, x + pStep - 18, pY), 'alur-process-arrow');
             });
         } else if (type === 'cycle') {
             var cySteps = spec.steps || [];
@@ -639,7 +644,7 @@
                 row.forEach(function (cell, ci) {
                     kit.text(layer, padL + tCW * ci + tCW / 2, padT + tRH * (ri + 1) + tRH / 2, String(cell), 'alur-table-cell', { 'text-anchor': 'middle' });
                 });
-                kit.line(layer, padL, padT + tRH * (ri + 2), padL + pw, padT + tRH * (ri + 2), 'alur-table-line');
+                kit.path(layer, kit.line(padL, padT + tRH * (ri + 2), padL + pw, padT + tRH * (ri + 2)), 'alur-table-line');
             });
         } else {
             /* kpi: angka besar + label + delta. */
@@ -650,6 +655,23 @@
             if (spec.delta !== undefined) {
                 kit.text(layer, W / 2, H / 2 + 44, spec.delta, 'alur-kpi-delta', { 'text-anchor': 'middle' });
             }
+        }
+
+        /* Label the two axis lines so a beginner knows what they are for.
+           The vertical line is the scale; the bottom line is the category. */
+        function monthish(labels) {
+            return !!(labels && labels.length && /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(String(labels[0])));
+        }
+        if (type === 'bar' || type === 'line' || type === 'area' || type === 'stacked' || type === 'waterfall') {
+            var ax = spec.xLabel || (type === 'waterfall' ? 'Step' : (monthish(labels) ? 'Month' : 'Category'));
+            var ay = spec.yLabel || spec.unit || 'Value';
+            kit.text(layer, padL + pw / 2, H - 6, ax, 'alur-axis-title', { 'text-anchor': 'middle' });
+            kit.text(layer, 14, padT + ph / 2, ay, 'alur-axis-title', {
+                'text-anchor': 'middle',
+                transform: 'rotate(-90 14 ' + (padT + ph / 2) + ')'
+            });
+        } else if (type === 'hbar') {
+            kit.text(layer, padL + pw / 2, H - 6, spec.xLabel || 'Value', 'alur-axis-title', { 'text-anchor': 'middle' });
         }
 
         /* Grafana-style hover: the mark under the pointer lights up and a

@@ -68,15 +68,15 @@
         var cat = isMonthLabels(spec.labels) ? 'month' : 'category';
         var unit = spec.unit ? ' (' + spec.unit + ')' : '';
         if (type === 'bar') {
-            return 'How to read: the vertical axis is the scale; the horizontal axis is the ' + cat +
+            return 'How to read: the vertical axis on the left is the scale; the faint horizontal lines are the scale marks; the axis along the bottom is the ' + cat +
                 '. Each bar is one ' + cat + unit + '; a taller bar means a larger value. The number on top is the exact value. Hover or tap a bar for details.';
         }
         if (type === 'hbar') {
-            return 'How to read: the horizontal axis is the scale; the vertical axis is the ' + cat +
+            return 'How to read: the horizontal axis is the scale; the faint vertical lines are the scale marks; the list on the left is the ' + cat +
                 '. Each bar is one item' + unit + '; a longer bar means a larger value. The number at the end is the exact value.';
         }
         if (type === 'line' || type === 'area' || type === 'spark') {
-            return 'How to read: the vertical axis is the scale; the horizontal axis is the ' + cat +
+            return 'How to read: the vertical axis on the left is the scale; the faint horizontal lines are the scale marks; the axis along the bottom is the ' + cat +
                 '. Each dot is one value; the line connects the dots. A higher dot means a larger value. Hover or tap a dot for the exact value.';
         }
         if (type === 'stacked') {
@@ -96,6 +96,48 @@
         }
         if (type === 'funnel') {
             return 'How to read: each band is a stage. The width is the count; a narrower band means fewer items remain.';
+        }
+        if (type === 'box') {
+            return 'How to read: each box is a range. The line inside is the median; the whiskers reach the minimum and maximum.';
+        }
+        if (type === 'histogram') {
+            return 'How to read: each bar is a bin; the height is the count of values in that bin.';
+        }
+        if (type === 'treemap') {
+            return 'How to read: each rectangle is one value; the area is proportional to the value.';
+        }
+        if (type === 'stackedArea') {
+            return 'How to read: each colored band is a series; the total height is the sum of the bands.';
+        }
+        if (type === 'range') {
+            return 'How to read: each bar spans a range; the end caps are the minimum and maximum.';
+        }
+        if (type === 'dumbbell') {
+            return 'How to read: each line connects two values; the dots at the ends are the two values.';
+        }
+        if (type === 'quadrant') {
+            return 'How to read: the two lines split the chart into four quadrants; each dot is one item.';
+        }
+        if (type === 'slope') {
+            return 'How to read: each line connects two points; the slope shows the change between them.';
+        }
+        if (type === 'timeline') {
+            return 'How to read: the horizontal line is time; the markers are events.';
+        }
+        if (type === 'process') {
+            return 'How to read: each box is a step; the arrows show the order.';
+        }
+        if (type === 'cycle') {
+            return 'How to read: each node is a step; the arrows show the cycle.';
+        }
+        if (type === 'table') {
+            return 'How to read: each row is a record; each column is a field.';
+        }
+        if (type === 'progress') {
+            return 'How to read: each bar is a percentage; the filled part is the value.';
+        }
+        if (type === 'kpi') {
+            return 'How to read: the big number is the value; the label says what it measures.';
         }
         return CAPTIONS.chart;
     }

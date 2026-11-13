@@ -239,7 +239,7 @@ python3 ai-tools/tools/build_topology_icons.py     # rebuild the sprite (auto-di
 
 - **Modular About config:** centralize About data (profile, experience, community, license, links) in a single config/data source for easier edits and reordering.
 - **Light & dark mode:** add theme support with a light/dark toggle, persisted user preference, and accessible contrast across all pages.
-- **Topology / diagram system:** extend the ` ```topology ` DSL with more node kinds (computer, network, cloud, security) and edge styles; add sequence/stack/network diagram types. For animated explainers, use the Alur engine (` ```alur `) and its cable/motion catalog.
+- **Topology / diagram system:** extend the ` ```topology ` DSL with more node kinds (computer, network, cloud, security) and edge styles; add sequence/stack/network diagram types. For animated explainers, use the Alur engine (` ```draw `) and its cable/motion catalog.
 - **Logo library expansion:** grow the Simple Icons set via `ai-tools/tools/build_topology_icons.py`; cover more languages, frameworks, databases, and security tools. Add concept icons by dropping Lucide SVGs in `ai-tools/tools/icons/`.
 
 ## Alur visual engine
@@ -260,21 +260,22 @@ without coupling.
   `raw.githubusercontent.com`; the site only ships the generated
   `js/logo-manifest.js` (no local logo files). Logo images need access to
   `raw.githubusercontent.com`. Local test override:
-  `preview.html?localLogos=1` after copying/symlinking
+  `draw.html?localLogos=1` after copying/symlinking
   `ai-tools/assets/logos/` to `imoon07.github.io/assets/logos/`.
 - **Styles:** `css/alur.css`.
-- **Playground:** `preview.html` — full-viewport infinite canvas
+- **Playground:** `draw.html` — full-viewport infinite canvas
   (space/middle-drag pan, wheel pan, Ctrl+wheel zoom, minimap), floating
   Properties/Assets/Layers/Scene panels, command palette (`Ctrl+K`), context
   menu, focus mode, multi-select/marquee/alignment/snapping, copy/paste/
-  duplicate, undo/redo, templates, 29 chart types, cable/motion/speed, and the
-  575-logo library. Every change renders instantly; responsive down to phones.
+  duplicate, undo/redo, Scene templates (including all 29 chart examples),
+  cable/motion/speed, and the 575-logo library. Every change renders instantly;
+  responsive down to phones.
 - **Docs:** `docs/alur-guide.md` — full authoring guide, cable/motion catalog,
   and how to add a module, cable, or motion.
 
-A Markdown article embeds a visual with a fenced ` ```alur ` block (JSON):
+A Markdown article embeds a visual with a fenced ` ```draw ` block (JSON):
 
-```alur
+```draw
 {
   "module": "flow",
   "title": "Request path",
@@ -290,6 +291,15 @@ A Markdown article embeds a visual with a fenced ` ```alur ` block (JSON):
 }
 ```
 
+A page can group several examples behind buttons with ` ```draw-tabs `:
+
+```draw-tabs
+[
+  { "label": "Bar", "spec": { "module": "chart", "type": "bar", "labels": ["A", "B"], "data": [3, 5] } },
+  { "label": "Donut", "spec": { "module": "chart", "type": "donut", "labels": ["A", "B"], "data": [3, 5] } }
+]
+```
+
 The `blog-post-template` folder stays Markdown-only; engine JavaScript never
 lives there.
 
@@ -298,12 +308,12 @@ lives there.
 - `index.html` — Home & About; `about.html` — About page context; `blog.html` — listing; `read.html` — reader; `references.html` — docs hub
 - `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`, `topology.css`, `alur.css`
 - `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`, `topology.js`, `topology-icons.js`
-- `js/alur/` — visual explainer engine (`core.js`, `kit.js`, `cables.js`, `motions.js`, `modules/*.js`)
+- `js/alur/` — visual explainer engine (`core.js`, `kit.js`, `cables.js`, `motions.js`, `draw-tabs.js`, `modules/*.js`)
 - `../ai-tools/tools/` — local-only generators (topology icon sprite, logo manifest)
 - `../ai-tools/tools/icons/` — extra Lucide concept icons for the sprite builder
 - `docs/topology-guide.md` — full guide for authoring ` ```topology ` diagrams
-- `docs/alur-guide.md` — full guide for the Alur visual engine (cables, motions, modules)
-- `preview.html` — Alur playground (infinite canvas editor, floating panels,
+- `docs/alur-guide.md` — full guide for the Alur visual engine (cables, motions, modules, `draw-tabs` gallery)
+- `draw.html` — Draw playground (infinite canvas editor, floating panels,
   command palette, logo library)
 - `assets/` — images and static assets
 - `robots.txt`, `sitemap.xml` — indexing/SEO helpers
