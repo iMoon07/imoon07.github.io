@@ -37,9 +37,111 @@
         return s ? [s] : [];
     }
 
+    function tableData(n) {
+        var cols = (n.columns && n.columns.length) ? n.columns.slice() : ['Column 1', 'Column 2', 'Column 3'];
+        var rows = (n.rows && n.rows.length) ? n.rows.map(function (r) { return r.slice(); }) : [
+            ['', '', ''], ['', '', ''], ['', '', '']
+        ];
+        rows.forEach(function (r) {
+            while (r.length < cols.length) r.push('');
+            r.length = cols.length;
+        });
+        return { cols: cols, rows: rows };
+    }
+
+    function drawTableNode(parent, n, selected) {
+        var w = n.w || 420;
+        var h = n.h || 240;
+        var data = tableData(n);
+        var g = kit.g(parent, 'alur-node alur-canvas-node alur-table-node' + (selected ? ' is-selected' : ''));
+        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+        g.setAttribute('data-node-id', n.id);
+        if (n.opacity != null) g.setAttribute('opacity', n.opacity);
+        var inner = kit.g(g, 'alur-node-inner');
+        kit.rect(inner, 0, 0, w, h, 'alur-node-box alur-table-box', {
+            rx: 8, fill: '#0c1117', stroke: kit.color(n.color || '#3d4652'), 'stroke-width': 1.2
+        });
+        var fo = kit.el('foreignObject', {
+            x: 0, y: 0, width: Math.max(20, w), height: Math.max(20, h), class: 'alur-table-fo'
+        }, inner);
+        var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        div.className = 'alur-table-wrap';
+        div.setAttribute('data-table-node', n.id);
+
+        var tools = document.createElement('div');
+        tools.className = 'alur-table-tools';
+        [['add-row', '+ Row'], ['del-row', '− Row'], ['add-col', '+ Col'], ['del-col', '− Col']].forEach(function (a) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'alur-table-tool';
+            b.setAttribute('data-table-action', a[0]);
+            b.textContent = a[1];
+            tools.appendChild(b);
+        });
+        div.appendChild(tools);
+
+        var scroll = document.createElement('div');
+        scroll.className = 'alur-table-scroll';
+        var table = document.createElement('table');
+        table.className = 'alur-table';
+        var thead = document.createElement('thead');
+        var htr = document.createElement('tr');
+        data.cols.forEach(function (label, c) {
+            var th = document.createElement('th');
+            th.setAttribute('contenteditable', 'true');
+            th.setAttribute('spellcheck', 'false');
+            th.setAttribute('data-table-node', n.id);
+            th.setAttribute('data-r', '-1');
+            th.setAttribute('data-c', String(c));
+            th.textContent = label;
+            htr.appendChild(th);
+        });
+        thead.appendChild(htr);
+        table.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        data.rows.forEach(function (row, r) {
+            var tr = document.createElement('tr');
+            data.cols.forEach(function (_, c) {
+                var td = document.createElement('td');
+                td.setAttribute('contenteditable', 'true');
+                td.setAttribute('spellcheck', 'false');
+                td.setAttribute('data-table-node', n.id);
+                td.setAttribute('data-r', String(r));
+                td.setAttribute('data-c', String(c));
+                td.textContent = row[c] || '';
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroll.appendChild(table);
+        div.appendChild(scroll);
+        fo.appendChild(div);
+        return g;
+    }
+
     function drawNode(parent, n, selected) {
         if (n.shape === 'module' && n.module) {
             return drawModuleNode(parent, n, selected);
+        }
+        if (n.shape === 'table') {
+            return drawTableNode(parent, n, selected);
+        }
+        if (n.shape === 'image' || n.src) {
+            var iw = n.w || 160;
+            var ih = n.h || 120;
+            var ig = kit.g(parent, 'alur-node alur-canvas-node' + (selected ? ' is-selected' : ''));
+            ig.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+            ig.setAttribute('data-node-id', n.id);
+            if (n.opacity != null) ig.setAttribute('opacity', n.opacity);
+            var iinner = kit.g(ig, 'alur-node-inner');
+            kit.el('image', {
+                href: n.src,
+                x: 0, y: 0, width: iw, height: ih,
+                preserveAspectRatio: 'xMidYMid meet',
+                class: 'alur-node-image'
+            }, iinner);
+            return ig;
         }
         var w = n.w || 160;
         var h = n.h || 60;

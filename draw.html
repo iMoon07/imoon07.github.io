@@ -751,9 +751,8 @@
     opacity: .82;
   }
 
-  .logo-tile.dark { background: #eef2f6; border-radius: 6px; }
   .logo-tile img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
-  .logo-tile:hover { opacity: 1; }
+  .logo-tile:hover { opacity: 1; transform: translateY(-1px); }
   .logo-tile.is-on { opacity: 1; filter: drop-shadow(0 0 4px rgba(88, 166, 255, .55)); }
   .logo-tile { touch-action: none; cursor: grab; }
   .logo-tile.is-dragging { opacity: .3; }
@@ -780,13 +779,116 @@
     place-items: center;
     width: 38px;
     height: 38px;
-    padding: 5px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: #0c1117;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
   }
-  .logo-preview .thumb.dark { background: #eef2f6; }
   .logo-preview .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+  /* ------------------------------------------------------- asset panel */
+  #panelAssets .dock-body { display: grid; gap: 12px; padding: 12px; }
+  .asset-section {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.022);
+  }
+  .asset-section + .asset-section { border-top: 1px solid var(--line-soft); }
+  .asset-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .asset-section-head b { color: var(--text); font-size: 12px; }
+  .asset-toolbar { display: flex; gap: 6px; align-items: center; }
+  .asset-toolbar .ghost { flex: 1; }
+  #logoGrid { margin-top: 2px; }
+  .template-library-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .template-library-head b { color: var(--text); font-size: 11px; }
+  .template-library {
+    display: grid;
+    gap: 8px;
+    max-height: 190px;
+    overflow: auto;
+    padding: 2px 2px 2px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #2a323d transparent;
+  }
+  .template-library::-webkit-scrollbar { width: 8px; }
+  .template-library::-webkit-scrollbar-thumb { background: #2a323d; border-radius: 8px; }
+  .scene-shell { display: grid; gap: 10px; }
+  .scene-step {
+    display: grid;
+    gap: 7px;
+    padding: 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.018);
+  }
+  .scene-step-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .scene-step-head b { color: var(--text); font-size: 11.5px; }
+  .scene-step-head span {
+    color: var(--muted);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .scene-advanced {
+    padding: 8px 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.018);
+  }
+  .scene-advanced summary {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .scene-advanced[open] summary { margin-bottom: 8px; }
+  .template-group { display: grid; gap: 4px; }
+  .template-group > summary {
+    color: var(--muted);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.55px;
+    cursor: pointer;
+    padding: 2px 0;
+  }
+  .template-group > summary:hover { color: var(--text); }
+  .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 4px; }
+  .template-btn {
+    min-height: 30px;
+    padding: 5px 7px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 10.5px;
+    line-height: 1.2;
+    text-align: left;
+    cursor: pointer;
+  }
+  .template-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .template-btn.is-on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 
   /* ------------------------------------------------------------- layers */
 
@@ -889,6 +991,60 @@
   .alur-canvas-node { cursor: grab; touch-action: none; transition: filter 0.15s ease; }
   .alur-canvas-node.is-dragging { cursor: grabbing; }
   .alur-canvas-node:hover .alur-node-box { filter: drop-shadow(0 0 7px rgba(88, 166, 255, 0.26)); }
+
+  /* ---------------------------------------------------------- table node */
+  .alur-table-node { cursor: grab; }
+  .alur-table-box { fill: #0c1117; }
+  .alur-table-fo { overflow: hidden; }
+  .alur-table-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #0c1117;
+    color: #e6edf3;
+    font-family: 'Excalifont', ui-sans-serif, sans-serif;
+    font-size: 12px;
+  }
+  .alur-table-tools {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 5px 6px;
+    border-bottom: 1px solid #21262d;
+    background: rgba(255, 255, 255, 0.025);
+  }
+  .alur-table-tool {
+    padding: 2px 6px;
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    background: #161b22;
+    color: #c9d1d9;
+    font: inherit;
+    font-size: 10px;
+    cursor: pointer;
+  }
+  .alur-table-tool:hover { border-color: #58a6ff; color: #58a6ff; }
+  .alur-table-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+  .alur-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .alur-table th, .alur-table td {
+    border: 1px solid #30363d;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+  .alur-table th { background: #161b22; color: #9fb0c3; font-weight: 650; }
+  .alur-table td { color: #e6edf3; }
+  .alur-table th:focus, .alur-table td:focus {
+    outline: 2px solid #58a6ff;
+    outline-offset: -2px;
+  }
+  .alur-node-image { pointer-events: all; }
   .alur-canvas-node.is-selected .alur-node-box {
     filter: none;
   }
@@ -1398,7 +1554,6 @@
     background: transparent !important;
     box-shadow: none !important;
   }
-  .logo-tile.dark { background: #eef2f6 !important; border-radius: 6px !important; }
   .logo-tile img { background: transparent !important; }
 
 
@@ -1939,22 +2094,81 @@
 
 <aside id="panelAssets" class="dock" data-side="right" aria-hidden="true">
   <div class="dock-head">
-    <b>Assets <span id="logoCount" class="badge">0</span></b>
+    <b>Assets &amp; scene <span id="logoCount" class="badge">0</span></b>
     <button class="icon-btn" data-close="assets" title="Close (Esc)" aria-label="Close assets">×</button>
   </div>
   <div class="dock-body">
     <div id="logoPanel">
-      <div class="panel-section" style="border-top:0; padding-top:0">
+      <section class="asset-section" style="border-top:0; padding-top:0">
+        <div class="asset-section-head">
+          <b>Canvas media</b>
+          <span class="badge">live objects</span>
+        </div>
+        <div class="asset-toolbar">
+          <button id="importPhoto" class="ghost" type="button"><span class="btn-ico">＋</span>Import photo</button>
+          <input id="photoInput" type="file" accept="image/*" hidden>
+        </div>
+        <p class="hint">Drop or paste an image anywhere on the canvas. The image becomes a movable object you can resize, layer, and delete like any other node.</p>
+      </section>
+      <section class="asset-section">
+        <div class="asset-section-head">
+          <b>Logos</b>
+          <span class="badge" id="logoCountInline">0</span>
+        </div>
         <div id="logoMeta" hidden>
           <select id="logoNode"></select>
           <div id="logoPreview" class="logo-preview"></div>
         </div>
-        <p class="hint">Pick a logo, then drag a node with V to resize it.</p>
+        <p class="hint">Click a logo to place the original logo by itself, with no box. Drag a tile onto an existing box, or Shift-click a selected box, to use that box as its frame.</p>
         <input id="logoSearch" type="search" autocomplete="off" placeholder="Search logos — docker, nginx, burp…">
         <div id="logoCats" class="chips"></div>
         <div id="logoGrid" class="logo-grid"></div>
         <p class="hint" id="logoStatus" hidden></p>
-      </div>
+      </section>
+      <section id="chartDataSection" class="asset-section" hidden>
+        <div class="asset-section-head">
+          <b>Chart data</b>
+          <span class="badge" id="chartDataMeta">canvas</span>
+        </div>
+        <p class="hint">Selected chart block only. Data is read from the objects on this canvas — no invented numbers.</p>
+        <label>Data source
+          <select id="chartSource">
+            <option value="canvas">Canvas objects</option>
+            <option value="table">Table block</option>
+          </select>
+        </label>
+        <label id="chartTableRow" hidden>Source table
+          <select id="chartTable"></select>
+        </label>
+        <label>Group by
+          <select id="chartGroupBy">
+            <option value="sub">sub label</option>
+            <option value="shape">shape</option>
+            <option value="color">color</option>
+            <option value="label">label</option>
+            <option value="category">category</option>
+          </select>
+        </label>
+        <label>Aggregation
+          <select id="chartAgg">
+            <option value="count">count</option>
+            <option value="sum">sum of value</option>
+            <option value="avg">average of value</option>
+          </select>
+        </label>
+        <label>Visualization
+          <select id="chartKind">
+            <option value="bar">bar</option>
+            <option value="hbar">horizontal bar</option>
+            <option value="donut">donut</option>
+            <option value="line">line</option>
+            <option value="area">area</option>
+            <option value="table">table</option>
+          </select>
+        </label>
+        <button id="chartApply" class="ghost" type="button">Apply to selected chart</button>
+        <p class="hint" id="chartDataStatus">Count uses the objects themselves. Sum/average uses each node's numeric value field.</p>
+      </section>
     </div>
   </div>
   <span class="dock-resize" data-resize="assets" title="Resize assets panel" aria-hidden="true"></span>
@@ -1987,86 +2201,107 @@
         <option value="graph">graph — BFS frontier</option>
       </select>
     </label>
-    <div class="panel-section" style="border-top:0; padding-top:0">
-      <p class="hint" style="margin:0 0 8px">Insert a live block into the current canvas. Everything stays editable on one page.</p>
-      <div class="module-grid">
-        <button class="ghost" data-scene-module="flow" title="Insert a Flow block into the current canvas"><span class="btn-ico">＋</span>Flow</button>
-        <button class="ghost" data-scene-module="reverse-proxy" title="Insert a Reverse Proxy block into the current canvas"><span class="btn-ico">＋</span>Reverse Proxy</button>
-        <button class="ghost" data-scene-module="chart" title="Insert a Chart block into the current canvas"><span class="btn-ico">＋</span>Chart</button>
-        <button class="ghost" data-scene-module="pipeline" title="Insert a Pipeline block into the current canvas"><span class="btn-ico">＋</span>Pipeline</button>
-        <button class="ghost" data-scene-module="graph" title="Insert a Graph block into the current canvas"><span class="btn-ico">＋</span>Graph</button>
+    <div class="scene-shell">
+      <div class="scene-step">
+        <div class="scene-step-head"><b>1 · Blocks</b><span>insert into this canvas</span></div>
+        <p class="hint">Adds a live object to the current canvas. It does not replace the scene.</p>
+        <div class="module-grid">
+          <button class="ghost" data-scene-module="flow" title="Insert a Flow block into the current canvas"><span class="btn-ico">＋</span>Flow</button>
+          <button class="ghost" data-scene-module="reverse-proxy" title="Insert a Reverse Proxy block into the current canvas"><span class="btn-ico">＋</span>Reverse Proxy</button>
+          <button class="ghost" data-scene-module="chart" title="Insert a Chart block into the current canvas"><span class="btn-ico">＋</span>Chart</button>
+          <button class="ghost" data-scene-module="pipeline" title="Insert a Pipeline block into the current canvas"><span class="btn-ico">＋</span>Pipeline</button>
+          <button class="ghost" data-scene-module="graph" title="Insert a Graph block into the current canvas"><span class="btn-ico">＋</span>Graph</button>
+          <button class="ghost" data-scene-module="table" title="Insert an editable Table block into the current canvas"><span class="btn-ico">＋</span>Table</button>
+        </div>
       </div>
-      <label>Template scene
-        <select id="preset"></select>
-      </label>
-      <div id="sceneControls"></div>
-    </div>
 
-    <label id="chartTypeRow" style="display:none">Chart type
-      <select id="chartType">
-        <option value="bar">bar</option>
-        <option value="hbar">hbar — ranking</option>
-        <option value="line">line — multi-series</option>
-        <option value="area">area</option>
-        <option value="stacked">stacked</option>
-        <option value="donut">donut</option>
-        <option value="gauge">gauge</option>
-        <option value="spark">spark</option>
-        <option value="kpi">kpi</option>
-        <option value="scatter">scatter</option>
-        <option value="waterfall">waterfall</option>
-        <option value="funnel">funnel</option>
-        <option value="bell">bell</option>
-        <option value="histogram">histogram</option>
-        <option value="stackedArea">stackedArea</option>
-        <option value="treemap">treemap</option>
-        <option value="box">box</option>
-        <option value="range">range</option>
-        <option value="density">density</option>
-        <option value="slope">slope</option>
-        <option value="combo">combo</option>
-        <option value="timeline">timeline</option>
-        <option value="bubble">bubble</option>
-        <option value="dumbbell">dumbbell</option>
-        <option value="quadrant">quadrant</option>
-        <option value="process">process</option>
-        <option value="cycle">cycle</option>
-        <option value="progress">progress</option>
-        <option value="table">table</option>
-      </select>
-    </label>
+      <div class="scene-step">
+        <div class="scene-step-head"><b>2 · Scene templates</b><span>replace canvas</span></div>
+        <p class="hint">Loads a complete scene. Undo restores the previous canvas.</p>
+        <select id="preset" hidden></select>
+        <div id="templateLibrary" class="template-library" aria-label="All scene templates"></div>
+      </div>
 
-    <div id="linkControls" class="panel-section">
-      <h3>Link style</h3>
-      <label>Cable
-        <select id="cable"></select>
-      </label>
-      <label>Motion
-        <select id="motion"></select>
-      </label>
-      <p class="hint">Applies to every edge in flow and pipeline.</p>
-    </div>
+      <div class="scene-step">
+        <div class="scene-step-head"><b>3 · Scene settings</b><span>current template</span></div>
+        <div id="sceneControls"></div>
 
-    <label id="speedRow">Speed <span id="speedVal">1.0×</span>
-      <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1">
-    </label>
+        <div id="linkControls" class="panel-section">
+          <h3>Link style</h3>
+          <label>Cable
+            <select id="cable"></select>
+          </label>
+          <label>Motion
+            <select id="motion"></select>
+          </label>
+          <p class="hint">Applies to every edge in flow and pipeline.</p>
+        </div>
 
-    <div class="row">
-      <button id="surprise" class="ghost">Surprise</button>
+        <label id="chartTypeRow" style="display:none">Chart type
+          <select id="chartType">
+            <option value="bar">bar</option>
+            <option value="hbar">hbar — ranking</option>
+            <option value="line">line — multi-series</option>
+            <option value="area">area</option>
+            <option value="stacked">stacked</option>
+            <option value="donut">donut</option>
+            <option value="gauge">gauge</option>
+            <option value="spark">spark</option>
+            <option value="kpi">kpi</option>
+            <option value="scatter">scatter</option>
+            <option value="waterfall">waterfall</option>
+            <option value="funnel">funnel</option>
+            <option value="bell">bell</option>
+            <option value="histogram">histogram</option>
+            <option value="stackedArea">stackedArea</option>
+            <option value="treemap">treemap</option>
+            <option value="box">box</option>
+            <option value="range">range</option>
+            <option value="density">density</option>
+            <option value="slope">slope</option>
+            <option value="combo">combo</option>
+            <option value="timeline">timeline</option>
+            <option value="bubble">bubble</option>
+            <option value="dumbbell">dumbbell</option>
+            <option value="quadrant">quadrant</option>
+            <option value="process">process</option>
+            <option value="cycle">cycle</option>
+            <option value="progress">progress</option>
+            <option value="table">table</option>
+          </select>
+        </label>
+
+        <label id="speedRow">Speed <span id="speedVal">1.0×</span>
+          <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1">
+        </label>
+
+        <div class="row">
+          <button id="surprise" class="ghost">Surprise</button>
+        </div>
+      </div>
+
+      <details class="scene-advanced">
+        <summary>Advanced · spec JSON &amp; export</summary>
+        <label>Spec JSON
+          <textarea id="spec" spellcheck="false"></textarea>
+        </label>
+        <div class="row">
+          <button id="apply" class="ghost">Apply JSON</button>
+          <button id="reset" class="ghost">Reset</button>
+        </div>
+        <div class="row">
+          <button id="exportJson" class="ghost">Export JSON</button>
+          <button id="exportSvg" class="ghost">Export SVG</button>
+        </div>
+        <div class="row">
+          <button id="exportDraw" class="ghost">Export draw</button>
+          <button id="copyDraw" class="ghost">Copy draw</button>
+        </div>
+        <p class="hint">Export produces a fenced <code>```draw</code> block: JSON that read.html can render again.</p>
+        <p class="hint">Scene saves to this browser automatically, so a refresh keeps your canvas. Reset clears it.</p>
+        <p class="hint">Motion names follow the docs. Node motions (pulse, orbit, grow, spin) target the edge's target node.</p>
+      </details>
     </div>
-    <label>Spec JSON
-      <textarea id="spec" spellcheck="false"></textarea>
-    </label>
-    <div class="row">
-      <button id="apply" class="ghost">Apply JSON</button>
-      <button id="reset" class="ghost">Reset</button>
-    </div>
-    <div class="row">
-      <button id="exportJson" class="ghost">Export JSON</button>
-      <button id="exportSvg" class="ghost">Export SVG</button>
-    </div>
-    <p class="hint">Scene saves to this browser automatically, so a refresh keeps your canvas. Reset clears it.</p>
-    <p class="hint">Motion names follow the docs. Node motions (pulse, orbit, grow, spin) target the edge's target node.</p>
   </div>
 </aside>
 
@@ -2571,6 +2806,8 @@
     if (s.module === 'canvas') {
       return Object.keys(s.nodes || {}).map(function (id) {
         return { id: id, node: s.nodes[id] };
+      }).filter(function (t) {
+        return t.node && t.node.shape !== 'image' && t.node.shape !== 'table' && t.node.shape !== 'module';
       });
     }
     if (s.module === 'reverse-proxy') {
@@ -2672,21 +2909,22 @@
   }
 
   document.getElementById('preset').addEventListener('change', function (ev) {
-    var list = PRESETS[state.spec.module || 'flow'] || PRESETS.flow;
-    var def = null;
-    list.forEach(function (p) { if (p[0] === ev.target.value) def = p; });
-    if (!def) return;
-    var grid = state.spec.grid !== false;
-    state.spec = def[2]();
-    state.spec.grid = grid;
-    state.spec._preset = def[0];
-    syncScene();
-    syncControls();
-    render();
+    var parts = String(ev.target.value || '').split(':');
+    if (parts.length === 2) loadPreset(parts[0], parts[1]);
+  });
+
+  document.getElementById('templateLibrary').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-tpl-module]');
+    if (!b) return;
+    loadPreset(b.getAttribute('data-tpl-module'), b.getAttribute('data-tpl-id'));
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-scene-module]'), function (b) {
-    b.addEventListener('click', function () { insertModule(b.getAttribute('data-scene-module')); });
+    b.addEventListener('click', function () {
+      var id = b.getAttribute('data-scene-module');
+      if (id === 'table') insertTableBlock();
+      else insertModule(id);
+    });
   });
 
   function renderLogoGrid(resetScroll) {
@@ -2784,6 +3022,72 @@
     grid.scrollTop = keepScroll;
   }
 
+  function addImageNode(src, w, h, x, y) {
+    if (!isCanvas()) switchModule('canvas');
+    pushHistory();
+    var s = state.spec;
+    s.nodes = s.nodes || {};
+    var id;
+    do { id = 'n' + (++nodeSeq); } while (s.nodes[id]);
+    s.nodes[id] = {
+      id: id,
+      x: Math.round(x),
+      y: Math.round(y),
+      w: Math.max(24, Math.round(w)),
+      h: Math.max(24, Math.round(h)),
+      shape: 'image',
+      src: src,
+      label: '',
+      sub: '',
+      color: '#e6edf3'
+    };
+    s.selected = id;
+    s.selectedEdge = null;
+    s.selectedEdges = [];
+    s.selectedDrawing = null;
+    touchSpec();
+    syncControls();
+    syncEditor();
+    render();
+    return id;
+  }
+
+  function addImageFile(file, clientX, clientY) {
+    if (!file || !/^image\//.test(file.type || '')) return;
+    if (!isCanvas()) switchModule('canvas');
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var maxW = 960, maxH = 640;
+        var ratio = Math.min(1, maxW / Math.max(1, img.naturalWidth),
+                                maxH / Math.max(1, img.naturalHeight));
+        var w = Math.max(80, Math.round(img.naturalWidth * ratio));
+        var h = Math.max(60, Math.round(img.naturalHeight * ratio));
+        var src = reader.result;
+        if (file.size > 1200000) {
+          try {
+            var cv = document.createElement('canvas');
+            cv.width = w; cv.height = h;
+            var cx = cv.getContext('2d');
+            cx.drawImage(img, 0, 0, w, h);
+            src = file.type === 'image/png' || file.type === 'image/webp'
+              ? cv.toDataURL('image/png')
+              : cv.toDataURL('image/jpeg', 0.86);
+          } catch (err) {}
+        }
+        var svg = stage.querySelector('svg');
+        var pt = (svg && typeof clientX === 'number')
+          ? svgPoint(svg, { clientX: clientX, clientY: clientY })
+          : viewportSceneCenter();
+        addImageNode(src, w, h, pt.x - w / 2, pt.y - h / 2);
+      };
+      img.onerror = function () { alert('That image could not be read.'); };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function dropLogo(id, x, y) {
     if (!isCanvas()) switchModule('canvas');
     var target = nodeAtPoint(x, y);
@@ -2802,14 +3106,12 @@
       render();
       return;
     }
-    var w = 120;
-    var h = 70;
     pushHistory();
-    addNode('box', x - w / 2, y - h / 2, w, h);
+    var nid = addNode('none', x - 48, y - 48, 96, 96);
     var s = state.spec;
-    var nid = s.selected;
     if (nid && s.nodes[nid]) {
       s.nodes[nid].logo = id;
+      s.nodes[nid].logoSize = 64;
       delete s.nodes[nid].logos;
     }
     logoState.last = id;
@@ -2911,6 +3213,22 @@
     render();
   }
 
+  function insertTableBlock() {
+    if (!isCanvas()) switchModule('canvas');
+    var c = viewportSceneCenter();
+    pushHistory();
+    var id = addNode('table', c.x - 210, c.y - 120, 420, 240);
+    var n = state.spec.nodes && state.spec.nodes[id];
+    if (n) {
+      ensureTableData(n);
+      n.color = n.color || 'blue';
+      touchSpec();
+      syncControls();
+      syncEditor();
+      render();
+    }
+  }
+
   function insertModule(id) {
     if (!isCanvas()) switchModule('canvas');
     var spec = presetFor(id);
@@ -2953,6 +3271,10 @@
       shape: 'module',
       module: id,
       moduleSpec: spec,
+      dataSource: id === 'chart' ? 'canvas' : undefined,
+      groupBy: id === 'chart' ? 'sub' : undefined,
+      agg: id === 'chart' ? 'count' : undefined,
+      chartType: id === 'chart' ? 'bar' : undefined,
       label: '',
       color: COLOR_KEYS[Object.keys(s.nodes).length % COLOR_KEYS.length]
     };
@@ -2993,18 +3315,20 @@
   }
 
   function applyLogo(id, additive) {
-    var cur = logoTarget();
+    /* A normal click always creates a clean logo object. Shift-click (or a
+       drag onto a box) is the explicit way to use an existing box as the frame. */
+    var cur = additive ? logoTarget() : null;
     if (!cur) {
       /* Assets work on an empty canvas too: pick a logo -> create a node in the
          center of the view, then attach the logo. */
       if (!isCanvas()) switchModule('canvas');
       var c = viewportSceneCenter();
       pushHistory();
-      addNode('box', c.x - 80, c.y - 30, 160, 60);
+      var nid = addNode('none', c.x - 48, c.y - 48, 96, 96);
       var s = state.spec;
-      var nid = s.selected;
       if (nid && s.nodes[nid]) {
         s.nodes[nid].logo = id;
+        s.nodes[nid].logoSize = 64;
         delete s.nodes[nid].logos;
       }
       logoState.last = id;
@@ -3169,6 +3493,202 @@
     render();
   }
 
+  var TEMPLATE_GROUPS = [
+    ['canvas', 'Canvas'],
+    ['flow', 'Flow'],
+    ['reverse-proxy', 'Reverse proxy'],
+    ['chart', 'Chart'],
+    ['pipeline', 'Pipeline'],
+    ['graph', 'Graph']
+  ];
+
+  function loadPreset(module, id) {
+    var list = PRESETS[module] || [];
+    var def = null;
+    list.forEach(function (p) { if (p[0] === id) def = p; });
+    if (!def) return;
+    var grid = state.spec.grid !== false;
+    state.spec = def[2]();
+    state.spec.grid = grid;
+    state.spec._preset = def[0];
+    state.spec.module = module;
+    syncScene();
+    syncControls();
+    render();
+  }
+
+  function chartSourceNodes() {
+    var nodes = state.spec.nodes || {};
+    return Object.keys(nodes).map(function (id) { return nodes[id]; }).filter(function (n) {
+      return n && n.shape !== 'module';
+    });
+  }
+
+  function chartGroupValue(n, groupBy) {
+    var raw = n[groupBy];
+    if (raw == null || raw === '') raw = n.category;
+    if (raw == null || raw === '') raw = n.label;
+    if (raw == null || raw === '') raw = n.shape || 'node';
+    return String(raw);
+  }
+
+  function buildChartSpecFromTable(n) {
+    var table = state.spec.nodes && state.spec.nodes[n.sourceTable];
+    if (!table || table.shape !== 'table') {
+      return {
+        module: 'chart', type: 'table', title: n.label || 'Table data',
+        columns: ['Table', 'Status'], rows: [['No table selected', '']]
+      };
+    }
+    var cols = table.columns || [];
+    var rows = table.rows || [];
+    if (!cols.length) cols = ['Column 1', 'Column 2', 'Column 3'];
+    var agg = n.agg || 'count';
+    var kind = n.chartType || 'bar';
+    var labels = [];
+    var counts = {};
+    var values = [];
+    rows.forEach(function (row) {
+      var label = row[0];
+      if (label == null || label === '') return;
+      label = String(label);
+      labels.push(label);
+      counts[label] = (counts[label] || 0) + 1;
+      var v = Number(row[1]);
+      values.push(isFinite(v) ? v : 0);
+    });
+    var data;
+    if (agg === 'count') {
+      labels = Object.keys(counts).sort();
+      data = labels.map(function (k) { return counts[k]; });
+    } else {
+      data = values.slice();
+    }
+    var spec = {
+      module: 'chart', type: kind, title: n.label || 'Table data',
+      labels: labels, data: data, color: n.color || 'blue'
+    };
+    if (kind === 'donut') {
+      spec.colors = labels.map(function (_, i) { return COLOR_KEYS[i % COLOR_KEYS.length]; });
+      spec.centerLabel = agg === 'count' ? 'rows' : agg;
+    } else if (kind === 'table') {
+      spec.columns = ['Group', agg === 'count' ? 'Count' : agg];
+      spec.rows = labels.map(function (k, i) { return [k, String(data[i])]; });
+      delete spec.labels;
+      delete spec.data;
+    } else if (kind === 'hbar') {
+      spec.xLabel = agg === 'count' ? 'Rows' : agg;
+    } else if (kind === 'line' || kind === 'area') {
+      spec.series = [{ name: agg, data: data }];
+    }
+    return spec;
+  }
+
+  function buildChartSpecFromCanvas(n) {
+    if (n.dataSource === 'table') return buildChartSpecFromTable(n);
+    var groupBy = n.groupBy || 'sub';
+    var agg = n.agg || 'count';
+    var kind = n.chartType || 'bar';
+    var nodes = chartSourceNodes();
+    var counts = {};
+    var totals = {};
+    var numeric = 0;
+    nodes.forEach(function (node) {
+      var key = chartGroupValue(node, groupBy);
+      counts[key] = (counts[key] || 0) + 1;
+      var v = Number(node.value);
+      if (isFinite(v)) {
+        totals[key] = (totals[key] || 0) + v;
+        numeric++;
+      }
+    });
+    var labels = Object.keys(counts).sort();
+    if (agg !== 'count' && !numeric) {
+      return {
+        module: 'chart', type: 'table', title: n.label || 'Canvas data',
+        columns: ['Group', 'Numeric value'],
+        rows: labels.length ? labels.map(function (k) { return [k, 'no numeric value']; }) : [['No canvas objects', '']]
+      };
+    }
+    var data = labels.map(function (k) {
+      if (agg === 'sum') return totals[k] || 0;
+      if (agg === 'avg') return counts[k] ? (totals[k] || 0) / counts[k] : 0;
+      return counts[k];
+    });
+    var spec = {
+      module: 'chart', type: kind, title: n.label || 'Canvas data',
+      labels: labels, data: data, color: n.color || 'blue'
+    };
+    if (kind === 'donut') {
+      spec.colors = labels.map(function (_, i) { return COLOR_KEYS[i % COLOR_KEYS.length]; });
+      spec.centerLabel = agg === 'count' ? 'objects' : agg;
+    } else if (kind === 'table') {
+      spec.columns = ['Group', agg === 'count' ? 'Count' : agg];
+      spec.rows = labels.map(function (k, i) { return [k, String(data[i])]; });
+      delete spec.labels;
+      delete spec.data;
+    } else if (kind === 'hbar') {
+      spec.xLabel = agg === 'count' ? 'Count' : agg;
+    } else if (kind === 'line' || kind === 'area') {
+      spec.series = [{ name: agg, data: data }];
+    }
+    return spec;
+  }
+
+  function refreshCanvasChartSpecs() {
+    var nodes = state.spec.nodes || {};
+    Object.keys(nodes).forEach(function (id) {
+      var n = nodes[id];
+      if (n && n.shape === 'module' && n.module === 'chart' &&
+          (n.dataSource === 'canvas' || n.dataSource === 'table')) {
+        n.moduleSpec = buildChartSpecFromCanvas(n);
+      }
+    });
+  }
+
+  function syncChartDataPanel(keepSource) {
+    var section = document.getElementById('chartDataSection');
+    if (!section) return;
+    var info = isCanvas() ? selectionInfo() : null;
+    var n = info && info.node;
+    var chart = !!(n && n.shape === 'module' && n.module === 'chart');
+    section.hidden = !chart;
+    if (!chart) return;
+    var source = keepSource
+      ? (document.getElementById('chartSource').value || n.dataSource || 'canvas')
+      : (n.dataSource || 'canvas');
+    document.getElementById('chartSource').value = source;
+    document.getElementById('chartGroupBy').value = n.groupBy || 'sub';
+    document.getElementById('chartAgg').value = n.agg || 'count';
+    document.getElementById('chartKind').value = n.chartType || 'bar';
+    var tableRow = document.getElementById('chartTableRow');
+    var tableSel = document.getElementById('chartTable');
+    tableRow.hidden = source !== 'table';
+    tableSel.innerHTML = '';
+    Object.keys(state.spec.nodes || {}).forEach(function (id) {
+      var tn = state.spec.nodes[id];
+      if (!tn || tn.shape !== 'table') return;
+      var o = document.createElement('option');
+      o.value = id;
+      o.textContent = tn.label || id;
+      if (n.sourceTable === id) o.selected = true;
+      tableSel.appendChild(o);
+    });
+    if (!tableSel.options.length) {
+      var o = document.createElement('option');
+      o.value = '';
+      o.textContent = '— add a table block first —';
+      tableSel.appendChild(o);
+    }
+    var count = source === 'table' ? 0 : chartSourceNodes().length;
+    document.getElementById('chartDataMeta').textContent =
+      source === 'table' ? 'table' : (count + ' objects');
+    document.getElementById('chartDataStatus').textContent =
+      (n.agg && n.agg !== 'count')
+        ? "Sum/average reads each node's numeric value field. Without values the chart stays empty instead of inventing data."
+        : 'Count reads the canvas objects themselves. No invented numbers.';
+  }
+
   function syncScene() {
     var body = document.querySelector('#panelAssets .dock-body');
     var keep = body ? body.scrollTop : 0;
@@ -3176,24 +3696,58 @@
     var s = state.spec;
     var m = s.module || 'flow';
     var sel = document.getElementById('preset');
-    var list = PRESETS[m] || PRESETS.flow;
+    if (!s._preset) s._preset = (PRESETS[m] || PRESETS.flow)[0][0];
 
     sel.innerHTML = '';
-    list.forEach(function (p) {
-      var o = document.createElement('option');
-      o.value = p[0];
-      o.textContent = p[1];
-      if (s._preset === p[0]) o.selected = true;
-      sel.appendChild(o);
+    TEMPLATE_GROUPS.forEach(function (group) {
+      var module = group[0];
+      var og = document.createElement('optgroup');
+      og.label = group[1];
+      (PRESETS[module] || []).forEach(function (p) {
+        var o = document.createElement('option');
+        o.value = module + ':' + p[0];
+        o.textContent = p[1];
+        og.appendChild(o);
+      });
+      sel.appendChild(og);
     });
-    if (!s._preset) s._preset = list[0][0];
     if (s._preset === 'custom') {
       var custom = document.createElement('option');
-      custom.value = 'custom';
-      custom.textContent = 'Custom';
+      custom.value = m + ':custom';
+      custom.textContent = 'Custom (edited)';
       sel.appendChild(custom);
     }
-    sel.value = s._preset;
+    sel.value = m + ':' + s._preset;
+
+    var lib = document.getElementById('templateLibrary');
+    if (lib) {
+      var libScroll = lib.scrollTop;
+      lib.innerHTML = '';
+      TEMPLATE_GROUPS.forEach(function (group) {
+        var module = group[0];
+        var list = PRESETS[module] || [];
+        var wrap = document.createElement('details');
+        wrap.className = 'template-group';
+        if (s.module === module) wrap.open = true;
+        var head = document.createElement('summary');
+        head.textContent = group[1] + ' · ' + list.length;
+        wrap.appendChild(head);
+        var grid = document.createElement('div');
+        grid.className = 'template-grid';
+        list.forEach(function (p) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'template-btn' + (s.module === module && s._preset === p[0] ? ' is-on' : '');
+          b.textContent = p[1];
+          b.setAttribute('data-tpl-module', module);
+          b.setAttribute('data-tpl-id', p[0]);
+          grid.appendChild(b);
+        });
+        wrap.appendChild(grid);
+        lib.appendChild(wrap);
+      });
+      lib.scrollTop = libScroll;
+    }
 
     var host = document.getElementById('sceneControls');
     host.innerHTML = '';
@@ -3428,6 +3982,7 @@
     if (zv) zv.textContent = pct;
     var top = document.getElementById('topStatus');
     if (top && /\d+%$/.test(top.textContent)) top.textContent = top.textContent.replace(/\d+%$/, pct);
+    if (editor && editor.textEdit) positionInlineText();
     if (!skipMinimap) renderMinimap();
   }
 
@@ -4198,6 +4753,15 @@
     touchSpec();
     syncEditor();
     render();
+  }
+
+  function ensureTableData(n) {
+    if (!n.columns || !n.columns.length) n.columns = ['Column 1', 'Column 2', 'Column 3'];
+    if (!n.rows || !n.rows.length) n.rows = [['', '', ''], ['', '', ''], ['', '', '']];
+    n.rows.forEach(function (row) {
+      while (row.length < n.columns.length) row.push('');
+      row.length = n.columns.length;
+    });
   }
 
   function addNode(shape, x, y, w, h) {
@@ -5312,6 +5876,7 @@
     renderNodeInspector();
     renderEdgeInspector();
     syncShapePanel();
+    syncChartDataPanel();
     updateHistoryButtons();
   }
 
@@ -5444,6 +6009,44 @@
     return pt.matrixTransform(m);
   }
 
+  function positionInlineText() {
+    if (!editor || !editor.textEdit) return;
+    var area = document.getElementById('inlineText');
+    if (!area) return;
+    var id = editor.textEdit.id;
+    var n = state.spec.nodes && state.spec.nodes[id];
+    if (!n) return;
+    var label = stage.querySelector('.alur-canvas-node[data-node-id="' + id + '"] .alur-node-label');
+    var rect = null;
+    if (label && label.getBoundingClientRect) rect = label.getBoundingClientRect();
+    if (!rect || (!rect.width && !rect.height)) {
+      var c = sceneToClient(n.x || 0, n.y || 0);
+      var zoom = state.spec.zoom || 1;
+      rect = { left: c.x, top: c.y, width: Math.max(80, (n.w || 160) * zoom), height: Math.max(26, (n.h || 40) * zoom) };
+    }
+    var ctm = label && label.getScreenCTM ? label.getScreenCTM() : null;
+    var scale = ctm ? Math.sqrt(ctm.a * ctm.a + ctm.b * ctm.b) : (state.spec.zoom || 1);
+    var fs = Math.max(9, (n.fontSize || 16) * scale);
+    var align = n.textAlign || ((n.logos && n.logos.length) || n.logo || n.shape === 'circle' ? 'center' : 'left');
+    area.style.left = rect.left + 'px';
+    area.style.top = rect.top + 'px';
+    area.style.width = Math.max(48, rect.width + 4) + 'px';
+    area.style.height = Math.max(20, rect.height + 2) + 'px';
+    area.style.fontFamily = 'Excalifont, sans-serif';
+    area.style.fontSize = fs + 'px';
+    area.style.fontWeight = n.fontWeight || (n.bold ? 700 : 400);
+    area.style.fontStyle = n.fontStyle || (n.italic ? 'italic' : 'normal');
+    area.style.color = AlurKit.color(n.color || '#e6edf3');
+    area.style.textAlign = align === 'center' ? 'center' : (align === 'right' ? 'right' : 'left');
+    area.style.lineHeight = String(fs * Math.max(1, n.lineHeight || 1.35)) + 'px';
+    area.style.padding = '0';
+    area.style.border = '0';
+    area.style.margin = '0';
+    area.style.boxSizing = 'border-box';
+    area.style.minWidth = '0';
+    area.style.minHeight = '0';
+  }
+
   function startTextEdit(id) {
     var n = state.spec.nodes && state.spec.nodes[id];
     if (!n) return;
@@ -5454,21 +6057,10 @@
       area.spellcheck = false;
       document.body.appendChild(area);
     }
-    var c = sceneToClient(n.x || 0, n.y || 0);
-    area.style.left = c.x + 'px';
-    area.style.top = c.y + 'px';
-    area.style.width = Math.max(80, n.w || 160) + 'px';
-    area.style.height = Math.max(26, n.h || 40) + 'px';
-    area.style.fontFamily = 'Excalifont, sans-serif';
-    area.style.fontSize = (n.fontSize || 16) + 'px';
-    area.style.fontWeight = n.fontWeight || 400;
-    area.style.fontStyle = n.fontStyle || 'normal';
-    area.style.color = AlurKit.color(n.color || '#e6edf3');
-    area.style.textAlign = n.textAlign || 'left';
-    area.style.lineHeight = n.lineHeight || 1.35;
     area.value = n.label || '';
     area.dataset.nodeId = id;
     editor.textEdit = { id: id, before: n.label || '' };
+    positionInlineText();
     area.style.display = 'block';
     area.focus();
     area.select();
@@ -5581,6 +6173,7 @@
 
   stage.addEventListener('pointerdown', function (ev) {
     if (!isCanvas()) return;
+    if (ev.target.closest && ev.target.closest('td[data-table-node], th[data-table-node], [data-table-action]')) return;
     var svg = stage.querySelector('svg');
     if (!svg) return;
     var p = svgPoint(svg, ev);
@@ -6062,6 +6655,53 @@
       });
     });
   }
+
+  stage.addEventListener('click', function (ev) {
+    var btn = ev.target.closest && ev.target.closest('[data-table-action]');
+    if (!btn) return;
+    var host = btn.closest('[data-table-node]');
+    var id = host && host.getAttribute('data-table-node');
+    var n = state.spec.nodes && state.spec.nodes[id];
+    if (!n) return;
+    ensureTableData(n);
+    var action = btn.getAttribute('data-table-action');
+    pushHistory();
+    if (action === 'add-row') {
+      n.rows.push(new Array(n.columns.length).fill(''));
+    } else if (action === 'del-row') {
+      if (n.rows.length > 1) n.rows.pop();
+    } else if (action === 'add-col') {
+      n.columns.push('Column ' + (n.columns.length + 1));
+      n.rows.forEach(function (row) { row.push(''); });
+    } else if (action === 'del-col') {
+      if (n.columns.length > 1) {
+        n.columns.pop();
+        n.rows.forEach(function (row) { row.pop(); });
+      }
+    }
+    touchSpec();
+    syncControls();
+    render();
+  });
+
+  stage.addEventListener('input', function (ev) {
+    var cell = ev.target.closest && ev.target.closest('td[data-table-node], th[data-table-node]');
+    if (!cell) return;
+    var host = cell.closest('[data-table-node]');
+    var id = host && host.getAttribute('data-table-node');
+    var n = state.spec.nodes && state.spec.nodes[id];
+    if (!n) return;
+    ensureTableData(n);
+    var r = parseInt(cell.getAttribute('data-r'), 10);
+    var c = parseInt(cell.getAttribute('data-c'), 10);
+    if (cell.getAttribute('data-r') === '-1') {
+      if (n.columns[c] != null) n.columns[c] = cell.textContent;
+    } else if (n.rows[r] && n.rows[r][c] != null) {
+      n.rows[r][c] = cell.textContent;
+    }
+    touchSpec();
+    syncChartDataPanel();
+  });
 
   window.addEventListener('pointermove', function (ev) {
     if (!editor.drag) return;
@@ -6723,6 +7363,26 @@
     download('alur-scene.svg', new XMLSerializer().serializeToString(clone), 'image/svg+xml');
   });
 
+  function drawMarkdown() {
+    return '```draw\n' + JSON.stringify(state.spec, null, 2) + '\n```\n';
+  }
+
+  document.getElementById('exportDraw').addEventListener('click', function () {
+    download('alur-scene.md', drawMarkdown(), 'text/markdown');
+  });
+
+  document.getElementById('copyDraw').addEventListener('click', function () {
+    var text = drawMarkdown();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        var b = document.getElementById('copyDraw');
+        if (b) { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy draw'; }, 900); }
+      }, function () { download('alur-scene.md', text, 'text/markdown'); });
+    } else {
+      download('alur-scene.md', text, 'text/markdown');
+    }
+  });
+
   function toggleShortcuts() {
     var card = document.getElementById('shortcutCard');
     if (card) card.hidden = !card.hidden;
@@ -7019,7 +7679,13 @@
     }
     if ((ev.ctrlKey || ev.metaKey) && k === 'y') { ev.preventDefault(); redo(); return; }
     if ((ev.ctrlKey || ev.metaKey) && k === 'c') { ev.preventDefault(); copySelection(); return; }
-    if ((ev.ctrlKey || ev.metaKey) && k === 'v') { ev.preventDefault(); pasteClipboard(); return; }
+    if ((ev.ctrlKey || ev.metaKey) && k === 'v') {
+      if (editor.clipboard && editor.clipboard.nodes && editor.clipboard.nodes.length) {
+        ev.preventDefault();
+        pasteClipboard();
+      }
+      return;
+    }
     if ((ev.ctrlKey || ev.metaKey) && k === 'd') { ev.preventDefault(); duplicateSelection(); return; }
     if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && k === 'z') { ev.preventDefault(); redo(); return; }
     if ((ev.ctrlKey || ev.metaKey) && k === 'x') {
@@ -7544,6 +8210,7 @@
   }
 
   function render() {
+    refreshCanvasChartSpecs();
     if (stage.__alur) {
       Alur.destroy(stage.__alur);
       stage.__alur = null;
@@ -7644,6 +8311,67 @@
     render();
   });
 
+  /* Import photo / drop / paste ----------------------------------------- */
+
+  document.getElementById('importPhoto').addEventListener('click', function () {
+    document.getElementById('photoInput').click();
+  });
+
+  document.getElementById('photoInput').addEventListener('change', function (ev) {
+    var file = ev.target.files && ev.target.files[0];
+    if (file) addImageFile(file);
+    ev.target.value = '';
+  });
+
+  stage.addEventListener('dragover', function (ev) {
+    if (!ev.dataTransfer || Array.prototype.indexOf.call(ev.dataTransfer.types || [], 'Files') < 0) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'copy';
+  });
+
+  stage.addEventListener('drop', function (ev) {
+    if (!ev.dataTransfer || !ev.dataTransfer.files || !ev.dataTransfer.files.length) return;
+    var file = ev.dataTransfer.files[0];
+    if (!/^image\//.test(file.type || '')) return;
+    ev.preventDefault();
+    addImageFile(file, ev.clientX, ev.clientY);
+  });
+
+  document.addEventListener('paste', function (ev) {
+    if (isTypingTarget(ev.target)) return;
+    if (!ev.clipboardData || !ev.clipboardData.items) return;
+    for (var i = 0; i < ev.clipboardData.items.length; i++) {
+      var item = ev.clipboardData.items[i];
+      if (item.kind === 'file' && /^image\//.test(item.type || '')) {
+        ev.preventDefault();
+        addImageFile(item.getAsFile());
+        return;
+      }
+    }
+  });
+
+  /* Chart data panel ----------------------------------------------------- */
+
+  document.getElementById('chartSource').addEventListener('change', function () {
+    syncChartDataPanel(true);
+  });
+
+  document.getElementById('chartApply').addEventListener('click', function () {
+    var info = selectionInfo();
+    var n = info && info.node;
+    if (!n || n.shape !== 'module' || n.module !== 'chart') return;
+    pushHistory();
+    n.dataSource = document.getElementById('chartSource').value;
+    n.sourceTable = document.getElementById('chartTable').value || null;
+    n.groupBy = document.getElementById('chartGroupBy').value;
+    n.agg = document.getElementById('chartAgg').value;
+    n.chartType = document.getElementById('chartKind').value;
+    refreshCanvasChartSpecs();
+    touchSpec();
+    syncControls();
+    render();
+  });
+
   /* Logo panel events ---------------------------------------------------- */
 
   document.getElementById('logoSearch').addEventListener('input', function (ev) {
@@ -7659,8 +8387,10 @@
 
   (function syncLogoCount() {
     var count = document.getElementById('logoCount');
+    var inline = document.getElementById('logoCountInline');
     var search = document.getElementById('logoSearch');
     if (count) count.textContent = LOGOS.total;
+    if (inline) inline.textContent = LOGOS.total;
     if (search) search.placeholder = 'Search ' + LOGOS.total + ' logos — docker, nginx, burp…';
   })();
 
