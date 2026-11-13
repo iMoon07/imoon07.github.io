@@ -133,7 +133,7 @@
         kit.rect(inner, 0, 0, box.w, box.h, 'alur-node-box', { rx: 11 });
         kit.rect(inner, 0, 0, 4, box.h, 'alur-node-accent', { fill: color, rx: 2 });
 
-        /* Logo: node.logo / node.logos (575 logo lokal), ukuran & posisi bebas.
+        /* Logo: node.logo / node.logos (587 logo lokal), ukuran & posisi bebas.
            Logo placement: left | right | top | bottom, plus logoSize. */
         var ids = (node.logos && node.logos.length) ? node.logos
             : (node.logo ? [node.logo] : []);

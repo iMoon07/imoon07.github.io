@@ -268,7 +268,7 @@ without coupling.
   Properties/Assets/Layers/Scene panels, command palette (`Ctrl+K`), context
   menu, focus mode, multi-select/marquee/alignment/snapping, copy/paste/
   duplicate, undo/redo, Scene templates (including all 29 chart examples),
-  cable/motion/speed, and the 575-logo library. Every change renders instantly;
+  cable/motion/speed, and the 587-logo library. Every change renders instantly;
   responsive down to phones.
 - **Docs:** `docs/alur-guide.md` — full authoring guide, cable/motion catalog,
   and how to add a module, cable, or motion.

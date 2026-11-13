@@ -173,6 +173,12 @@
             host.innerHTML = '<p class="alur-error">Render error: ' + String(err.message || err) + '</p>';
             return null;
         }
+        /* Every module gets the same full-page grid unless the spec opts out.
+           The canvas editor used to own this; now it is a shared layer. */
+        if (spec.grid !== false && global.AlurKit && global.AlurKit.grid) {
+            var svg = host.querySelector('svg');
+            if (svg) global.AlurKit.grid(svg);
+        }
         var record = { el: el, host: host, def: def, inst: inst || {}, spec: spec };
         var caption = captionText(spec);
         if (caption) {

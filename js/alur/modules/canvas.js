@@ -37,16 +37,6 @@
         return s ? [s] : [];
     }
 
-    function drawGrid(svg, W, H) {
-        var id = 'alur-grid-' + (++uid);
-        var defs = kit.el('defs', {}, svg);
-        var pat = kit.el('pattern', {
-            id: id, width: 22, height: 22, patternUnits: 'userSpaceOnUse'
-        }, defs);
-        kit.el('circle', { cx: 1, cy: 1, r: 1, fill: '#3d4652', opacity: 0.55 }, pat);
-        kit.rect(svg, 0, 0, W, H, 'alur-canvas-grid', { fill: 'url(#' + id + ')' });
-    }
-
     function drawNode(parent, n, selected) {
         if (n.shape === 'module' && n.module) {
             return drawModuleNode(parent, n, selected);
@@ -152,7 +142,7 @@
         var label = kit.text(inner, labelX, labelY, '', 'alur-node-label', {
             'text-anchor': anchor,
             'font-size': size,
-            'font-family': n.fontFamily || 'Excalifont, Nunito, Segoe UI, sans-serif',
+            'font-family': n.fontFamily || 'Excalifont, sans-serif',
             'font-weight': weight,
             'font-style': fontStyle,
             fill: kit.color(n.color || '#e6edf3')
@@ -366,8 +356,6 @@
         var palette = (env && env.palette) || kit.palette;
         var speed = spec.speed || 1;
         var stops = [];
-
-        if (spec.grid !== false) drawGrid(svg, W, H);
 
         var drawLayer = kit.g(svg, 'alur-layer-draw');
         (spec.drawings || []).forEach(function (dr) {

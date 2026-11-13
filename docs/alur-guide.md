@@ -62,6 +62,15 @@ and blog templates use the same syntax.
 The Scene panel's **Template** menu includes the same examples as the chart
 gallery, so the playground and the documentation expose the same catalog.
 
+### Grid and non-grid
+
+Every module gets the same full-page minor/major grid by default. Set
+`"grid": false` in a spec to remove it. The Scene panel's **Grid background**
+switch toggles the current scene without changing the module, and the setting
+is kept when switching between flow, chart, pipeline, graph, canvas, and every
+other page. Turning the grid off does not disable the canvas line or arrow
+tools; they keep drawing and connecting normally.
+
 ### Flow keys
 
 | Key | Meaning |
@@ -174,13 +183,19 @@ https://raw.githubusercontent.com/iMoon07/logo-svg/main/<category>/<file>.svg
 ```
 
 The site does **not** ship `assets/logos/`. It only loads the generated
-`js/logo-manifest.js` (575 entries), which contains the remote base URL. Logo
+`js/logo-manifest.js` (587 entries), which contains the remote base URL. Logo
 images need access to `raw.githubusercontent.com`.
 
 ```js
 AlurLogos.resolve('stack:docker')
 // { kind: 'file', href: 'https://raw.githubusercontent.com/iMoon07/logo-svg/main/stack/docker.svg' }
+
+AlurLogos.resolve('brand:figma')
+// { kind: 'file', href: 'assets/brands/figma.svg' }
 ```
+
+Common brand marks that are absent from the remote library ship in
+`assets/brands/` and use the `brand:<name>` id.
 
 Node fields:
 

@@ -43,15 +43,22 @@
         return byId[id] || null;
     }
 
+    function hrefOf(hit) {
+        if (!hit) return null;
+        /* Local overrides (brand icons shipped with the site) win over the
+           remote logo library. */
+        return hit.url || (hit.absolute ? hit.file : base + hit.file);
+    }
+
     function resolve(id) {
         if (!id) return null;
         if (isPath(id)) return { kind: 'file', href: id };
         var hit = byId[id];
-        if (hit) return { kind: 'file', href: base + hit.file, entry: hit };
+        if (hit) return { kind: 'file', href: hrefOf(hit), entry: hit };
         var named = byName[id];
         if (named && named.length === 1) {
             hit = named[0];
-            return { kind: 'file', href: base + hit.file, entry: hit };
+            return { kind: 'file', href: hrefOf(hit), entry: hit };
         }
         if (isSprite(id)) return { kind: 'sprite', ref: '#' + id };
         /* Fallback terakhir: anggap id sprite (kompatibel dengan topology). */

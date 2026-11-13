@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alur Visual Lab — sketch canvas</title>
 <link rel="stylesheet" href="css/alur.css?v=4">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #090c11;
@@ -47,7 +44,7 @@
   body {
     background: transparent;
     color: var(--text);
-    font: 13px/1.5 Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+    font: 13px/1.5 Excalifont, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -568,6 +565,13 @@
   .dock.is-dragging {
     transition: none;
     transform: none;
+    backdrop-filter: none;
+    box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.95);
+  }
+  body.is-panel-dragging,
+  body.is-panel-dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
   }
 
   .dock-head b { font-size: 12px; font-weight: 650; display: flex; align-items: center; gap: 6px; }
@@ -620,7 +624,7 @@
   textarea {
     min-height: 220px;
     resize: vertical;
-    font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+    font: 11px/1.45 Excalifont, sans-serif;
   }
 
   button {
@@ -682,12 +686,20 @@
   .checkline {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
     text-transform: none;
     letter-spacing: 0;
-    font-size: 11.5px;
+    font-size: 12px;
+    cursor: pointer;
   }
-  .checkline input { width: auto; }
+  .checkline input { width: auto; flex: 0 0 auto; accent-color: var(--accent); transform: scale(1.15); }
 
   .scene-head { display: flex; justify-content: space-between; gap: 8px; }
   .scene-head b { color: var(--text); font-weight: 600; }
@@ -739,7 +751,7 @@
     opacity: .82;
   }
 
-  .logo-tile.dark { background: transparent; }
+  .logo-tile.dark { background: #eef2f6; border-radius: 6px; }
   .logo-tile img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
   .logo-tile:hover { opacity: 1; }
   .logo-tile.is-on { opacity: 1; filter: drop-shadow(0 0 4px rgba(88, 166, 255, .55)); }
@@ -971,7 +983,7 @@
     border-radius: 4px;
     background: var(--surface-2);
     color: var(--text);
-    font: 10px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    font: 10px/1.6 Excalifont, sans-serif;
     text-align: center;
   }
 
@@ -1218,7 +1230,7 @@
   #stage.alur .alur-canvas-edge.is-selected { stroke-width: 3; }
   #stage.alur .alur-canvas-node .alur-node-label,
   #stage.alur .alur-canvas-node .alur-node-sub {
-    font-family: 'Excalifont', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Excalifont', sans-serif;
   }
   #stage.alur:hover .alur-svg,
   #stage.alur.is-touched .alur-svg {
@@ -1261,7 +1273,7 @@
     outline: 0;
     background: transparent;
     color: var(--text);
-    font-family: 'Excalifont', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Excalifont', sans-serif;
     font-size: 16px;
     line-height: 1.35;
     resize: none;
@@ -1321,7 +1333,7 @@
     border-radius: 6px;
     background: #0c1117;
     color: var(--text);
-    font: 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+    font: 10px/1.2 Excalifont, sans-serif;
     text-transform: lowercase;
   }
   .swatch {
@@ -1386,6 +1398,7 @@
     background: transparent !important;
     box-shadow: none !important;
   }
+  .logo-tile.dark { background: #eef2f6 !important; border-radius: 6px !important; }
   .logo-tile img { background: transparent !important; }
 
 
@@ -1417,6 +1430,8 @@
   body.light-theme .alur-canvas-node .alur-node-label,
   body.light-theme .alur-canvas-node .alur-node-sub { fill: #111; }
   body.light-theme .alur-canvas-grid circle { fill: #c9d1d9; }
+  body.light-theme .alur-grid-minor { stroke: #d0d7de; }
+  body.light-theme .alur-grid-major { stroke: #b8c2cf; }
 
 
   /* ---------------------------------------------------- phone-first layout
@@ -1782,6 +1797,9 @@
 
     <span class="mobile-menu-title">Panels</span>
     <div class="mobile-menu-grid">
+      <button class="mobile-menu-item" type="button" data-mobile-panel="scene"><span class="mi">▤</span>Scene</button>
+      <button class="mobile-menu-item" type="button" data-mobile-panel="template"><span class="mi">◧</span>Template</button>
+      <button class="mobile-menu-item" type="button" data-mobile-panel="logos"><span class="mi">⚑</span>Logos</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="assets"><span class="mi">▦</span>Assets</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="layers"><span class="mi">☰</span>Layers</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="properties"><span class="mi">⚙</span>Properties</button>
@@ -1911,7 +1929,6 @@
         <button id="connectBtn" class="ghost"><span class="btn-ico">⇢</span>Connect</button>
         <button id="deleteBtn" class="ghost"><span class="btn-ico">⌫</span>Delete</button>
       </div>
-      <label class="checkline"><input id="gridToggle" type="checkbox" checked> Grid background</label>
       <div id="nodeInspector" class="inspector"></div>
       <div id="edgeInspector" class="inspector"></div>
       <p class="hint" id="editorHint">Drag a node to move it. Click to select.</p>
@@ -1922,7 +1939,7 @@
 
 <aside id="panelAssets" class="dock" data-side="right" aria-hidden="true">
   <div class="dock-head">
-    <b>Assets <span id="logoCount" class="badge">575</span></b>
+    <b>Assets <span id="logoCount" class="badge">0</span></b>
     <button class="icon-btn" data-close="assets" title="Close (Esc)" aria-label="Close assets">×</button>
   </div>
   <div class="dock-body">
@@ -1933,10 +1950,9 @@
           <div id="logoPreview" class="logo-preview"></div>
         </div>
         <p class="hint">Pick a logo, then drag a node with V to resize it.</p>
-        <input id="logoSearch" type="search" autocomplete="off" placeholder="Search 575 logos — docker, nginx, burp…">
+        <input id="logoSearch" type="search" autocomplete="off" placeholder="Search logos — docker, nginx, burp…">
         <div id="logoCats" class="chips"></div>
         <div id="logoGrid" class="logo-grid"></div>
-        <div id="logoSentinel" class="logo-sentinel" aria-hidden="true"></div>
         <p class="hint" id="logoStatus" hidden></p>
       </div>
     </div>
@@ -1972,15 +1988,15 @@
       </select>
     </label>
     <div class="panel-section" style="border-top:0; padding-top:0">
+      <p class="hint" style="margin:0 0 8px">Insert a live block into the current canvas. Everything stays editable on one page.</p>
       <div class="module-grid">
-        <button class="ghost" data-scene-module="canvas"><span class="btn-ico">▭</span>Canvas</button>
-        <button class="ghost" data-scene-module="flow"><span class="btn-ico">⇄</span>Flow</button>
-        <button class="ghost" data-scene-module="reverse-proxy"><span class="btn-ico">⇋</span>Reverse Proxy</button>
-        <button class="ghost" data-scene-module="chart"><span class="btn-ico">▦</span>Chart</button>
-        <button class="ghost" data-scene-module="pipeline"><span class="btn-ico">▤</span>Pipeline</button>
-        <button class="ghost" data-scene-module="graph"><span class="btn-ico">◈</span>Graph</button>
+        <button class="ghost" data-scene-module="flow" title="Insert a Flow block into the current canvas"><span class="btn-ico">＋</span>Flow</button>
+        <button class="ghost" data-scene-module="reverse-proxy" title="Insert a Reverse Proxy block into the current canvas"><span class="btn-ico">＋</span>Reverse Proxy</button>
+        <button class="ghost" data-scene-module="chart" title="Insert a Chart block into the current canvas"><span class="btn-ico">＋</span>Chart</button>
+        <button class="ghost" data-scene-module="pipeline" title="Insert a Pipeline block into the current canvas"><span class="btn-ico">＋</span>Pipeline</button>
+        <button class="ghost" data-scene-module="graph" title="Insert a Graph block into the current canvas"><span class="btn-ico">＋</span>Graph</button>
       </div>
-      <label>Template
+      <label>Template scene
         <select id="preset"></select>
       </label>
       <div id="sceneControls"></div>
@@ -2649,7 +2665,7 @@
         logoState.cat = c.id;
         logoState.limit = 96;
         syncLogoCats();
-        renderLogoGrid();
+        renderLogoGrid(true);
       });
       host.appendChild(b);
     });
@@ -2660,7 +2676,9 @@
     var def = null;
     list.forEach(function (p) { if (p[0] === ev.target.value) def = p; });
     if (!def) return;
+    var grid = state.spec.grid !== false;
     state.spec = def[2]();
+    state.spec.grid = grid;
     state.spec._preset = def[0];
     syncScene();
     syncControls();
@@ -2668,22 +2686,12 @@
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-scene-module]'), function (b) {
-    b.addEventListener('click', function () { switchModule(b.getAttribute('data-scene-module')); });
+    b.addEventListener('click', function () { insertModule(b.getAttribute('data-scene-module')); });
   });
 
-  document.getElementById('logoAll').addEventListener('click', function () {
-    if (!logoState.last) return;
-    pushHistory();
-    logoTargets().forEach(function (t) {
-      t.node.logo = logoState.last;
-      delete t.node.logos;
-    });
-    syncControls();
-    render();
-  });
-
-  function renderLogoGrid() {
+  function renderLogoGrid(resetScroll) {
     var grid = document.getElementById('logoGrid');
+    var keepScroll = resetScroll ? 0 : grid.scrollTop;
     var hits = LOGOS.search(logoState.q, logoState.cat);
     var shown = hits.slice(0, logoState.limit);
     var cur = logoTarget();
@@ -2700,7 +2708,8 @@
       img.loading = 'eager';
       img.alt = e.name;
       img.draggable = false;
-      img.src = LOGOS.base + e.file;
+      var res = LOGOS.resolve(e.id);
+      if (res && res.kind === 'file') img.src = res.href;
       b.appendChild(img);
       b.addEventListener('click', function (ev) {
         if (editor.suppressLogoClick) { editor.suppressLogoClick = false; return; }
@@ -2769,10 +2778,10 @@
       grid.appendChild(b);
     });
 
-    document.getElementById('logoMore').style.display = hits.length > shown.length ? '' : 'none';
     document.getElementById('logoStatus').textContent =
       hits.length + ' logo' + (hits.length === 1 ? '' : 's') +
       (hits.length > shown.length ? ' · showing ' + shown.length : '');
+    grid.scrollTop = keepScroll;
   }
 
   function dropLogo(id, x, y) {
@@ -3028,6 +3037,8 @@
 
   function syncLogoPanel() {
     var panel = document.getElementById('logoPanel');
+    var assets = document.getElementById('panelAssets');
+    var assetsOpen = !!(assets && assets.classList.contains('is-open'));
     var targets = logoTargets();
     panel.style.display = '';
 
@@ -3036,7 +3047,7 @@
       logoState.target = null;
       sel.innerHTML = '<option value="">— add a node first —</option>';
       renderLogoPreview();
-      renderLogoGrid();
+      if (assetsOpen) renderLogoGrid();
       document.getElementById('logoStatus').textContent = 'Add a node first';
       return;
     }
@@ -3053,7 +3064,7 @@
 
     var node = cur && cur.node;
     renderLogoPreview();
-    renderLogoGrid();
+    if (assetsOpen) renderLogoGrid();
   }
 
   /* Scene controls ------------------------------------------------------ */
@@ -3106,6 +3117,7 @@
     base.motion = state.spec.motion || 'flow';
     base.speed = state.spec.speed || 1;
     base.vertical = !!state.spec.vertical;
+    base.grid = state.spec.grid !== false;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3119,6 +3131,7 @@
     base.motion = state.spec.motion || 'packets';
     base.speed = state.spec.speed || 1;
     base.color = state.spec.color || 'cyan';
+    base.grid = state.spec.grid !== false;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3128,6 +3141,7 @@
 
   function regenGraph(n, pattern) {
     var base = makeGraph(n, pattern);
+    base.grid = state.spec.grid !== false;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3137,6 +3151,7 @@
 
   function regenProxy(n) {
     var base = makeProxy(n);
+    base.grid = state.spec.grid !== false;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3146,6 +3161,7 @@
 
   function regenChart(series, points) {
     var base = chartPreset(state.spec.type || 'bar', series, points);
+    base.grid = state.spec.grid !== false;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3154,6 +3170,9 @@
   }
 
   function syncScene() {
+    var body = document.querySelector('#panelAssets .dock-body');
+    var keep = body ? body.scrollTop : 0;
+    requestAnimationFrame(function () { if (body) body.scrollTop = keep; });
     var s = state.spec;
     var m = s.module || 'flow';
     var sel = document.getElementById('preset');
@@ -3397,6 +3416,13 @@
     var vx = (state.spec.panX || 0) + (W - vw) / 2;
     var vy = (state.spec.panY || 0) + (H - vh) / 2 - safeTop * vh / (2 * Math.max(1, rect.height));
     svg.setAttribute('viewBox', vx + ' ' + vy + ' ' + vw + ' ' + vh);
+    var gridRect = svg.querySelector('.alur-canvas-grid');
+    if (gridRect) {
+      gridRect.setAttribute('x', vx);
+      gridRect.setAttribute('y', vy);
+      gridRect.setAttribute('width', vw);
+      gridRect.setAttribute('height', vh);
+    }
     var pct = Math.round(z * 100) + '%';
     var zv = document.getElementById('zoomVal');
     if (zv) zv.textContent = pct;
@@ -3553,15 +3579,19 @@
       var r = el.getBoundingClientRect();
       var offX = ev.clientX - r.left;
       var offY = ev.clientY - r.top;
+      var dragging = true;
       el.classList.add('is-dragging');
+      document.body.classList.add('is-panel-dragging');
       el.style.right = 'auto';
       el.style.bottom = 'auto';
       el.style.left = r.left + 'px';
       el.style.top = r.top + 'px';
       el.style.transform = 'none';
+      el.style.willChange = 'left, top';
       try { head.setPointerCapture(ev.pointerId); } catch (err) {}
 
       function move(e) {
+        if (!dragging) return;
         var w = el.offsetWidth;
         var h = el.offsetHeight;
         var x = Math.max(8, Math.min(window.innerWidth - w - 8, e.clientX - offX));
@@ -3571,18 +3601,22 @@
       }
 
       function up() {
-        head.removeEventListener('pointermove', move);
-        head.removeEventListener('pointerup', up);
-        head.removeEventListener('pointercancel', up);
+        if (!dragging) return;
+        dragging = false;
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        document.removeEventListener('pointercancel', up);
         el.classList.remove('is-dragging');
+        document.body.classList.remove('is-panel-dragging');
+        el.style.willChange = '';
         var r2 = el.getBoundingClientRect();
         editor.panelPos[name] = { left: Math.round(r2.left), top: Math.round(r2.top) };
         savePanels();
       }
 
-      head.addEventListener('pointermove', move);
-      head.addEventListener('pointerup', up);
-      head.addEventListener('pointercancel', up);
+      document.addEventListener('pointermove', move, { passive: false });
+      document.addEventListener('pointerup', up, { once: true });
+      document.addEventListener('pointercancel', up, { once: true });
       ev.preventDefault();
     });
   }
@@ -3640,8 +3674,9 @@
     }
     el.classList.toggle('is-open', !!open);
     el.setAttribute('aria-hidden', open ? 'false' : 'true');
-    var btn = document.querySelector('[data-panel="' + name + '"]');
-    if (btn) btn.classList.toggle('is-on', !!open);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-panel="' + name + '"]'), function (btn) {
+      btn.classList.toggle('is-on', !!open);
+    });
     if (open) {
       applyPanelPos(name);
       applyPanelSize(name);
@@ -3673,6 +3708,9 @@
   function renderLayers() {
     var host = document.getElementById('layerList');
     if (!host) return;
+    var body = document.querySelector('#panelLayers .dock-body');
+    var keep = body ? body.scrollTop : 0;
+    requestAnimationFrame(function () { if (body) body.scrollTop = keep; });
     host.innerHTML = '';
     if (!isCanvas()) {
       var note = document.createElement('p');
@@ -3822,7 +3860,11 @@
   var paletteState = { open: false, index: 0, items: [] };
 
   function switchModule(id) {
+    /* Grid is a view preference, not part of a module preset. Keep it when
+       switching between flow, chart, canvas, and every other page. */
+    var grid = state.spec.grid !== false;
     state.spec = presetFor(id);
+    state.spec.grid = grid;
     syncScene();
     syncControls();
     render();
@@ -3862,7 +3904,6 @@
     list.push({ label: 'Action · Delete selection', hint: 'Del', run: deleteSelected });
     list.push({ label: 'Action · Select all', hint: '', run: selectAllNodes });
     list.push({ label: 'Action · Zoom to fit', hint: '', run: function () { document.getElementById('zoomFit').click(); } });
-    list.push({ label: 'Action · Toggle grid', hint: '', run: function () { document.getElementById('gridToggle').click(); } });
     list.push({ label: 'Action · Undo', hint: 'Ctrl+Z', run: undo });
     list.push({ label: 'Action · Redo', hint: 'Ctrl+Shift+Z', run: redo });
     list.push({ label: 'Action · Export JSON', hint: '', run: function () { document.getElementById('exportJson').click(); } });
@@ -3980,7 +4021,6 @@
     if (cmd === 'delete') deleteSelected();
     if (cmd === 'select-all') selectAllNodes();
     if (cmd === 'fit') document.getElementById('zoomFit').click();
-    if (cmd === 'grid') document.getElementById('gridToggle').click();
   }
 
   function toggleFocus(force) {
@@ -4509,11 +4549,6 @@
   var SHAPE_EDGES = [['sharp', 'Sharp'], ['round', 'Round']];
   var SHAPE_FILLS = [['hachure', 'Hachure'], ['cross-hatch', 'Cross-hatch'], ['solid', 'Solid']];
   var ARROW_TYPES = [['arrow', 'Arrow'], ['triangle', 'Triangle'], ['circle', 'Circle'], ['diamond', 'Diamond'], ['bar', 'Bar'], ['none', 'None']];
-  var TEXT_FONTS = [
-    ['Excalifont', 'Excalifont'], ['Nunito', 'Nunito'],
-    ['Segoe UI', 'Segoe UI'], ['Georgia', 'Georgia'],
-    ['monospace', 'Monospace'], ['cursive', 'Cursive']
-  ];
 
   function selectionInfo() {
     var s = state.spec;
@@ -4860,6 +4895,33 @@
     touchSpec();
   }
 
+  function liveTextNodePatch(patch, n) {
+    var info = selectionInfo();
+    var target = (info && info.kind === 'node') ? info.node : n;
+    if (!target) return;
+    var el = info && info.id ? stage.querySelector('.alur-canvas-node[data-node-id="' + info.id + '"]') : null;
+    if (patch.opacity !== undefined) {
+      target.opacity = patch.opacity;
+      if (el) el.setAttribute('opacity', patch.opacity);
+    }
+    if (patch.lineHeight !== undefined) {
+      target.lineHeight = patch.lineHeight;
+      var label = el && el.querySelector('.alur-node-label');
+      var spans = label ? label.querySelectorAll('tspan') : [];
+      if (spans.length) {
+        var size = target.fontSize || 16;
+        var lh = Math.max(1, target.lineHeight || 1.35);
+        var baseY = parseFloat(spans[0].getAttribute('y')) || 0;
+        for (var i = 0; i < spans.length; i++) {
+          spans[i].setAttribute('y', baseY + i * size * lh);
+        }
+        var sub = el.querySelector('.alur-node-sub');
+        if (sub) sub.setAttribute('y', baseY + size * lh + 2);
+      }
+    }
+    touchSpec();
+  }
+
   function updateTextStyle(patch, n, isDefault) {
     if (!isDefault && n) {
       var nodePatch = {};
@@ -4871,10 +4933,20 @@
       if (patch.align !== undefined) nodePatch.textAlign = patch.align;
       if (patch.lineHeight !== undefined) nodePatch.lineHeight = patch.lineHeight;
       if (patch.opacity !== undefined) nodePatch.opacity = patch.opacity;
-      applyNodePatch(nodePatch);
+      var liveOnly = (patch.lineHeight !== undefined || patch.opacity !== undefined) &&
+        patch.fontSize === undefined && patch.color === undefined &&
+        patch.bold === undefined && patch.italic === undefined && patch.align === undefined;
+      if (liveOnly) liveTextNodePatch(nodePatch, n);
+      else applyNodePatch(nodePatch);
     }
     Object.keys(patch).forEach(function (k) { editor.textStyle[k] = patch[k]; });
     saveTextStyle();
+    if (isDefault) {
+      var structural = patch.fontFamily !== undefined || patch.fontSize !== undefined ||
+        patch.color !== undefined || patch.bold !== undefined ||
+        patch.italic !== undefined || patch.align !== undefined;
+      if (structural) syncShapePanel();
+    }
   }
 
   function updatePenStyle(patch, d, isDefault, live) {
@@ -4884,6 +4956,7 @@
     }
     Object.keys(patch).forEach(function (k) { editor.penStyle[k] = patch[k]; });
     savePenStyle();
+    if (isDefault && (patch.color !== undefined || patch.strokeStyle !== undefined)) syncShapePanel();
   }
 
   function renderTextStyle(host, n, isDefault) {
@@ -4902,9 +4975,6 @@
       host.appendChild(plainHint('Double-click text to write. Enter saves, Shift+Enter adds a line.'));
     }
 
-    host.appendChild(shapeSelect('Font', TEXT_FONTS, n ? (n.fontFamily || 'Excalifont') : (st.fontFamily || 'Excalifont'), function (v) {
-      updateTextStyle({ fontFamily: v }, n, isDefault);
-    }));
     host.appendChild(textSizeRow(size, function (v) {
       updateTextStyle({ fontSize: v }, n, isDefault);
     }));
@@ -4975,11 +5045,38 @@
     }, function () { if (!isDefault) pushHistory(); }));
   }
 
+  function shapeSelectionKey() {
+    if (!isCanvas()) return 'view';
+    if (editor.tool === 'text') return 'new:text';
+    if (editor.tool === 'draw') return 'new:pen';
+    var s = state.spec;
+    if (s.selectedDrawing) return 'drawing:' + s.selectedDrawing;
+    if (s.selectedEdge != null) return 'edge:' + s.selectedEdge;
+    var ids = selectionIds();
+    if (ids.length === 1) return 'node:' + ids[0];
+    if (ids.length > 1) return 'multi:' + ids.join(',');
+    return 'none';
+  }
+
   function syncShapePanel() {
     var panel = document.getElementById('shapePanel');
     var body = document.getElementById('shapePanelBody');
     var title = document.getElementById('shapePanelTitle');
     if (!panel || !body || !title) return;
+
+    /* Rebuilding the inspector must not throw away the user's scroll position.
+       A color tap or a range nudge re-renders the same selection, so keep the
+       scroll offset unless the selected object actually changed. */
+    var key = shapeSelectionKey();
+    var same = panel.getAttribute('data-sel-key') === key;
+    var keepBody = same ? body.scrollTop : 0;
+    var keepPanel = same ? panel.scrollTop : 0;
+    panel.setAttribute('data-sel-key', key);
+    requestAnimationFrame(function () {
+      body.scrollTop = keepBody;
+      panel.scrollTop = keepPanel;
+    });
+
     var info = (isCanvas() && !document.body.classList.contains('view-mode')) ? selectionInfo() : null;
 
     /* While a connection is pending, keep the canvas clear so the target is
@@ -5195,7 +5292,6 @@
     updateStatus();
     if (!canvas) return;
 
-    document.getElementById('gridToggle').checked = state.spec.grid !== false;
     document.getElementById('editorMode').textContent = editor.tool;
 
     var hints = {
@@ -5363,7 +5459,7 @@
     area.style.top = c.y + 'px';
     area.style.width = Math.max(80, n.w || 160) + 'px';
     area.style.height = Math.max(26, n.h || 40) + 'px';
-    area.style.fontFamily = n.fontFamily || 'Excalifont, Nunito, Segoe UI, sans-serif';
+    area.style.fontFamily = 'Excalifont, sans-serif';
     area.style.fontSize = (n.fontSize || 16) + 'px';
     area.style.fontWeight = n.fontWeight || 400;
     area.style.fontStyle = n.fontStyle || 'normal';
@@ -6627,13 +6723,6 @@
     download('alur-scene.svg', new XMLSerializer().serializeToString(clone), 'image/svg+xml');
   });
 
-  document.getElementById('gridToggle').addEventListener('change', function (ev) {
-    pushHistory();
-    state.spec.grid = ev.target.checked;
-    touchSpec();
-    render();
-  });
-
   function toggleShortcuts() {
     var card = document.getElementById('shortcutCard');
     if (card) card.hidden = !card.hidden;
@@ -7133,6 +7222,10 @@
     });
     Array.prototype.forEach.call(mobileMenu.querySelectorAll('[data-mobile-panel]'), function (b) {
       var name = b.getAttribute('data-mobile-panel');
+      if (name === 'scene' || name === 'template' || name === 'logos') {
+        b.classList.remove('is-on');
+        return;
+      }
       var id = name === 'properties' ? 'shapePanel' : (name === 'assets' ? 'panelAssets' : 'panelLayers');
       var el = document.getElementById(id);
       var open = name === 'properties' ? !!(el && !el.hidden) : !!(el && el.classList.contains('is-open'));
@@ -7210,14 +7303,46 @@
 
   function mobilePanel(name) {
     if (name === 'properties') {
+      var current = document.getElementById('shapePanel');
+      var wasOpen = !!(current && !current.hidden);
       closePanels();
+      if (wasOpen) return;
       syncShapePanel();
       var sp = document.getElementById('shapePanel');
-      if (sp && sp.hidden) sp.hidden = false;
+      if (sp && sp.hidden) {
+        /* Nothing is selected (or the line/arrow tool intentionally hides the
+           inspector): still open a useful sheet instead of a blank panel. */
+        sp.hidden = false;
+        var sb = document.getElementById('shapePanelBody');
+        var st = document.getElementById('shapePanelTitle');
+        if (sb && !sb.textContent.trim()) {
+          if (st) st.textContent = 'Properties';
+          sb.innerHTML = '<p class="hint">Select a node, text, arrow, or drawing on the canvas to edit it.</p>';
+        }
+      }
       return;
     }
     if (name === 'shortcuts') {
       toggleShortcuts();
+      return;
+    }
+    if (name === 'assets' || name === 'layers') {
+      var el = panelEl(name);
+      var wasOpen = !!(el && el.classList.contains('is-open'));
+      closePanels();
+      if (!wasOpen) setPanel(name, true);
+      return;
+    }
+    if (name === 'scene' || name === 'template' || name === 'logos') {
+      closePanels();
+      setPanel('assets', true);
+      window.setTimeout(function () {
+        var target = name === 'scene'
+          ? document.getElementById('sceneSection')
+          : (name === 'template' ? document.getElementById('preset') : document.getElementById('logoPanel'));
+        if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        if (name === 'template' && target && target.focus) target.focus();
+      }, 80);
       return;
     }
     togglePanel(name);
@@ -7443,7 +7568,9 @@
   }
 
   document.getElementById('module').addEventListener('change', function (ev) {
+    var grid = state.spec.grid !== false;
     state.spec = presetFor(ev.target.value);
+    state.spec.grid = grid;
     syncScene();
     syncControls();
     render();
@@ -7453,6 +7580,7 @@
     var s = state.spec;
     var spec = chartPreset(ev.target.value, s._series || 2, s._points || 7);
     spec._preset = 'custom';
+    spec.grid = state.spec.grid !== false;
     state.spec = spec;
     syncScene();
     syncControls();
@@ -7521,7 +7649,7 @@
   document.getElementById('logoSearch').addEventListener('input', function (ev) {
     logoState.q = ev.target.value;
     logoState.limit = 96;
-    renderLogoGrid();
+    renderLogoGrid(true);
   });
 
   document.getElementById('logoNode').addEventListener('change', function (ev) {
@@ -7529,23 +7657,24 @@
     syncLogoPanel();
   });
 
-  document.getElementById('logoClear').addEventListener('click', function () {
-    var cur = logoTarget();
-    if (!cur) return;
-    delete cur.node.logo;
-    delete cur.node.logos;
-    delete cur.node.logoSize;
-    delete cur.node.logoPos;
-    syncControls();
-    render();
-  });
-
-  document.getElementById('logoMore').addEventListener('click', function () {
-    logoState.limit += 96;
-    renderLogoGrid();
-  });
+  (function syncLogoCount() {
+    var count = document.getElementById('logoCount');
+    var search = document.getElementById('logoSearch');
+    if (count) count.textContent = LOGOS.total;
+    if (search) search.placeholder = 'Search ' + LOGOS.total + ' logos — docker, nginx, burp…';
+  })();
 
   syncLogoCats();
+
+  /* Logo grid grows as you scroll; no More button. */
+  document.getElementById('logoGrid').addEventListener('scroll', function () {
+    var grid = this;
+    if (grid.scrollTop + grid.clientHeight < grid.scrollHeight - 48) return;
+    var total = LOGOS.search(logoState.q, logoState.cat).length;
+    if (logoState.limit >= total) return;
+    logoState.limit += 96;
+    renderLogoGrid();
+  }, { passive: true });
 
   Alur.init(document);
   syncScene();
@@ -7562,12 +7691,10 @@
     section.className = 'panel-section';
     section.id = 'sceneSection';
     var head = document.createElement('h3');
-    head.textContent = 'Scene';
+    head.textContent = 'Scene & blocks';
     section.appendChild(head);
     while (body.firstChild) section.appendChild(body.firstChild);
-    var grid = document.querySelector('#panelProperties .checkline');
-    if (grid) section.appendChild(grid);
-    target.appendChild(section);
+    target.insertBefore(section, target.firstChild);
     if (scene.parentNode) scene.parentNode.removeChild(scene);
   })();
 

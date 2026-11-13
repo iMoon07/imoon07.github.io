@@ -34,7 +34,7 @@
         return el;
     }
 
-    /* Logo file dari katalog Alur (575 logo). The topology sprite only covers
+    /* Logo file dari katalog Alur (587 logo). The topology sprite only covers
        Lucide/Simple Icons; file logos resolve through AlurLogos. */
     function logoFile(name) {
         const logos = window.AlurLogos;

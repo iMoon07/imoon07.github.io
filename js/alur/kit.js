@@ -131,6 +131,43 @@
 
     function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
+    /* Full background grid for every module. Minor lines every 22 units,
+       major lines every 110. The rect matches the current viewBox; the canvas
+       editor moves it while panning/zooming. */
+    var gridUid = 0;
+    function grid(svg, opts) {
+        if (!svg || svg.querySelector('.alur-canvas-grid')) return;
+        var o = opts || {};
+        var minor = o.minor || 22;
+        var major = o.major || 110;
+        var id = 'alur-grid-' + (++gridUid);
+        var defs = el('defs', {}, svg);
+        var pat = el('pattern', {
+            id: id, width: major, height: major, patternUnits: 'userSpaceOnUse'
+        }, defs);
+        var minorD = '';
+        var majorD = 'M 0 0 H ' + major + ' M 0 0 V ' + major;
+        for (var x = 0; x <= major; x += minor) minorD += 'M ' + x + ' 0 V ' + major + ' ';
+        for (var y = 0; y <= major; y += minor) minorD += 'M 0 ' + y + ' H ' + major + ' ';
+        path(pat, minorD, 'alur-grid-minor', {
+            fill: 'none', stroke: '#3d4652', 'stroke-width': 0.7, opacity: 0.38
+        });
+        path(pat, majorD, 'alur-grid-major', {
+            fill: 'none', stroke: '#4a5568', 'stroke-width': 1, opacity: 0.5
+        });
+        /* Cover exactly the current viewBox. The canvas editor updates this
+           rect while panning/zooming; other modules never move their viewBox. */
+        var vb = svg.viewBox && svg.viewBox.baseVal;
+        var gx = vb && vb.width ? vb.x : 0;
+        var gy = vb && vb.height ? vb.y : 0;
+        var gw = vb && vb.width ? vb.width : 900;
+        var gh = vb && vb.height ? vb.height : 520;
+        var r = rect(svg, gx, gy, gw, gh, 'alur-canvas-grid', {
+            fill: 'url(#' + id + ')'
+        });
+        svg.insertBefore(r, svg.firstChild);
+    }
+
     function svgRoot(host, opts) {
         var o = opts || {};
         var node = el('svg', {
@@ -159,7 +196,7 @@
     function icon(parent, id, x, y, size, opts) {
         var logos = global.AlurLogos;
         var res = logos && logos.resolve(id);
-        /* Logo berkas (575 logo iMoon07/logo-svg) dirender sebagai <image>;
+        /* Logo berkas (587 logo iMoon07/logo-svg) dirender sebagai <image>;
            logo sprite (i-si-*) tetap pakai <use>. */
         if (res && res.kind === 'file') {
             var g = el('g', { class: 'alur-logo' }, parent);
@@ -204,6 +241,7 @@
         zigzag: zigzag,
         ease: ease,
         clamp: clamp,
+        grid: grid,
         svgRoot: svgRoot,
         ensureSprite: ensureSprite,
         icon: icon,
