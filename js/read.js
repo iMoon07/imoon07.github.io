@@ -886,12 +886,31 @@ function enhanceImages(root) {
 }
 
 function enhanceLinks(root) {
+    /* Reference docs link to each other with plain relative .md paths
+       ("standards-en.md"). Those resolve against the site root and 404, so in
+       References mode rewrite them to the in-page loader URL. */
+    const mods = window.REFERENCE_MODULES || [];
+    const byFile = new Map();
+    mods.forEach(m => {
+        const seg = String(m.src || '').split('/').pop();
+        if (seg && !byFile.has(seg)) byFile.set(seg, m.id);
+    });
+    const lang = (new URLSearchParams(window.location.search).get('lang') || 'en').toLowerCase();
+
     root.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
         if (/^https?:\/\//i.test(href)) {
             link.setAttribute('target', '_blank');
             link.setAttribute('rel', 'noopener noreferrer');
+            return;
         }
+        const seg = String(href || '').split('#')[0].split('/').pop();
+        const id = seg ? byFile.get(seg) : null;
+        if (!id) return;
+        let url = 'references.html?ref=' + encodeURIComponent(id);
+        if (lang && lang !== 'en') url += '&lang=' + encodeURIComponent(lang);
+        link.setAttribute('href', url);
+        link.removeAttribute('target');
     });
 }
 
