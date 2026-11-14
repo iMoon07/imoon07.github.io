@@ -9,6 +9,7 @@
 
     /* iMoon07 docs: source-code documentation mirrored from the site repo and
        the logo library. Grouped under Start so they sit right below Overview. */
+    { id: 'imoon-topology-editor', title: 'Topology Editor — topology.html', group: 'Start', src: RAW + 'imoon-topology-editor-en.md' },
     { id: 'imoon-topology', title: 'Topology Diagrams', group: 'Start', src: RAW + 'imoon-topology-en.md' },
     { id: 'imoon-alur-draw', title: 'Alur Visual Engine & draw.html', group: 'Start', src: RAW + 'imoon-alur-draw-en.md' },
     { id: 'imoon-ai-tools', title: 'ai-tools Pipeline', group: 'Start', src: RAW + 'imoon-ai-tools-en.md' },

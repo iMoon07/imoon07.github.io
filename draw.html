@@ -320,6 +320,14 @@
     margin: 3px 2px;
     background: var(--line);
   }
+
+  .view-sep {
+    width: 1px;
+    height: 20px;
+    flex: 0 0 auto;
+    margin: 0 2px;
+    background: var(--line);
+  }
   .tool-rail::-webkit-scrollbar { display: none; }
 
   /* ----------------------------------------------------------- zoom bar */
@@ -594,7 +602,7 @@
   .dock-head b { font-size: 12px; font-weight: 650; display: flex; align-items: center; gap: 6px; }
   .dock-head b::before { color: var(--accent); font-size: 13px; line-height: 1; }
   #panelProperties .dock-head b::before { content: '⚙'; }
-  #panelAssets .dock-head b::before { content: '▦'; }
+  #panelAssets .dock-head b::before { content: '❐'; }
   #panelLayers .dock-head b::before { content: '☰'; }
   .dock-head .icon-btn { width: 26px; height: 26px; font-size: 16px; }
 
@@ -1104,6 +1112,13 @@
 
   /* ------------------------------------------------------------- minimap */
 
+  /* Floating chrome keeps its buttons clickable but lets the canvas underneath
+     stay drawable everywhere else. */
+  #editorBar,
+  #viewBar { pointer-events: none; }
+  #editorBar > *,
+  #viewBar > * { pointer-events: auto; }
+
   .minimap {
     position: absolute;
     right: 12px;
@@ -1121,6 +1136,22 @@
   }
 
   .minimap[hidden] { display: none; }
+  /* Collapsed by default: a corner of the canvas must stay drawable. */
+  .minimap.is-collapsed {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .minimap.is-collapsed svg { display: none; }
+  .minimap.is-collapsed::before {
+    content: '\25A3';
+    font-size: 18px;
+    line-height: 1;
+    color: var(--muted);
+  }
   .minimap svg { display: block; width: 100%; height: 100%; }
   .minimap .mm-node { fill: #2b3644; stroke: #46515f; stroke-width: 1; }
   .minimap .mm-view { fill: rgba(88, 166, 255, 0.1); stroke: var(--accent); stroke-width: 1.2; }
@@ -1916,7 +1947,7 @@
 </header>
 
 <div id="editorBar" class="tool-rail" style="display:none">
-  <button class="tool mobile-panel" data-panel="assets" title="Assets &amp; Scene" data-name="Assets" aria-label="Assets and Scene">▦</button>
+  <button class="tool mobile-panel" data-panel="assets" title="Assets" data-name="Assets" aria-label="Assets"><span aria-hidden="true">❐</span></button>
   <button class="tool mobile-panel" data-panel="layers" title="Layers" data-name="Layers" aria-label="Layers">☰</button>
   <button class="tool is-on" data-tool="select" title="Select (V / 1)" data-name="Select (V / 1)" aria-label="Select"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 8-6 1.5L10 19z"/></svg><span class="tool-text">Select</span></button>
   <button class="tool" data-tool="pan" title="Pan (H)" data-name="Pan (H)" aria-label="Pan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12V7a2 2 0 1 1 4 0v4-6a2 2 0 1 1 4 0v6-4a2 2 0 1 1 4 0v7c0 4-3 7-7 7h-1c-2 0-4-1-5-3l-3-5a2 2 0 0 1 3-2z"/></svg><span class="tool-text">Pan</span></button>
@@ -1939,7 +1970,7 @@
   <div class="tool-sep"></div>
   <button id="helpBtn" class="tool" title="Keyboard shortcuts (?)" data-name="Shortcuts (?)" aria-label="Shortcuts">?</button>
   <div class="tool-sep"></div>
-  <button class="tool" data-panel="assets" title="Assets &amp; Scene (L)" data-name="Assets &amp; Scene (L)" aria-label="Assets and Scene">▦</button>
+  <button class="tool" data-panel="assets" title="Assets (L)" data-name="Assets (L)" aria-label="Assets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></button>
   <button class="tool" data-panel="layers" title="Layers (Y)" data-name="Layers (Y)" aria-label="Layers">☰</button>
   <button class="tool" id="focusModeBottom" title="Focus mode (Ctrl+.)" data-name="Focus mode (Ctrl+.)" aria-label="Focus mode">⛶</button>
 </div>
@@ -1951,6 +1982,8 @@
     <span id="zoomVal" class="zoom-val">100%</span>
     <button id="zoomIn" class="tool" title="Zoom in" data-name="Zoom in" aria-label="Zoom in">+</button>
     <button id="zoomFit" class="tool" title="Fit — show the whole canvas (Ctrl+0)" data-name="Fit (Ctrl+0)" aria-label="Zoom to fit">Fit</button>
+    <span class="view-sep"></span>
+    <button id="gridToggle" class="tool" title="Toggle grid (Ctrl+')" data-name="Toggle grid (Ctrl+')" aria-label="Toggle grid">▦</button>
   </div>
 </div>
 
@@ -1995,7 +2028,7 @@
       <button class="mobile-menu-item" type="button" data-mobile-panel="scene"><span class="mi">▤</span>Scene</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="template"><span class="mi">◧</span>Template</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="logos"><span class="mi">⚑</span>Logos</button>
-      <button class="mobile-menu-item" type="button" data-mobile-panel="assets"><span class="mi">▦</span>Assets</button>
+      <button class="mobile-menu-item" type="button" data-mobile-panel="assets"><span class="mi">❐</span>Assets</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="layers"><span class="mi">☰</span>Layers</button>
       <button class="mobile-menu-item" type="button" data-mobile-panel="properties"><span class="mi">⚙</span>Properties</button>
     </div>
@@ -2005,6 +2038,7 @@
       <button class="mobile-menu-item" type="button" data-mobile-action="zoom-out"><span class="mi">−</span>Zoom out</button>
       <button class="mobile-menu-item" type="button" data-mobile-action="zoom-in"><span class="mi">+</span>Zoom in</button>
       <button class="mobile-menu-item" type="button" data-mobile-action="zoom-fit"><span class="mi">⤢</span>Zoom to fit</button>
+      <button class="mobile-menu-item" type="button" data-mobile-action="grid" id="gridToggleMobile"><span class="mi">▦</span>Grid</button>
     </div>
 
     <span class="mobile-menu-title">Site</span>
@@ -2058,6 +2092,8 @@
   <span><kbd>Ctrl</kbd>+<kbd>0</kbd> reset zoom</span>
   <span><kbd>Shift</kbd>+<kbd>1</kbd> zoom to fit all</span>
   <span><kbd>Shift</kbd>+<kbd>2</kbd> zoom to selection</span>
+  <span><kbd>Arrows</kbd> pan the canvas (with nothing selected)</span>
+  <span><kbd>Space</kbd> + drag / middle-drag pan</span>
   <span><kbd>PgUp</kbd> / <kbd>PgDn</kbd> move page up/down</span>
   <span><kbd>Shift</kbd>+<kbd>PgUp</kbd> / <kbd>PgDn</kbd> move page left/right</span>
   <span><kbd>Alt</kbd>+<kbd>Z</kbd> zen mode</span>
@@ -2134,7 +2170,7 @@
 
 <aside id="panelAssets" class="dock" data-side="right" aria-hidden="true">
   <div class="dock-head">
-    <b>Assets &amp; scene <span id="logoCount" class="badge">0</span></b>
+    <b>Assets <span id="logoCount" class="badge">0</span></b>
     <button class="icon-btn" data-close="assets" title="Close (Esc)" aria-label="Close assets">×</button>
   </div>
   <div class="dock-body">
@@ -4510,6 +4546,52 @@
     });
   }
 
+  /* The canvas is the free area. A floating panel must never sit on top of a
+     region where the drawing tools would otherwise work, so the stage is inset
+     by whatever chrome is actually open. */
+  var stageRO = ('ResizeObserver' in window) ? new ResizeObserver(function () {
+    var r = stage.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var prev = stageRO.last;
+    stageRO.last = { w: r.width, h: r.height };
+    if (!prev || !prev.w || !prev.h) { applyViewNow(true); return; }
+    /* Keep the same world point in the middle of the view when the canvas is
+       resized, so insetting never looks like the view jumped. */
+    var z = clampZoom(state.spec.zoom);
+    var cx = (state.spec.panX || 0) + prev.w / (2 * z);
+    var cy = (state.spec.panY || 0) + prev.h / (2 * z);
+    state.spec.panX = cx - r.width / (2 * z);
+    state.spec.panY = cy - r.height / (2 * z);
+    applyViewNow(true);
+  }) : null;
+
+  function syncStageInsets() {
+    if (!stage) return;
+    if (!isCanvas()) {
+      stage.style.left = '';
+      stage.style.right = '';
+      return;
+    }
+    var vw = window.innerWidth || 1500;
+    var left = 0;
+    var right = 0;
+    var sp = document.getElementById('shapePanel');
+    if (sp && !sp.hidden) {
+      var sr = sp.getBoundingClientRect();
+      if (sr.width && sr.height) left = Math.round(sr.right + 10);
+    }
+    ['panelAssets', 'panelLayers'].forEach(function (id) {
+      var d = document.getElementById(id);
+      if (!d || !d.classList.contains('is-open')) return;
+      var r = d.getBoundingClientRect();
+      if (r.width) right = Math.max(right, Math.round(vw - r.left + 10));
+    });
+    var l = Math.max(0, Math.min(left, vw * 0.45));
+    var rt = Math.max(0, Math.min(right, vw * 0.45));
+    stage.style.left = l + 'px';
+    stage.style.right = rt + 'px';
+  }
+
   function setPanel(name, open) {
     var el = panelEl(name);
     if (!el) return;
@@ -4522,6 +4604,7 @@
     }
     el.classList.toggle('is-open', !!open);
     el.setAttribute('aria-hidden', open ? 'false' : 'true');
+    syncStageInsets();
     Array.prototype.forEach.call(document.querySelectorAll('[data-panel="' + name + '"]'), function (btn) {
       btn.classList.toggle('is-on', !!open);
     });
@@ -4545,6 +4628,7 @@
     Object.keys(PANELS).forEach(function (n) { setPanel(n, false); });
     var sp = document.getElementById('shapePanel');
     if (sp) sp.hidden = true;
+    syncStageInsets();
   }
 
   function syncTitle() {
@@ -4655,6 +4739,7 @@
     if (!wrap || !svg) return;
     if (!isCanvas()) { wrap.hidden = true; return; }
     wrap.hidden = false;
+    wrap.classList.toggle('is-collapsed', minimapCollapsed);
 
     var s = state.spec;
     var nodes = s.nodes || {};
@@ -4731,6 +4816,7 @@
         run: function () { setTool(tool[0]); }
       });
     });
+    list.push({ label: 'Panel · Properties', hint: 'Alt+/', run: function () { setInspector(true); } });
     list.push({ label: 'Panel · Assets', hint: 'L', run: function () { setPanel('assets', true); } });
     list.push({ label: 'Panel · Layers', hint: 'Y', run: function () { setPanel('layers', true); } });
     list.push({ label: 'Insert module · Flow', hint: 'canvas block', run: function () { insertModule('flow'); } });
@@ -5922,7 +6008,24 @@
     return 'none';
   }
 
+  /* The inspector is opt-in: an auto-opening panel used to sit on top of the
+     canvas and quietly shrink the drawing area. */
+  var inspectorOpen = (function () {
+    try { return localStorage.getItem('ruang.inspector.v1') === 'open'; } catch (err) { return false; }
+  })();
+
+  function setInspector(open) {
+    inspectorOpen = !!open;
+    try { localStorage.setItem('ruang.inspector.v1', inspectorOpen ? 'open' : 'closed'); } catch (err) {}
+    syncShapePanel();
+  }
+
   function syncShapePanel() {
+    syncShapePanelInner();
+    syncStageInsets();
+  }
+
+  function syncShapePanelInner() {
     var panel = document.getElementById('shapePanel');
     var body = document.getElementById('shapePanelBody');
     var title = document.getElementById('shapePanelTitle');
@@ -5954,6 +6057,12 @@
     /* Keep the canvas clear while wiring: the edge/shape inspector would
        otherwise sit on top of the nodes the user is trying to connect. */
     if (editor.tool === 'arrow' || editor.tool === 'line') {
+      panel.hidden = true;
+      body.innerHTML = '';
+      return;
+    }
+
+    if (!inspectorOpen) {
       panel.hidden = true;
       body.innerHTML = '';
       return;
@@ -7670,6 +7779,12 @@
     zoomFit();
   });
 
+  var gridToggleBtn = document.getElementById('gridToggle');
+  if (gridToggleBtn) {
+    syncGridButton();
+    gridToggleBtn.addEventListener('click', function () { toggleGridView(); });
+  }
+
   function download(name, text, type) {
     var blob = new Blob([text], { type: type || 'application/octet-stream' });
     var url = URL.createObjectURL(blob);
@@ -7820,8 +7935,18 @@
     touchSpec();
   }
 
+  function syncGridButton() {
+    var btn = document.getElementById('gridToggle');
+    if (!btn) return;
+    var on = state.spec.grid !== false;
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.title = (on ? 'Hide' : 'Show') + ' grid (Ctrl+\')';
+  }
+
   function toggleGridView() {
     state.spec.grid = state.spec.grid === false;
+    syncGridButton();
     syncControls();
     render();
   }
@@ -8093,7 +8218,7 @@
     if (ev.altKey && ev.shiftKey && k === 'd') { ev.preventDefault(); toggleTheme(); return; }
     if (ev.altKey && k === 'z') { ev.preventDefault(); toggleViewMode(); return; }
     if (ev.altKey && k === 'r') { ev.preventDefault(); toggleViewMode(); return; }
-    if (ev.altKey && k === '/') { ev.preventDefault(); syncShapePanel(); return; }
+    if (ev.altKey && k === '/') { ev.preventDefault(); setInspector(true); return; }
     if (ev.altKey && k === 's') {
       ev.preventDefault();
       editor.snap = !editor.snap;
@@ -8269,6 +8394,8 @@
       var src = stateMap[action] ? document.getElementById(stateMap[action]) : null;
       b.disabled = src ? !!src.disabled : false;
     });
+    var gridBtn = mobileMenu.querySelector('[data-mobile-action="grid"]');
+    if (gridBtn) gridBtn.classList.toggle('is-on', state.spec.grid !== false);
     var del = mobileMenu.querySelector('[data-mobile-action="delete"]');
     if (del) {
       del.disabled = !(selectionIds().length ||
@@ -8329,6 +8456,7 @@
 
   function mobilePanel(name) {
     if (name === 'properties') {
+      inspectorOpen = true;
       var current = document.getElementById('shapePanel');
       var wasOpen = !!(current && !current.hidden);
       closePanels();
@@ -8388,11 +8516,11 @@
       case 'zoom-out': setZoom((state.spec.zoom || 1) / 1.15); break;
       case 'zoom-in': setZoom((state.spec.zoom || 1) * 1.15); break;
       case 'zoom-fit':
-        state.spec.zoom = 1;
-        state.spec.panX = 0;
-        state.spec.panY = 0;
-        applyView();
-        touchSpec();
+        zoomFit();
+        break;
+      case 'grid':
+        toggleGridView();
+        syncMobileMenuState();
         break;
       case 'focus': toggleFocus(true); break;
     }
@@ -8426,6 +8554,7 @@
   }
 
   window.addEventListener('resize', function () {
+    syncStageInsets();
     if (!mobileFab || !mobileFab.style.left) return;
     placeMobileFab(parseFloat(mobileFab.style.left) || 8, parseFloat(mobileFab.style.top) || 8);
   });
@@ -8435,9 +8564,9 @@
   });
 
   document.getElementById('shapePanelClose').addEventListener('click', function () {
-    var sp = document.getElementById('shapePanel');
-    if (sp) sp.hidden = true;
+    setInspector(false);
   });
+
 
   Object.keys(PANELS).forEach(initDockDrag);
   Object.keys(PANELS).forEach(initDockResize);
@@ -8503,10 +8632,20 @@
     openCtx(ev);
   });
 
+  var minimapCollapsed = (function () {
+    try { return localStorage.getItem('ruang.minimap.v1') !== 'open'; } catch (err) { return true; }
+  })();
+
   var minimap = document.getElementById('minimapSvg');
   if (minimap) {
     minimap.addEventListener('click', function (ev) {
       if (!isCanvas()) return;
+      if (minimapCollapsed) {
+        minimapCollapsed = false;
+        try { localStorage.setItem('ruang.minimap.v1', 'open'); } catch (err) {}
+        minimap.classList.remove('is-collapsed');
+        return;
+      }
       var rect = minimap.getBoundingClientRect();
       var vb = minimap.viewBox && minimap.viewBox.baseVal;
       if (!rect.width || !rect.height || !vb || !vb.width) return;
@@ -8777,6 +8916,8 @@
   Alur.init(document);
   syncScene();
   syncControls();
+  syncStageInsets();
+
   /* Assets and Scene share one dock. Scene controls move into Assets. */
   (function mergeSceneIntoAssets() {
     var scene = document.getElementById('panelScene');

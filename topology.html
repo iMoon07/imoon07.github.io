@@ -181,6 +181,7 @@
   .btn--sm { padding: 4px 8px; font-size: 11.5px; border-radius: 7px; }
   .btn--icon { padding: 4px 7px; font-size: 13px; line-height: 1; }
   .btn.is-on { background: var(--accent-soft); border-color: rgba(88, 166, 255, 0.45); color: #cfe4ff; }
+  .copy-short { display: none; }
 
   /* -------------------------------------------------------------- stage */
 
@@ -639,11 +640,13 @@
       border-top: 1px solid var(--line);
       border-radius: 16px 16px 0 0;
       transform: translateY(100%);
-      transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+      visibility: hidden;
+      transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), visibility 0.22s;
       box-shadow: 0 -20px 50px -30px #000;
     }
 
-    #dock.is-open { transform: translateY(0); }
+    /* A closed sheet must not add scrollable area or catch taps. */
+    #dock.is-open { transform: translateY(0); visibility: visible; }
     #dockToggle { display: inline-flex; }
     .top-nav .lbl { display: none; }
     .top-nav .top-link { padding: 5px 7px; }
@@ -651,6 +654,27 @@
     .brand-sub { display: none; }
     .doc-title { display: none; }
     #topStatus { display: none; }
+    .copy-long { display: none; }
+  }
+
+  /* Phones: the header carries a lot of controls, so it has to fit 390px
+     without clipping. Labels go, tap targets grow, and the copy button keeps
+     only its short label. */
+  @media (max-width: 600px) {
+    .topbar { gap: 6px; padding: 0 8px; }
+    .brand-text { display: none; }
+    .brand-avatar { width: 26px; height: 26px; }
+    .top-nav { padding-left: 2px; gap: 0; }
+    .top-nav .top-link { padding: 6px 6px; }
+    .top-nav .ico { font-size: 15px; }
+    .top-right { gap: 4px; }
+    .top-right .btn { padding: 6px 8px; font-size: 11.5px; }
+    .copy-short { display: inline; }
+    #stage { padding: 12px 10px 84px; }
+    #board { padding: 14px 12px 12px; border-radius: 14px; }
+    #legendBar { flex-wrap: wrap; row-gap: 4px; }
+    .dock-tabs { padding: 8px 8px 0; }
+    .dock-tab { padding: 7px 9px; }
   }
 </style>
 </head>
@@ -679,7 +703,7 @@
     <button class="btn btn--ghost btn--sm" id="guidesBtn" title="Editor guides only — never exported">Guides: off</button>
     <button class="btn btn--sm" id="dockToggle" title="Only on narrow screens">Panel</button>
     <button class="btn btn--sm" id="exportBtn">Export</button>
-    <button class="btn btn--primary btn--sm" id="copyBtn">Copy ```topology</button>
+    <button class="btn btn--primary btn--sm" id="copyBtn" aria-label="Copy topology block"><span class="copy-long">Copy ```topology</span><span class="copy-short">Copy</span></button>
   </div>
 </header>
 
