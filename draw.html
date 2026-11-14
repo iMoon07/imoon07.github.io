@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alur Visual Lab — sketch canvas</title>
-<link rel="stylesheet" href="css/alur.css?v=6">
+<link rel="stylesheet" href="css/alur.css?v=8">
 <style>
   :root {
     --bg: #090c11;
@@ -1887,7 +1887,9 @@
     position: absolute;
     left: 12px;
     top: 124px;
-    z-index: 24;
+    /* Di atas #inlineText (26) dan .shortcut-card (30): panel harus selalu
+       menerima klik, apa pun yang sedang terbuka di kanvas. */
+    z-index: 50;
     width: 252px;
     max-height: calc(100vh - 150px);
     display: flex;
@@ -2003,8 +2005,8 @@
   }
 
   /* Swatch row + custom-colour button + hex chip. */
-  .pp-sw { display: flex; align-items: center; gap: 7px; }
-  .pp-sw .pp-swrow { display: flex; gap: 6px; }
+  .pp-sw { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .pp-sw .pp-swrow { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
   .pp-sw button.pp-dot {
     position: relative;
     width: 24px;
@@ -2034,7 +2036,10 @@
     background-color: #ffffff;
   }
   .pp-hex {
-    flex: 1 1 auto;
+    /* Its own row: five swatches plus the custom button leave no room for a
+       hex value, and a clipped colour is worse than no colour field. */
+    flex: 1 0 100%;
+    width: 100%;
     min-width: 0;
     height: 26px;
     padding: 0 8px;
@@ -2118,13 +2123,17 @@
   }
   .pp-range:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 999px; }
 
-  /* Action row */
-  .pp-acts { display: flex; gap: 6px; }
+  /* Action row: icon plus its name, so the panel never shows a mystery glyph. */
+  .pp-acts { display: flex; flex-wrap: wrap; gap: 6px; }
   .pp-acts button {
-    flex: 1 1 0;
-    height: 30px;
-    display: grid;
-    place-items: center;
+    flex: 1 1 auto;
+    min-width: 62px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 6px;
     border: 1px solid var(--line-soft);
     border-radius: 9px;
     background: var(--field-bg);
@@ -2132,9 +2141,58 @@
     cursor: pointer;
     transition: color .13s ease, border-color .13s ease, background .13s ease;
   }
-  .pp-acts button svg { width: 16px; height: 16px; display: block; }
+  .pp-acts button svg { width: 15px; height: 15px; display: block; flex: 0 0 auto; }
+  .pp-acts button .pp-ico { display: block; flex: 0 0 auto; }
+  .pp-acts button span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
   .pp-acts button:hover { color: var(--text); border-color: var(--line); }
   .pp-acts button.is-danger:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* Link row: an explicit URL field, not a keyboard shortcut. */
+  .pp-link { display: flex; align-items: center; gap: 6px; }
+  .pp-link input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    background: var(--field-bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 11px;
+  }
+  .pp-link input:focus { outline: none; border-color: var(--accent); }
+  .pp-link input.is-bad { border-color: var(--danger); }
+  .pp-link button {
+    flex: 0 0 auto;
+    height: 28px;
+    padding: 0 9px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    background: var(--field-bg);
+    color: var(--muted);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pp-link button:hover { color: var(--text); border-color: var(--line); }
+  .pp-link button.is-on { color: var(--accent); border-color: var(--accent); }
+  .pp-link button.is-danger:hover { color: var(--danger); border-color: var(--danger); }
+  .pp-note {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.45;
+    padding: 2px 4px 0;
+  }
 
   /* Colour popover (palette, shades, hex, eyedropper). */
   .color-pop {
@@ -2567,7 +2625,7 @@
       max-height: none;
       border-radius: 16px 16px 0 0;
       overflow-y: auto;
-      z-index: 46;
+      z-index: 52;
     }
     /* Touch targets: the desktop panel is dense, a thumb is not. */
     .pp-sec { padding: 9px 4px 10px; gap: 7px; }
@@ -2739,6 +2797,9 @@
   </a>
   <input id="docTitle" class="doc-title" value="Sketch canvas" aria-label="Diagram title" spellcheck="false">
   <span id="topStatus" class="top-status">0 nodes · 0 edges</span>
+  <!-- Build stamp: always visible, so "nothing changed" can be told apart from
+       "this page is a cached copy". Bump it whenever draw.html changes. -->
+  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15a</span>
   <nav class="top-nav" aria-label="Site">
     <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
     <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
@@ -3161,7 +3222,7 @@
 <script src="js/alur/cables.js?v=4"></script>
 <script src="js/alur/motions.js?v=4"></script>
 <script src="js/alur/core.js?v=6"></script>
-<script src="js/alur/modules/canvas.js?v=12"></script>
+<script src="js/alur/modules/canvas.js?v=14"></script>
 <script src="js/alur/modules/flow.js?v=4"></script>
 <script src="js/alur/modules/reverse-proxy.js?v=4"></script>
 <script src="js/alur/modules/chart.js?v=4"></script>
@@ -3596,6 +3657,11 @@
 
   var SAVE_KEY = 'ruang.scene.v1';
   var MODULE_IDS = ['canvas', 'flow', 'reverse-proxy', 'chart', 'pipeline', 'graph'];
+  /* Sticky defaults live up here because the saved-scene migration below needs
+     them before the panel helpers are defined. */
+  var STICKY_PAPER = '#ffec99';
+  var STICKY_INK = '#1971c2';
+  var STICKY_INK_OLD = '#1f2328';
   /* First visit opens on the editable three-box starter, not an empty page.
      The blank canvas is still one click away in the Scene panel. */
   var state = { spec: PRESETS.canvas[1][2]() };
@@ -3607,6 +3673,21 @@
       if (parsedScene && MODULE_IDS.indexOf(parsedScene.module) >= 0) state.spec = parsedScene;
     }
   } catch (err) {}
+
+  /* A note saved before the ink default changed keeps near-black text forever,
+     which reads as "the sticky default is still black". Re-ink those notes once,
+     then stamp the scene so a deliberate black note is never touched again. */
+  (function migrateStickyInk(spec) {
+    if (!spec || !spec.nodes || spec.inkDefault === STICKY_INK) return;
+    Object.keys(spec.nodes).forEach(function (id) {
+      var n = spec.nodes[id];
+      if (!n || n.shape !== 'sticky') return;
+      if (String(n.textColor || '').toLowerCase() !== STICKY_INK_OLD) return;
+      n.textColor = STICKY_INK;
+    });
+    spec.inkDefault = STICKY_INK;
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(spec)); } catch (err) {}
+  })(state.spec);
 
   var stage = document.getElementById('stage');
   /* The raw JSON editor is gone — the canvas is the only source of truth.
@@ -5056,7 +5137,11 @@
       width: 2,
       strokeStyle: 'solid',
       opacity: 1
-    }
+    },
+    /* Bucket tool: what the next tap paints, so the fill panel has a real
+       value to show instead of a hard-coded fallback inside the tool. */
+    fillColor: '#a5d8ff',
+    fillStyle: 'solid'
   };
 
   try {
@@ -6166,6 +6251,15 @@
   function setTool(tool) {
     editor.tool = tool;
     editor.from = null;
+    /* A tool owns the canvas: leaving a shape selected would make the panel
+       show that shape instead of the tool's own controls (the bucket palette
+       used to disappear exactly this way). */
+    if (tool !== 'select' && tool !== 'pan') {
+      state.spec.selected = null;
+      state.spec.selectedEdge = null;
+      state.spec.selectedEdges = [];
+      state.spec.selectedDrawing = null;
+    }
     Array.prototype.forEach.call(document.querySelectorAll('.alur-canvas-node.is-connect-from'), function (el) {
       el.classList.remove('is-connect-from');
     });
@@ -6443,6 +6537,17 @@
       color: isText ? editor.textStyle.color : COLOR_KEYS[Object.keys(s.nodes).length % COLOR_KEYS.length]
     };
     if (shape === 'table') ensureTableData(s.nodes[id]);
+    if (shape === 'sticky') {
+      /* A note is a coloured square, never a dark box: paper and ink are set
+         here so the tool and the keyboard shortcut create the same object. */
+      s.nodes[id].fill = STICKY_PAPER;
+      s.nodes[id].textColor = STICKY_INK;
+      s.nodes[id].sloppiness = 'artist';
+      s.nodes[id].fontSize = 16;
+      s.nodes[id].textAlign = 'center';
+      s.nodes[id].opacity = 1;
+      s.nodes[id].label = '';
+    }
     if (isText) {
       s.nodes[id].isText = true;
       s.nodes[id].textRole = 'text';
@@ -7222,7 +7327,18 @@
       b.title = it[1];
       b.setAttribute('aria-label', it[1]);
       if (it[3]) b.className = 'is-danger';
-      b.innerHTML = ICON_PATH[it[0]] || '';
+      if (ICON_PATH[it[0]]) {
+        var ic = document.createElement('span');
+        ic.className = 'pp-ico';
+        ic.innerHTML = ICON_PATH[it[0]];
+        b.appendChild(ic);
+      }
+      /* The name stays visible: an icon alone is not a control the user can
+         recognise, and the panel is the only place these actions are listed. */
+      var tx = document.createElement('span');
+      tx.className = 'pp-txt';
+      tx.textContent = it[1];
+      b.appendChild(tx);
       b.addEventListener('click', it[2]);
       row.appendChild(b);
     });
@@ -7257,6 +7373,11 @@
     ['front', 'layerFront', 'Bring to front'],
     ['back', 'layerBack', 'Send to back']
   ];
+  /* Sticky paper and ink: Excalidraw's default note, and a dark-on-light ink
+     that reads on every paper colour instead of a black default.
+     STICKY_PAPER / STICKY_INK are declared near SAVE_KEY so the saved-scene
+     migration can run before this point. */
+  var FILL_COLORS = ['transparent', '#ffc9c9', '#b2f2bb', '#a5d8ff', '#ffec99', '#e599f7'];
 
   /* Stroke width is three steps, like Excalidraw, not a slider. */
   function widthKey(v) {
@@ -7380,14 +7501,41 @@
     render();
   }
 
-  function applyNodePatch(patch) {
+  /* The panel owns the node it is showing. If the selection was cleared while
+     the panel is still on screen (a tool switch, a re-render), editing the
+     control must still hit that node instead of silently doing nothing. */
+  var panelNodeId = null;
+  var panelSyncTimer = null;
+
+  function panelNode() {
     var info = selectionInfo();
-    if (!info || info.kind !== 'node') return;
+    if (info && info.kind === 'node') return info.node;
+    if (panelNodeId && state.spec.nodes) return state.spec.nodes[panelNodeId] || null;
+    return null;
+  }
+
+  /* Rebuilding the panel synchronously, from inside the click that changed it,
+     replaces the button under the pointer. On a slow frame that loses the
+     click, which reads as "the control is dead". Defer it one tick. */
+  function scheduleShapePanel() {
+    if (panelSyncTimer) return;
+    panelSyncTimer = setTimeout(function () {
+      panelSyncTimer = null;
+      syncShapePanel();
+    }, 0);
+  }
+
+  function applyNodePatch(patch) {
+    var n = panelNode();
+    if (!n) return;
     pushHistory();
-    Object.keys(patch).forEach(function (k) { info.node[k] = patch[k]; });
+    Object.keys(patch).forEach(function (k) { n[k] = patch[k]; });
     touchSpec();
     syncControls();
     render();
+    /* The panel reads the node it edits: without this the swatch the user just
+       clicked keeps its old pressed state and the control looks dead. */
+    scheduleShapePanel();
   }
 
   function applyEdgePatch(patch) {
@@ -7398,17 +7546,20 @@
     touchSpec();
     syncControls();
     render();
+    syncShapePanel();
   }
 
   function liveNodePatch(patch) {
     var info = selectionInfo();
-    if (!info || info.kind !== 'node') return;
-    Object.keys(patch).forEach(function (k) { info.node[k] = patch[k]; });
-    var el = stage.querySelector('.alur-canvas-node[data-node-id="' + info.id + '"]');
+    var n = (info && info.kind === 'node') ? info.node : panelNode();
+    var nid = (info && info.kind === 'node') ? info.id : panelNodeId;
+    if (!n || !nid) return;
+    Object.keys(patch).forEach(function (k) { n[k] = patch[k]; });
+    var el = stage.querySelector('.alur-canvas-node[data-node-id="' + nid + '"]');
     if (el) {
       if (patch.opacity != null) el.setAttribute('opacity', patch.opacity);
       if (patch.angle != null) {
-        var nn = info.node;
+        var nn = n;
         var nw = nn.w || 160, nh = nn.h || 60;
         el.setAttribute('transform',
           'translate(' + (nn.x || 0) + ' ' + (nn.y || 0) + ') ' +
@@ -7686,6 +7837,117 @@
     host.appendChild(secPenOpacity);
   }
 
+  /* Bucket tool: its own palette, so F is a tool and not a hidden action.
+     The same control edits the selected shape when there is one. */
+  function renderFillStyle(host, d, isDefault) {
+    var fill = d ? (d.fill || 'transparent') : (editor.fillColor || '#a5d8ff');
+    var style = d ? (d.fillStyle || 'hachure') : (editor.fillStyle || 'solid');
+
+    if (isDefault) {
+      host.appendChild(plainHint('Bucket: tap any shape to paint it. Pick the paint here first.'));
+    } else {
+      host.appendChild(plainHint('Background fill of the selected shape.'));
+    }
+
+    var secFill = ppSec('Fill');
+    secFill.appendChild(ppSwatches(fill, function (c) {
+      editor.fillColor = c;
+      if (isDefault) {
+        if (c !== 'transparent') editor.fillStyle = 'solid';
+        syncShapePanel();
+        return;
+      }
+      applyNodePatch({
+        fill: c,
+        fillStyle: c === 'transparent' ? 'hachure' : (d.fillStyle || editor.fillStyle || 'solid')
+      });
+    }, { colors: FILL_COLORS }));
+    secFill.appendChild(ppSeg(FILL_ICONS, style, function (v) {
+      editor.fillStyle = v;
+      if (isDefault) { syncShapePanel(); return; }
+      applyNodePatch({ fillStyle: v });
+    }));
+    host.appendChild(secFill);
+
+    if (!isDefault) {
+      var secFillOpacity = ppSec('Opacity');
+      var fpct = Math.round(((d && d.opacity) == null ? 1 : d.opacity) * 100);
+      secFillOpacity.val.textContent = fpct + '%';
+      secFillOpacity.appendChild(ppSlider(10, 100, 5, fpct, function (v) {
+        secFillOpacity.val.textContent = v + '%';
+        liveNodePatch({ opacity: v / 100 });
+      }, function () { pushHistory(); }));
+      host.appendChild(secFillOpacity);
+    }
+  }
+
+  /* Link: an explicit URL field, because a keyboard shortcut is not discoverable
+     and a prompt() dialog cannot be styled or validated. */
+  function normalizeLink(raw) {
+    var v = String(raw == null ? '' : raw).trim();
+    if (!v) return '';
+    v = v.replace(/"/g, '&quot;');
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v;
+    if (!/^(https?:|mailto:|tel:)/i.test(v)) return '';
+    return v;
+  }
+
+  function linkSection(n) {
+    var sec = ppSec('Link');
+    var row = document.createElement('div');
+    row.className = 'pp-link';
+
+    var input = document.createElement('input');
+    input.type = 'url';
+    input.placeholder = 'https://example.com';
+    input.value = n.link || '';
+    input.setAttribute('aria-label', 'Link URL');
+    input.title = 'Link URL';
+
+    var apply = document.createElement('button');
+    apply.type = 'button';
+    apply.className = n.link ? 'is-on' : '';
+    apply.textContent = n.link ? 'Update' : 'Apply';
+
+    var clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'is-danger';
+    clear.textContent = 'Clear';
+    clear.hidden = !n.link;
+
+    function commit() {
+      var url = normalizeLink(input.value);
+      input.classList.toggle('is-bad', !!input.value.trim() && !url);
+      if (!url) return;
+      pushHistory();
+      n.link = url;
+      touchSpec();
+      render();
+      syncShapePanel();
+    }
+
+    apply.addEventListener('click', function (ev) { ev.stopPropagation(); commit(); });
+    clear.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      pushHistory();
+      n.link = null;
+      touchSpec();
+      render();
+      syncShapePanel();
+    });
+    input.addEventListener('keydown', function (ev) {
+      ev.stopPropagation();
+      if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+    });
+    input.addEventListener('blur', function () { input.classList.remove('is-bad'); });
+
+    row.appendChild(input);
+    row.appendChild(apply);
+    row.appendChild(clear);
+    sec.appendChild(row);
+    return sec;
+  }
+
   function shapeSelectionKey() {
     if (!isCanvas()) return 'view';
     if (editor.tool === 'text') return 'new:text';
@@ -7755,6 +8017,7 @@
     });
 
     var info = (isCanvas() && !document.body.classList.contains('view-mode')) ? selectionInfo() : null;
+    if (info && info.kind === 'node') panelNodeId = info.id;
 
     /* While a connection is pending, keep the canvas clear so the target is
        visible and tappable on a phone. */
@@ -7781,9 +8044,14 @@
 
     /* Sedang menulis: panel menunjuk node yang diedit, bukan default
        "Text · new". Kalau tidak, klik warna hanya mengubah gaya untuk teks
-       berikutnya dan editornya tertutup. */
-    var editNode = editor.textEdit ? (state.spec.nodes && state.spec.nodes[editor.textEdit.id]) : null;
-    if (editNode) {
+       berikutnya dan editornya tertutup.
+       Hanya untuk node teks. Sticky yang labelnya sedang disunting harus tetap
+       memakai panel sticky-nya sendiri: dulu panel ini menggantikan Paper /
+       Ink / Roughness / Link, sehingga kontrol sticky tampak mati. */
+    var editNode = editor.textEdit && editor.textEdit.id != null
+      ? (state.spec.nodes && state.spec.nodes[editor.textEdit.id])
+      : null;
+    if (editNode && editNode.isText) {
       panel.hidden = false;
       body.innerHTML = '';
       title.textContent = 'Text · ' + (editNode.id || 'node');
@@ -7795,16 +8063,22 @@
       return;
     }
 
+    /* A tool that has no selection still owns the panel, otherwise the palette
+       disappears the moment the bucket is picked up. */
+    var fillToolNew = editor.tool === 'fill' && !selectionIds().length;
     if (isCanvas() && !document.body.classList.contains('view-mode') &&
-        (editor.tool === 'text' || editor.tool === 'draw')) {
+        (editor.tool === 'text' || editor.tool === 'draw' || fillToolNew)) {
       panel.hidden = false;
       body.innerHTML = '';
       if (editor.tool === 'text') {
         title.textContent = 'Text · new';
         renderTextStyle(body, null, true);
-      } else {
+      } else if (editor.tool === 'draw') {
         title.textContent = 'Pen · new';
         renderPenStyle(body, null, true);
+      } else {
+        title.textContent = 'Fill · bucket';
+        renderFillStyle(body, null, true);
       }
       return;
     }
@@ -7846,16 +8120,16 @@
         title.textContent = 'Sticky · ' + (n.id || 'note');
 
         var secPaper = ppSec('Paper');
-        secPaper.appendChild(ppSwatches(n.fill || '#ffec99', function (c) {
+        secPaper.appendChild(ppSwatches(n.fill || STICKY_PAPER, function (c) {
           editor.fillColor = c;
           applyNodePatch({ fill: c });
-        }, { colors: ['#ffec99', '#b2f2bb', '#a5d8ff', '#ffc9c9', '#e599f7'] }));
+        }, { colors: [STICKY_PAPER, '#b2f2bb', '#a5d8ff', '#ffc9c9', '#e599f7'] }));
         body.appendChild(secPaper);
 
         var secInk = ppSec('Ink');
-        secInk.appendChild(ppSwatches(n.textColor || '#1f2328', function (c) {
+        secInk.appendChild(ppSwatches(n.textColor || STICKY_INK, function (c) {
           applyNodePatch({ textColor: c });
-        }, { colors: ['#1f2328', '#e03131', '#1971c2', '#2f9e44', '#6741d9'] }));
+        }, { colors: [STICKY_INK, '#1f2328', '#e03131', '#2f9e44', '#6741d9'] }));
         body.appendChild(secInk);
 
         var secSize = ppSec('Text size');
@@ -7885,16 +8159,17 @@
         }, function () { pushHistory(); }));
         body.appendChild(secNoteOpacity);
 
-        var secSlop = ppSec('Sloppiness');
+        var secSlop = ppSec('Roughness');
         secSlop.appendChild(ppSeg(SLOP_ICONS, n.sloppiness || 'artist', function (v) {
           applyNodePatch({ sloppiness: v });
         }));
         body.appendChild(secSlop);
 
+        body.appendChild(linkSection(n));
+
         body.appendChild(ppSec(null)).appendChild(ppActions([
-          ['connect', 'Link', function () { startConnect(info.id); }],
           ['duplicate', 'Duplicate', function () { duplicateSelection(); }],
-          ['trash', 'Delete note', function () { deleteSelected(); }, true]
+          ['trash', 'Delete', function () { deleteSelected(); }, true]
         ]));
         return;
       }
@@ -7902,6 +8177,7 @@
       if (n.isText) {
         title.textContent = 'Text · ' + (n.id || 'node');
         renderTextStyle(body, n, false);
+        body.appendChild(linkSection(n));
         body.appendChild(shapeButtonRow([
           ['Front', 'Bring to front', function () { moveNodeLayer(info.id, 'front'); }],
           ['Back', 'Send to back', function () { moveNodeLayer(info.id, 'back'); }],
@@ -7961,21 +8237,23 @@
       }, function () { pushHistory(); }));
       body.appendChild(secOpacity);
 
+      body.appendChild(linkSection(n));
+
       body.appendChild(ppSec(null)).appendChild(ppActions([
-        ['layerFront', 'Bring to front', function () { moveNodeLayer(info.id, 'front'); }],
-        ['layerBack', 'Send to back', function () { moveNodeLayer(info.id, 'back'); }]
+        ['layerFront', 'Front', function () { moveNodeLayer(info.id, 'front'); }],
+        ['layerBack', 'Back', function () { moveNodeLayer(info.id, 'back'); }]
       ]));
 
       var actions = [
-        ['connect', 'Connect to another node', function () { startConnect(info.id); }],
+        ['connect', 'Connect', function () { startConnect(info.id); }],
         ['duplicate', 'Duplicate', function () { duplicateSelection(); }]
       ];
       if (n.logo || (n.logos && n.logos.length)) {
-        actions.push(['trash', 'Remove logo', function () {
+        actions.push(['trash', 'Unlogo', function () {
           applyNodePatch({ logo: null, logos: [] });
         }]);
       }
-      actions.push(['trash', 'Delete node', function () { deleteSelected(); }, true]);
+      actions.push(['trash', 'Delete', function () { deleteSelected(); }, true]);
       body.appendChild(ppSec(null)).appendChild(ppActions(actions));
       return;
     }
@@ -8146,6 +8424,9 @@
       arrow: 'Drag from a node to a node to connect, or drag empty space for an editable arrow.',
       line: 'Drag to draw a line. Select it, then drag its point handles.',
       draw: 'Drag to sketch a freehand stroke with the pen.',
+      sticky: 'Drag or click to place a sticky note. Paper, ink and link live in the panel.',
+      fill: 'Click a shape to paint it. Pick the paint in the panel first.',
+      lasso: 'Drag a loop around the shapes you want to select.',
       eraser: 'Click or drag over an object to erase it.',
       laser: 'Drag to leave a temporary laser trail.',
       pan: 'Drag to pan. Wheel pans; Ctrl/⌘ + wheel zooms (10%–100%).'
@@ -8481,6 +8762,9 @@
     } else {
       area.select();
     }
+    /* Panel harus ikut pindah ke node yang sedang disunting, bukan tertinggal
+       di tampilan sebelumnya sampai ada aksi lain. */
+    syncShapePanel();
   }
 
   function commitTextEdit() {
@@ -8709,6 +8993,9 @@
 
   stage.addEventListener('pointerdown', function (ev) {
     if (!isCanvas()) return;
+    /* A link badge is a real anchor: let the browser follow it instead of
+       starting a node drag that would swallow the click. */
+    if (ev.target.closest && ev.target.closest('[data-link-badge]')) return;
     if (editor.textEdit) commitTextEdit();
     /* Fokus yang nyangkut di input (mis. sel tabel) menelan tombol Delete.
        Klik kanvas harus memindahkan fokus, sama seperti Excalidraw. */
@@ -8771,10 +9058,11 @@
       if (fillNode && !fillNode.isText) {
         pushHistory();
         fillNode.fill = editor.fillColor || '#a5d8ff';
-        fillNode.fillStyle = 'solid';
+        fillNode.fillStyle = editor.fillStyle || 'solid';
         touchSpec();
         syncControls();
         render();
+        syncShapePanel();
       }
       ev.preventDefault();
       return;
@@ -10802,19 +11090,28 @@
   function stickyNote() {
     if (!isCanvas()) return;
     var c = viewportSceneCenter();
-    var id = addNode('plain', c.x - 80, c.y - 30, 160, 60);
+    /* A real note, not a plain box: the tool button and the N key must create
+       the same object, otherwise the panel edits something else. */
+    var id = addNode('sticky', c.x - 90, c.y - 90, 180, 180);
     if (id) setTimeout(function () { startTextEdit(id); }, 0);
   }
 
   function bucketFill() {
     var ids = selectionIds();
     if (!ids.length) return;
-    var fill = (editor.clipStyles && editor.clipStyles.fill) || 'blue';
+    var fill = editor.fillColor || '#a5d8ff';
+    var fillStyle = editor.fillStyle || 'solid';
     pushHistory();
-    ids.forEach(function (id) { if (state.spec.nodes[id]) state.spec.nodes[id].fill = fill; });
+    ids.forEach(function (id) {
+      var n = state.spec.nodes[id];
+      if (!n) return;
+      n.fill = fill;
+      n.fillStyle = fillStyle;
+    });
     touchSpec();
     syncControls();
     render();
+    syncShapePanel();
   }
 
   window.addEventListener('keydown', function (ev) {
@@ -11313,6 +11610,16 @@
   document.getElementById('shapePanelClose').addEventListener('click', function () {
     setInspector(false);
   });
+
+  /* The panel is UI, not canvas: a click on a control must never reach the
+     stage (it would start a drag, or close the editor the panel is editing). */
+  (function () {
+    var sp = document.getElementById('shapePanel');
+    if (!sp) return;
+    sp.addEventListener('pointerdown', function (ev) { ev.stopPropagation(); });
+    sp.addEventListener('mousedown', function (ev) { ev.stopPropagation(); });
+    sp.addEventListener('click', function (ev) { ev.stopPropagation(); });
+  })();
 
 
   Object.keys(PANELS).forEach(initDockDrag);

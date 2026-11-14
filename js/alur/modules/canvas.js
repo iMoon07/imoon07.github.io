@@ -202,6 +202,48 @@
         return g;
     }
 
+    /* Link badge: a real anchor, so a box or a note with a URL can be opened
+       from the canvas and from the reading page alike. Excalidraw hides the
+       badge while the element is selected, because the handles own the corner. */
+    function linkTarget(n) {
+        if (!n) return '';
+        var v = String(n.link == null ? '' : n.link).trim();
+        return /^(https?:|mailto:|tel:)/i.test(v) ? v : '';
+    }
+
+    function drawLinkBadge(g, n, w, h, selected) {
+        var href = linkTarget(n);
+        if (!href) return;
+        /* Always in the DOM. The editor hides it with CSS while the node is
+           selected, so deselecting brings the badge back without a re-render
+           (deselect only repaints the selection frame). */
+        var size = 16;
+        var x = Math.max(0, w - size - 3);
+        var y = 3;
+        var a = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        a.setAttribute('href', href);
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+        a.setAttribute('class', 'alur-node-link');
+        a.setAttribute('data-link-badge', '1');
+        a.setAttribute('aria-label', 'Open link');
+        kit.el('rect', { x: x, y: y, width: size, height: size, rx: 4, class: 'alur-node-link-bg' }, a);
+        /* Chain glyph: two rounded links, drawn in the 16px box. */
+        kit.el('path', {
+            d: 'M ' + (x + 6.4) + ' ' + (y + 9.6) + ' l 3.2 -3.2',
+            class: 'alur-node-link-ico'
+        }, a);
+        kit.el('path', {
+            d: 'M ' + (x + 9.2) + ' ' + (y + 6.2) + ' a 2 2 0 0 1 0 2.8 l -1.2 1.2 a 2 2 0 0 1 -2.8 0',
+            class: 'alur-node-link-ico'
+        }, a);
+        kit.el('path', {
+            d: 'M ' + (x + 6.8) + ' ' + (y + 9.8) + ' a 2 2 0 0 1 0 -2.8 l 1.2 -1.2 a 2 2 0 0 1 2.8 0',
+            class: 'alur-node-link-ico'
+        }, a);
+        g.appendChild(a);
+    }
+
     function drawNode(parent, n, selected) {
         if (n.shape === 'sticky') {
             return drawStickyNode(parent, n, selected);
@@ -371,6 +413,7 @@
         if (n.sub) {
             kit.text(inner, labelX, labelY + fontSize * lineHeight + 2, n.sub, 'alur-node-sub', { 'text-anchor': anchor, fill: kit.color(labelColor) });
         }
+        drawLinkBadge(g, n, w, h, selected);
         return g;
     }
 
@@ -391,12 +434,12 @@
     function drawStickyNode(parent, n, selected) {
         var w = n.w || 180;
         var h = n.h || 180;
-        /* The note's ink is its text colour: outline, fold and type agree, and
-           the sticky follows whatever ink the user picked instead of borrowing
-           the node stroke colour (which used to leave a blue rim on yellow). */
-        var ink = (n.textColor && n.textColor !== 'transparent') ? kit.color(n.textColor) : '#1f2328';
+        /* The ink is the text colour. The border is its own neutral line: a
+           note whose default ink is blue must not grow a blue rim, which is
+           what happened when outline and type shared one value. */
+        var ink = (n.textColor && n.textColor !== 'transparent') ? kit.color(n.textColor) : '#1971c2';
         var fill = (n.fill && n.fill !== 'transparent') ? kit.color(n.fill) : '#ffec99';
-        var color = ink;
+        var color = (n.stroke && n.stroke !== 'transparent') ? kit.color(n.stroke) : '#495057';
         var fold = Math.max(12, Math.min(30, Math.min(w, h) * 0.16));
         var g = kit.g(parent, 'alur-node alur-canvas-node alur-sticky-node' +
             (selected ? ' is-selected' : ''));
@@ -455,7 +498,7 @@
         if (!lines.length) lines = [''];
         var blockH = (lines.length - 1) * fontSize * lineHeight;
         var startY = Math.max(pad + fontSize * 0.85, (h - blockH) / 2 + fontSize * 0.35);
-        var labelColor = n.textColor || '#1f2328';
+        var labelColor = n.textColor || '#1971c2';
         var anchor = 'middle';
         var labelX = w / 2;
         var weight = n.fontWeight || 500;
@@ -470,6 +513,7 @@
             var span = kit.el('tspan', { x: labelX, y: startY + i * fontSize * lineHeight }, label);
             span.textContent = line;
         });
+        drawLinkBadge(g, n, w, h, selected);
         return g;
     }
 

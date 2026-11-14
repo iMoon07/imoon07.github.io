@@ -219,6 +219,36 @@
 
 .alur-logo-img { pointer-events: none; }
 
+/* Link badge on a box or a sticky note. It is a real <a>, so it also works on
+   the reading page; the editor ignores the drag while the pointer is on it. */
+.alur-node-link { cursor: pointer; }
+
+.alur-node-link-bg {
+    fill: rgba(88, 166, 255, 0.18);
+    stroke: #58a6ff;
+    stroke-width: 1;
+}
+
+.alur-node-link-ico {
+    fill: none;
+    stroke: #58a6ff;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.alur-node-link:hover .alur-node-link-bg { fill: rgba(88, 166, 255, 0.36); }
+
+/* Selected node: the resize handles own the corner, like Excalidraw. */
+.alur-canvas-node.is-selected .alur-node-link { display: none; }
+
+.alur-node-link:focus-visible { outline: none; }
+
+.alur-node-link:focus-visible .alur-node-link-bg {
+    stroke: #ffffff;
+    stroke-width: 1.6;
+}
+
 .alur-node-label {
     fill: #e6edf3;
     font-size: 13px;
