@@ -668,6 +668,138 @@
 
 .alur-table-line { stroke: #21262d; stroke-width: 1; }
 
+/* ------------------------------------------------------- editable table
+   Rendered inside foreignObject, so these rules must live in the shared
+   stylesheet: draw.html edits the table, read.html lets visitors edit it. */
+.alur-table-node { cursor: default; }
+.alur-table-box { fill: #0c1117; }
+.alur-table-fo { overflow: hidden; }
+
+.alur-table-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #0c1117;
+    color: #e6edf3;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 12px;
+}
+
+.alur-table-tools {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 5px 6px;
+    border-bottom: 1px solid #21262d;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.alur-table-tool {
+    padding: 2px 6px;
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    background: #161b22;
+    color: #c9d1d9;
+    font: inherit;
+    font-size: 10px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.alur-table-tool:hover { border-color: #58a6ff; color: #58a6ff; }
+.alur-table-tool:active { background: #1f2937; }
+
+.alur-table-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+
+.alur-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+
+.alur-table th, .alur-table td {
+    border: 1px solid #30363d;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.alur-table th { background: #161b22; color: #9fb0c3; font-weight: 650; }
+.alur-table td { color: #e6edf3; }
+
+.alur-table th:focus, .alur-table td:focus {
+    outline: 2px solid #58a6ff;
+    outline-offset: -2px;
+}
+
+@media print {
+    .alur-table-tools { display: none; }
+}
+
+/* ------------------------------------------------- plain tables (read page)
+   A canvas that holds nothing but tables drops the artboard entirely and
+   renders as article tables: transparent, no dark card, no blue frame, and no
+   inner scroll — a reader who adds rows makes the table grow. */
+.alur-tables { margin: 18px 0; }
+
+.alur-tables .alur-table-wrap {
+    display: block;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.92em;
+}
+
+.alur-tables .alur-table-tools {
+    padding: 0 0 6px;
+    border-bottom: 0;
+    background: transparent;
+    gap: 6px;
+}
+
+.alur-tables .alur-table-tool {
+    padding: 2px 8px;
+    border: 1px solid var(--line, #30363d);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--muted, #8b949e);
+    font-size: 11px;
+}
+
+.alur-tables .alur-table-tool:hover {
+    border-color: var(--muted, #8b949e);
+    color: var(--text, #e6edf3);
+}
+
+.alur-tables .alur-table-scroll { overflow: visible; }
+
+.alur-tables .alur-table th,
+.alur-tables .alur-table td {
+    border: 0;
+    border-bottom: 1px solid var(--line, #30363d);
+    padding: 10px 14px;
+}
+
+.alur-tables .alur-table th {
+    background: transparent;
+    color: inherit;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.alur-tables .alur-table td { color: inherit; }
+
+.alur-tables .alur-table th:focus,
+.alur-tables .alur-table td:focus {
+    outline: 1px dashed var(--muted, #8b949e);
+    outline-offset: -2px;
+}
+
 @media (max-width: 600px) {
     .alur {
         margin: 16px 0;
@@ -828,31 +960,4 @@
     .alur-tab {
         flex: 0 0 auto;
     }
-}
-
-/* ------------------------------------------------- topology sebagai blok Alur
-   Node topology adalah DOM, bukan SVG, jadi: (a) grid digambar dengan CSS supaya
-   tidak menutupi kartu, (b) lebar 620px untuk .alur-svg di layar sempit tidak
-   berlaku, biar topology tetap responsif seperti di artikel.
-
-   Topology nodes are DOM, not SVG, so (a) the grid is CSS so it never covers a
-   card, and (b) the 620px .alur-svg minimum for narrow screens does not apply:
-   topology stays as responsive as it is in an article. */
-.alur-topology {
-    width: 100%;
-    border-radius: 10px;
-    background-repeat: repeat;
-    background-position: 0 0;
-}
-
-.alur-topology .alur-svg {
-    min-width: 0;
-}
-
-.alur-topology .topo-canvas {
-    max-width: 100%;
-}
-
-.alur-topology .topo-stage {
-    padding: 10px 4px;
 }

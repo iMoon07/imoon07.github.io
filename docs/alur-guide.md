@@ -271,6 +271,63 @@ auto-laid out.
 | `selected` | Node id or array of ids. |
 | `selectedEdge`, `selectedDrawing` | Edge index or drawing id. |
 
+### Tables
+
+A table is a canvas node with `shape: "table"`. It is where tabular data lives
+inside a visual: the same block you get from the **＋ Table** button in
+`draw.html`.
+
+```draw
+{
+  "module": "canvas",
+  "title": "Editable table",
+  "nodes": {
+    "t1": {
+      "id": "t1",
+      "x": 20, "y": 20, "w": 700, "h": 260,
+      "shape": "table",
+      "color": "slate",
+      "columns": ["Check", "Status", "Owner"],
+      "rows": [
+        ["TLS terminator", "pass", "edge"],
+        ["WAF rules", "review", "sec"],
+        ["Backup restore", "pass", "ops"]
+      ]
+    }
+  },
+  "edges": []
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `columns[]` | Header labels. |
+| `rows[][]` | Cell text, one array per row. |
+| `color` | Frame accent in the editor. |
+
+The block is editable wherever it renders. Readers can type in any cell and use
+`+ Row`, `− Row`, `+ Col`, `− Col`; the editor mirrors the same edits back into
+`state.spec`, so the scene and the fence never disagree.
+
+When a ` ```draw ` block holds **only** tables (no edges, no drawings), the
+reading page drops the artboard and renders plain article tables: no dark card,
+no blue frame, no inner scroll. A reader who adds rows makes the table grow with
+the page.
+
+```draw
+{
+  "module": "canvas",
+  "grid": false,
+  "nodes": {
+    "t1": {
+      "shape": "table",
+      "columns": ["Tool", "Use"],
+      "rows": [["Nginx", "edge"], ["Postgres", "data"]]
+    }
+  }
+}
+```
+
 ### Tools
 
 | Tool | Key | Action |

@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Topology Lab — editor ```topology</title>
+<link rel="stylesheet" href="css/topology.css?v=6">
+<style>
+  :root {
+    --bg: #080b10;
+    --bg-2: #0b0f15;
+    --surface: #0f141b;
+    --surface-2: #141a22;
+    --surface-3: #1a212b;
+    --line: #222a35;
+    --line-soft: #1a212a;
+    --text: #e6edf3;
+    --text-2: #b9c4d0;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --accent-soft: rgba(88, 166, 255, 0.14);
+    --green: #3fb950;
+    --danger: #f85149;
+    --r-sm: 8px;
+    --r-md: 11px;
+    --r-lg: 14px;
+    --shadow: 0 18px 48px -32px rgba(0, 0, 0, 0.95);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; margin: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.55 Excalifont, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  /* ------------------------------------------------------------- topbar */
+
+  .topbar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 54px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(8, 11, 16, 0.9);
+    backdrop-filter: blur(16px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .brand-avatar {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface-2);
+  }
+
+  .brand-text { display: flex; flex-direction: column; line-height: 1.05; }
+  .brand-name { font-size: 15px; font-weight: 750; letter-spacing: -0.35px; }
+  .brand-name span { color: var(--accent); }
+  .brand-sub {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .doc-title {
+    width: 150px;
+    padding: 5px 7px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font-weight: 600;
+    text-overflow: ellipsis;
+  }
+
+  .doc-title:hover { border-color: var(--line); }
+
+  .doc-title:focus {
+    outline: 0;
+    border-color: var(--accent);
+    background: #0c1117;
+  }
+
+  .top-status {
+    padding: 0 6px;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .top-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-left: 4px;
+    border-left: 1px solid var(--line);
+  }
+
+  .top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 7px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .top-link:hover { background: var(--surface-2); color: var(--text); }
+  .top-link .ico { font-size: 13px; line-height: 1; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--text);
+    padding: 6px 11px;
+    font-size: 12px;
+    font-weight: 620;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.13s ease, border-color 0.13s ease, transform 0.08s ease;
+  }
+
+  .btn:hover { background: var(--surface-3); border-color: #2e3947; }
+  .btn:active { transform: translateY(1px); }
+  .btn .k { color: var(--muted); font-size: 11px; }
+
+  .btn--primary {
+    background: var(--accent-soft);
+    border-color: rgba(88, 166, 255, 0.42);
+    color: #d6e8ff;
+  }
+
+  .btn--primary:hover { background: rgba(88, 166, 255, 0.22); }
+
+  .btn--ghost { background: transparent; }
+  .btn--ghost:hover { background: var(--surface-2); }
+  .btn--danger { color: #ffb4ae; border-color: rgba(248, 81, 73, 0.35); }
+  .btn--danger:hover { background: rgba(248, 81, 73, 0.12); }
+  .btn--sm { padding: 4px 8px; font-size: 11.5px; border-radius: 7px; }
+  .btn--icon { padding: 4px 7px; font-size: 13px; line-height: 1; }
+  .btn.is-on { background: var(--accent-soft); border-color: rgba(88, 166, 255, 0.45); color: #cfe4ff; }
+
+  /* -------------------------------------------------------------- stage */
+
+  #stage {
+    position: absolute;
+    inset: 54px 380px 0 0;
+    overflow: auto;
+    padding: 28px 30px 96px;
+    background:
+      radial-gradient(900px 520px at 42% -6%, rgba(88, 166, 255, 0.07), transparent 62%),
+      transparent;
+  }
+
+  #stage.is-guides {
+    background-image:
+      linear-gradient(to right, rgba(88, 166, 255, 0.075) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(88, 166, 255, 0.075) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+  }
+
+  #board {
+    max-width: 940px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.014), transparent 40%),
+      var(--bg-2);
+    box-shadow: var(--shadow);
+    padding: 22px 22px 18px;
+    min-height: 320px;
+  }
+
+  #preview { width: 100%; }
+
+  #preview .topo-node {
+    cursor: grab;
+    transition: outline-color 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  #preview .topo-node.is-selected {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+
+  /* Sasaran drop logo: node menyala saat dilewati. */
+  #preview .topo-node.is-drop {
+    outline: 2px dashed var(--accent);
+    outline-offset: 4px;
+    border-radius: 10px;
+  }
+
+  #empty {
+    display: none;
+    padding: 34px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  #board.is-empty #empty { display: block; }
+  #board.is-empty #preview { display: none; }
+
+  /* Legenda konteks di bawah kanvas. */
+  #legendBar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 13px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .lg i {
+    width: 18px;
+    height: 0;
+    border-top: 2.5px solid var(--accent);
+    border-radius: 2px;
+  }
+
+  .lg--back i { border-top-color: var(--green); }
+
+  .lg em {
+    font-style: normal;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* --------------------------------------------------------------- dock */
+
+  #dock {
+    position: absolute;
+    top: 54px; right: 0; bottom: 0;
+    width: 380px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .dock-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 12px 0;
+  }
+
+  .dock-tabs {
+    display: flex;
+    gap: 3px;
+    padding: 9px 10px 0;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dock-tabs::-webkit-scrollbar { display: none; }
+
+  .dock-tab {
+    flex: 0 0 auto;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 10px 7px;
+    font-size: 12px;
+    font-weight: 640;
+    cursor: pointer;
+  }
+
+  .dock-tab:hover { color: var(--text-2); }
+
+  .dock-tab.is-on {
+    color: var(--text);
+    background: var(--surface-2);
+    border-color: var(--line);
+  }
+
+  .dock-body {
+    flex: 1;
+    overflow: auto;
+    padding: 13px 12px 20px;
+  }
+
+  .pane { display: none; }
+  .pane.is-on { display: block; }
+
+  .hint {
+    margin: 0 0 11px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  .hint b { color: var(--text-2); font-weight: 650; }
+
+  .sec {
+    margin: 0 0 14px;
+  }
+
+  .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 8px;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .sec-h::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line-soft);
+  }
+
+  .field { display: block; margin-bottom: 9px; }
+
+  .field > span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+  }
+
+  .inp {
+    display: block;
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--bg-2);
+    color: var(--text);
+    font-size: 12.5px;
+    transition: border-color 0.13s ease, background 0.13s ease;
+  }
+
+  .inp:hover { border-color: #2b3644; }
+
+  .inp:focus {
+    outline: none;
+    border-color: rgba(88, 166, 255, 0.6);
+    background: #0c1118;
+  }
+
+  textarea.inp {
+    min-height: 230px;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+  }
+
+  textarea.inp.code {
+    min-height: calc(100vh - 210px);
+    font-size: 12.5px;
+    line-height: 1.6;
+    tab-size: 2;
+    white-space: pre;
+    overflow: auto;
+  }
+
+  .code-status {
+    margin: 8px 0 0;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .code-status.is-ok { color: var(--green); }
+  .code-status.is-bad { color: var(--danger); }
+
+  select.inp { appearance: none; cursor: pointer; }
+
+  .seg {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--bg-2);
+  }
+
+  .seg button {
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 620;
+    cursor: pointer;
+  }
+
+  .seg button:hover { color: var(--text-2); }
+
+  .seg button.is-on {
+    background: var(--surface-3);
+    color: var(--text);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  }
+
+  .swatches {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .sw {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .sw:hover { transform: scale(1.08); }
+
+  .sw.is-on {
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px currentColor;
+  }
+
+  .sw--none {
+    background: repeating-linear-gradient(45deg, #2a3341 0 3px, transparent 3px 6px);
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    padding: 10px;
+    margin-bottom: 8px;
+    transition: border-color 0.13s ease, background 0.13s ease;
+  }
+
+  .card:hover { border-color: #2b3644; }
+  .card.is-on { border-color: rgba(88, 166, 255, 0.55); background: #121a24; }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: 0 0 auto;
+  }
+
+  .card-head b { font-size: 12.5px; font-weight: 650; }
+  .card-head .id { color: var(--muted); font-size: 10.5px; }
+
+  .grow { flex: 1; min-width: 0; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+  .row { display: flex; gap: 6px; align-items: center; }
+  .row + .row { margin-top: 7px; }
+  .row > * { min-width: 0; }
+
+  .empty {
+    padding: 16px 12px;
+    border: 1px dashed var(--line);
+    border-radius: var(--r-md);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .edge-line {
+    display: grid;
+    grid-template-columns: 1fr 16px 1fr;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .edge-line .arw { color: var(--muted); text-align: center; font-size: 12px; }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    color: var(--text-2);
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .switch input { appearance: none; width: 28px; height: 16px; margin: 0; border-radius: 999px; background: #26303d; position: relative; cursor: pointer; transition: background 0.15s ease; }
+
+  .switch input::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #8b949e;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .switch input:checked { background: rgba(63, 185, 80, 0.3); }
+  .switch input:checked::after { transform: translateX(12px); background: var(--green); }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+    gap: 7px;
+  }
+
+  .tile {
+    position: relative;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: 7px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--bg-2);
+    cursor: grab;
+    transition: border-color 0.12s ease, background 0.12s ease, transform 0.1s ease;
+  }
+
+  .tile:hover {
+    border-color: rgba(88, 166, 255, 0.6);
+    background: #101823;
+    transform: translateY(-1px);
+  }
+
+  .tile:active { cursor: grabbing; }
+  .tile img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
+  .tile svg { width: 22px; height: 22px; pointer-events: none; }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    transform: translate(-50%, 8px);
+    z-index: 80;
+    padding: 8px 15px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(15, 20, 27, 0.97);
+    box-shadow: var(--shadow);
+    font-size: 12px;
+    font-weight: 620;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+
+  .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+  #dockToggle { display: none; }
+
+  @media (max-width: 1180px) {
+    #stage { inset: 54px 340px 0 0; padding: 22px 20px 90px; }
+    #dock { width: 340px; }
+  }
+
+  @media (max-width: 900px) {
+    #stage { inset: 54px 0 0 0; padding: 16px 14px 80px; }
+
+    #dock {
+      top: auto;
+      left: 0; right: 0; bottom: 0;
+      width: auto;
+      height: 68%;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 16px 16px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+      box-shadow: 0 -20px 50px -30px #000;
+    }
+
+    #dock.is-open { transform: translateY(0); }
+    #dockToggle { display: inline-flex; }
+    .top-nav .lbl { display: none; }
+    .top-nav .top-link { padding: 5px 7px; }
+    #guidesBtn { display: none; }
+    .brand-sub { display: none; }
+    .doc-title { display: none; }
+    #topStatus { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html#home" title="TopologyLab by iMoon07">
+    <img class="brand-avatar" src="assets/foto-raja.jpg" alt="iMoon07" decoding="async">
+    <span class="brand-text">
+      <span class="brand-name">Topology Lab<span>.</span></span>
+      <span class="brand-sub">by iMoon07 · ```topology editor</span>
+    </span>
+  </a>
+
+  <input id="docTitle" class="doc-title" value="Topology" aria-label="Diagram title" spellcheck="false">
+  <span id="topStatus" class="top-status">0 node · 0 edge</span>
+
+  <nav class="top-nav" aria-label="Site">
+    <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
+    <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
+    <a class="top-link" href="about.html" title="About"><span class="ico">☺</span><span class="lbl">About</span></a>
+    <a class="top-link" href="draw.html" title="Alur Visual Lab"><span class="ico">✎</span><span class="lbl">Draw</span></a>
+  </nav>
+
+  <div class="top-right">
+    <button class="btn btn--ghost btn--sm" id="guidesBtn" title="Editor guides only — never exported">Guides: off</button>
+    <button class="btn btn--sm" id="dockToggle" title="Only on narrow screens">Panel</button>
+    <button class="btn btn--sm" id="exportBtn">Export</button>
+    <button class="btn btn--primary btn--sm" id="copyBtn">Copy ```topology</button>
+  </div>
+</header>
+
+<main id="stage">
+  <div id="board">
+    <div id="preview" class="topology"></div>
+    <p id="empty">Belum ada node. Tambahkan lewat panel <b>Nodes</b>, atau pilih <b>Starter</b> di atas.</p>
+    <div id="legendBar">
+      <span class="lg"><i></i><span id="lgFlow">Request</span> <em>flow</em></span>
+      <span class="lg lg--back"><i></i><span id="lgBack">Response</span> <em>back</em></span>
+      <span class="lg" style="margin-left:auto"><em>context</em> = label arah aliran data</span>
+    </div>
+  </div>
+</main>
+
+<aside id="dock" aria-label="Topology editor panel">
+  <div class="dock-tabs" role="tablist">
+    <button class="dock-tab is-on" data-pane="nodes" role="tab">Nodes</button>
+    <button class="dock-tab" data-pane="edges" role="tab">Edges</button>
+    <button class="dock-tab" data-pane="look" role="tab">Look</button>
+    <button class="dock-tab" data-pane="logos" role="tab">Logos</button>
+    <button class="dock-tab" data-pane="json" role="tab">Topology</button>
+  </div>
+
+  <div class="dock-body">
+    <!-- -------------------------------------------------------- nodes -->
+    <section class="pane is-on" data-pane="nodes">
+      <div class="sec">
+        <h3 class="sec-h">Starter</h3>
+        <select id="presetSel" class="inp" title="Insert a starter diagram — replaces the current one">
+          <option value="">Insert a starter…</option>
+        </select>
+      </div>
+      <p class="hint">Klik kartu untuk memilih, lalu seret logo dari tab <b>Logos</b> ke kartu node di kanvas. Kolom menentukan posisi: 1 = kiri, 2 = tengah, dst.</p>
+      <div id="nodeList"></div>
+      <button class="btn btn--sm" id="addNode" style="width:100%;justify-content:center">＋ Add node</button>
+    </section>
+
+    <!-- -------------------------------------------------------- edges -->
+    <section class="pane" data-pane="edges">
+      <p class="hint">Setiap baris satu kabel. <b>Label</b> adalah konteks di atas kabel (mis. <code>POST /order</code>, <code>SQL</code>), <b>back</b> menggambar jalur balik.</p>
+      <div id="edgeList"></div>
+      <button class="btn btn--sm" id="addEdge" style="width:100%;justify-content:center">＋ Add edge</button>
+    </section>
+
+    <!-- --------------------------------------------------------- look -->
+    <section class="pane" data-pane="look">
+      <div class="sec">
+        <h3 class="sec-h">Canvas</h3>
+        <label class="field"><span>Title</span>
+          <input id="fTitle" class="inp" type="text" placeholder="Diagram title">
+        </label>
+        <div class="field"><span>Layout</span>
+          <div class="seg" id="fVertical" role="group">
+            <button type="button" data-v="1" class="is-on">Vertical</button>
+            <button type="button" data-v="0">Horizontal</button>
+          </div>
+        </div>
+        <label class="switch"><input id="fBadges" type="checkbox"> Show edge numbers</label>
+      </div>
+
+      <div class="sec">
+        <h3 class="sec-h">Context / data flow</h3>
+        <p class="hint">Label ini menjelaskan arti arah aliran, bukan cuma hiasan. Bisa dipakai bersama di semua kabel maju/mundur.</p>
+        <div class="grid2">
+          <label class="field"><span>Flow label</span>
+            <input id="fFlow" class="inp" type="text" placeholder="Request">
+          </label>
+          <label class="field"><span>Back label</span>
+            <input id="fBack" class="inp" type="text" placeholder="Response">
+          </label>
+        </div>
+        <div class="row" style="flex-wrap:wrap">
+          <button class="btn btn--sm" id="applyCtx">Apply ke semua edge</button>
+          <button class="btn btn--sm btn--ghost" id="clearCtx">Kosongkan</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3 class="sec-h">Default kabel baru</h3>
+        <p class="hint">Dipakai saat menambah edge baru.</p>
+        <div class="field"><span>Warna</span><div class="swatches" id="defSwatches"></div></div>
+        <div class="grid2">
+          <label class="field"><span>Tebal</span>
+            <input id="defWidth" class="inp" type="number" min="1" max="8" step="0.5" value="2">
+          </label>
+          <label class="field"><span>Gaya</span>
+            <select id="defDash" class="inp">
+              <option value="solid">solid</option>
+              <option value="dashed">dashed</option>
+              <option value="dotted">dotted</option>
+            </select>
+          </label>
+        </div>
+        <label class="field"><span>Motion</span>
+          <select id="defMotion" class="inp">
+            <option value="flow">flow — titik jalan</option>
+            <option value="none">none — statis</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="sec">
+        <h3 class="sec-h">Facilities</h3>
+        <label class="field"><span>Label grup</span>
+          <input id="fFacLabel" class="inp" type="text" placeholder="On one machine">
+        </label>
+        <div id="facList"></div>
+        <button class="btn btn--sm" id="addFac" style="width:100%;justify-content:center">＋ Add chip</button>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------- logos -->
+    <section class="pane" data-pane="logos">
+      <p class="hint">Seret logo ke node di kanvas (atau ke kartu node di tab Nodes). Klik = pakai node terpilih.</p>
+      <input id="logoSearch" class="inp" type="search" placeholder="Search logos — docker, nginx, burp…">
+      <div style="height:8px"></div>
+      <select id="logoCat" class="inp"></select>
+      <div style="height:10px"></div>
+      <div id="logoGrid" class="logo-grid"></div>
+    </section>
+
+    <!-- ----------------------------------------------------- topology -->
+    <section class="pane" data-pane="json">
+      <p class="hint">Sintaks <code>```topology</code> — edit langsung, kanvas ikut berubah saat mengetik. <b>Tab</b> = 2 spasi.</p>
+      <textarea id="specBox" class="inp code" spellcheck="false" wrap="off"></textarea>
+      <p class="code-status" id="codeStatus"></p>
+    </section>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/topology-icons.js?v=5"></script>
+<script src="js/logo-manifest.js"></script>
+<script src="js/alur/logos.js?v=5"></script>
+<script src="js/topology.js?v=6"></script>
+<script>
+(function () {
+  'use strict';
+
+  var SAVE_KEY = 'topology.lab.v2';
+  var TONES = [
+    ['blue', '#58a6ff'], ['green', '#3fb950'], ['amber', '#d29922'],
+    ['red', '#f85149'], ['purple', '#bc8cff'], ['cyan', '#39d0d8'],
+    ['pink', '#f778ba'], ['slate', '#8b949e']
+  ];
+  var KINDS = ['process', 'actor', 'store', 'choice', 'out', 'tech', 'host',
+    'client', 'server', 'database', 'cloud', 'security', 'network'];
+
+  var PRESETS = [
+    {
+      id: 'request-response',
+      label: 'Request / Response',
+      spec: {
+        title: 'Request / Response',
+        vertical: true,
+        columns: [['C'], ['P'], ['K']],
+        nodes: {
+          C: ['Customer', 'browser', 'customer', 'client', 'https://en.wikipedia.org/wiki/Web_browser'],
+          P: ['API', 'node', 'waiter', 'process', 'https://en.wikipedia.org/wiki/Web_server'],
+          K: ['Database', 'postgres', 'warehouse', 'database', 'https://en.wikipedia.org/wiki/Database']
+        },
+        edges: [
+          { from: 'C', to: 'P', badge: 'Request', color: 'blue' },
+          { from: 'P', to: 'K', badge: 'Query', color: 'cyan' },
+          { from: 'K', to: 'P', badge: 'Rows', back: true },
+          { from: 'P', to: 'C', badge: 'Response', back: true }
+        ],
+        legend: { flow: 'Request', back: 'Response' },
+        facilitiesLabel: 'On one machine',
+        facilities: [['server', 'Core'], ['lock', 'Transport'], ['package', 'Optional']]
+      }
+    },
+    {
+      id: 'chain',
+      label: 'Linear chain',
+      spec: {
+        title: 'Linear chain',
+        vertical: true,
+        columns: [['C'], ['P'], ['K'], ['G']],
+        nodes: {
+          C: ['Customer', 'Places an order', 'customer', 'actor'],
+          P: ['Waiter', 'Takes the order', 'waiter', 'process'],
+          K: ['Chef', 'Prepares the order', 'cook', 'process'],
+          G: ['Pantry', 'Stores ingredients', 'warehouse', 'store']
+        },
+        edges: [
+          { from: 'C', to: 'P', badge: 'Order' },
+          { from: 'P', to: 'K', badge: 'Ticket' },
+          { from: 'K', to: 'G', badge: 'Fetch' },
+          { from: 'G', to: 'K', badge: 'Items', back: true },
+          { from: 'K', to: 'P', badge: 'Dish', back: true },
+          { from: 'P', to: 'C', badge: 'Serve', back: true }
+        ],
+        legend: { flow: 'Request', back: 'Response' }
+      }
+    },
+    {
+      id: 'fan',
+      label: 'Fan-out grid',
+      spec: {
+        title: 'Choose a platform',
+        vertical: true,
+        columns: [['B'], { nodes: ['C', 'D', 'E', 'F'], grid: 2 }, ['I']],
+        nodes: {
+          B: ['Where to run it?', '', 'git-branch', 'choice'],
+          C: ['Bare Metal', 'Own hardware', 'hard-drive', 'host'],
+          D: ['Virtual Machine', 'Private room', 'monitor', 'host'],
+          E: ['Container', 'Shared kernel', 'si-docker', 'host'],
+          F: ['Serverless', 'Per request', 'zap', 'host'],
+          I: ['All components', 'Run in one place', 'layers', 'out']
+        },
+        edges: [
+          { from: 'B', to: 'C' }, { from: 'B', to: 'D' },
+          { from: 'B', to: 'E' }, { from: 'B', to: 'F' },
+          { from: 'C', to: 'I', back: true }, { from: 'D', to: 'I', back: true },
+          { from: 'E', to: 'I', back: true }, { from: 'F', to: 'I', back: true }
+        ]
+      }
+    },
+    {
+      id: 'stack',
+      label: 'Stack with logos',
+      spec: {
+        title: 'Request path',
+        vertical: false,
+        columns: [['client'], ['edge'], ['app'], ['db']],
+        nodes: {
+          client: ['Client', 'browser', 'customer', 'client'],
+          edge: ['Edge', 'nginx', 'stack:nginx', 'server'],
+          app: ['App', 'node', 'programming:nodejs', 'process'],
+          db: ['Database', 'postgres', 'stack:postgresql', 'database']
+        },
+        edges: [
+          { from: 'client', to: 'edge', badge: 'TLS', color: 'green', width: 2.5 },
+          { from: 'edge', to: 'app', badge: 'proxy_pass' },
+          { from: 'app', to: 'db', badge: 'SQL', color: 'amber', dash: 'dashed' }
+        ]
+      }
+    }
+  ];
+
+  var state = {
+    spec: null,
+    sel: null,
+    guides: false,
+    def: { color: 'blue', width: 2, dash: 'solid', motion: 'flow' }
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var el = {
+    board: $('board'), preview: $('preview'), docTitle: $('docTitle'),
+    topStatus: $('topStatus'),
+    nodeList: $('nodeList'), edgeList: $('edgeList'), facList: $('facList'),
+    specBox: $('specBox'), codeStatus: $('codeStatus'), toast: $('toast'), logoGrid: $('logoGrid'),
+    logoSearch: $('logoSearch'), logoCat: $('logoCat'), presetSel: $('presetSel'),
+    legendFlow: $('lgFlow'), legendBack: $('lgBack'), defSwatches: $('defSwatches')
+  };
+
+  /* ------------------------------------------------------------ helpers */
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function uid(prefix) {
+    var ids = Object.keys(state.spec.nodes || {});
+    var n = 1;
+    while (ids.indexOf(prefix + n) >= 0) n++;
+    return prefix + n;
+  }
+
+  function toneColor(name) {
+    for (var i = 0; i < TONES.length; i++) if (TONES[i][0] === name) return TONES[i][1];
+    return null;
+  }
+
+  function toast(msg) {
+    el.toast.textContent = msg;
+    el.toast.classList.add('is-on');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.toast.classList.remove('is-on'); }, 1500);
+  }
+
+  /* Edge bisa array lama ["A","B","label",true] atau objek baru. Semua kode
+     panel memakai objek; normalisasi terjadi sekali saat load/apply.
+     Edges may be legacy arrays or objects; the panel only works with objects. */
+  function normalizeEdges() {
+    var spec = state.spec;
+    if (!Array.isArray(spec.edges)) { spec.edges = []; return; }
+    spec.edges = spec.edges.map(function (e) {
+      if (e && !Array.isArray(e)) {
+        if (!e.color) e.color = e.back ? 'green' : 'blue';
+        if (e.motion === undefined) e.motion = 'flow';
+        return e;
+      }
+      var back = !!e[3];
+      return {
+        from: e[0], to: e[1],
+        badge: e[2] || '',
+        back: back,
+        color: back ? 'green' : 'blue',
+        width: 2,
+        dash: 'solid',
+        motion: 'flow'
+      };
+    });
+  }
+
+  function nodeArr(id) {
+    var n = state.spec.nodes[id];
+    if (!Array.isArray(n)) state.spec.nodes[id] = n = [id, '', 'circle-dot', 'process'];
+    return n;
+  }
+
+  function rebuildColumns() {
+    var spec = state.spec;
+    var ids = Object.keys(spec.nodes);
+    var groups = [];
+    ids.forEach(function (id) {
+      var col = Math.max(1, parseInt(spec.nodes[id]._col || 1, 10) || 1);
+      while (groups.length < col) groups.push([]);
+      groups[col - 1].push(id);
+    });
+    if (!groups.length) return [['A']];
+    spec.columns = groups.map(function (list) {
+      if (list.length > 1) {
+        var g = Math.min(4, list.length);
+        return g > 1 ? { nodes: list, grid: g } : { nodes: list };
+      }
+      return [list[0]];
+    });
+    return spec.columns;
+  }
+
+  /* _col hanya untuk editor; columns yang dipublikasikan tetap dari rebuild.
+     _col is editor-only; the published columns come from rebuildColumns(). */
+  function cleanSpec() {
+    var spec = clone(state.spec);
+    Object.keys(spec.nodes || {}).forEach(function (id) {
+      if (Array.isArray(spec.nodes[id])) delete spec.nodes[id]._col;
+    });
+    delete spec._col;
+    return spec;
+  }
+
+  function fence() {
+    return '```topology\n' + JSON.stringify(cleanSpec(), null, 2) + '\n```';
+  }
+
+  function edgeColor(e) {
+    return toneColor(e.color) || (typeof e.color === 'string' && e.color.charAt(0) === '#' ? e.color : '#8b949e');
+  }
+
+  /* ------------------------------------------------------------- render */
+
+  function render() {
+    var spec = cleanSpec();
+    el.preview.innerHTML = '';
+    el.preview.className = 'topology';
+    delete el.preview.dataset.rendered;
+    if (document.activeElement !== el.docTitle) el.docTitle.value = state.spec.title || '';
+
+    var count = Object.keys(state.spec.nodes || {}).length;
+    var edgeCount = (state.spec.edges || []).length;
+    if (el.topStatus) el.topStatus.textContent = count + ' node · ' + edgeCount + ' edge';
+    el.board.classList.toggle('is-empty', count === 0);
+
+    if (count) {
+      try { window.Topology.render(el.preview, spec); }
+      catch (err) { el.preview.textContent = 'Render error: ' + err.message; }
+    }
+
+    var flow = (state.spec.legend && state.spec.legend.flow) || 'Request';
+    var back = (state.spec.legend && state.spec.legend.back) || 'Response';
+    el.legendFlow.textContent = flow;
+    el.legendBack.textContent = back;
+
+    syncPanels();
+    queueSave();
+  }
+
+  function syncPanels() {
+    if (document.activeElement !== el.specBox) el.specBox.value = fence();
+    renderNodes();
+    renderEdges();
+    renderLook();
+    highlight();
+  }
+
+  /* Sintaks ditulis langsung; kanvas mengikuti selama JSON-nya sah.
+     The fence is edited in place — the canvas follows while the JSON parses. */
+  function codeStatus(kind, msg) {
+    el.codeStatus.className = 'code-status' + (kind ? ' is-' + kind : '');
+    el.codeStatus.textContent = msg || '';
+  }
+
+  function statusLine() {
+    var n = Object.keys(state.spec.nodes || {}).length;
+    var e = (state.spec.edges || []).length;
+    return 'valid · ' + n + ' node · ' + e + ' edge';
+  }
+
+  function stripFence(raw) {
+    return String(raw)
+      .replace(/^\s*```(?:topology|json)?[ \t]*\r?\n/, '')
+      .replace(/\r?\n?```\s*$/, '');
+  }
+
+  function liveParse() {
+    var next;
+    try {
+      next = JSON.parse(stripFence(el.specBox.value));
+    } catch (err) {
+      codeStatus('bad', 'sintaks salah — ' + err.message);
+      return false;
+    }
+    if (!next || typeof next !== 'object' || Array.isArray(next) ||
+        !next.nodes || typeof next.nodes !== 'object' || Array.isArray(next.nodes)) {
+      codeStatus('bad', 'butuh objek dengan "nodes"');
+      return false;
+    }
+
+    state.spec = next;
+    Object.keys(state.spec.nodes).forEach(function (id, i) {
+      if (!state.spec.nodes[id]._col) state.spec.nodes[id]._col = i + 1;
+    });
+    normalizeEdges();
+    rebuildColumns();
+    state.sel = null;
+
+    render();
+    codeStatus('ok', statusLine());
+    return true;
+  }
+
+  function highlight() {
+    Array.prototype.forEach.call(el.preview.querySelectorAll('.topo-node'), function (n) {
+      n.classList.toggle('is-selected', !!state.sel && n.dataset.node === state.sel);
+    });
+  }
+
+  /* -------------------------------------------------------------- nodes */
+
+  function renderNodes() {
+    var spec = state.spec;
+    var ids = Object.keys(spec.nodes);
+    el.nodeList.innerHTML = '';
+
+    if (!ids.length) {
+      el.nodeList.innerHTML = '<div class="empty">Belum ada node.</div>';
+      return;
+    }
+
+    ids.forEach(function (id) {
+      var n = nodeArr(id);
+      var card = document.createElement('div');
+      card.className = 'card' + (state.sel === id ? ' is-on' : '');
+      card.dataset.node = id;
+
+      var head = document.createElement('div');
+      head.className = 'card-head';
+
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.background = toneColor(n[3]) || '#58a6ff';
+
+      var b = document.createElement('b');
+      b.textContent = n[0] || id;
+
+      var idTag = document.createElement('span');
+      idTag.className = 'id mono';
+      idTag.textContent = id;
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'btn btn--sm btn--danger btn--icon';
+      del.style.marginLeft = 'auto';
+      del.textContent = '×';
+      del.title = 'Delete node';
+      del.addEventListener('click', function () {
+        delete state.spec.nodes[id];
+        state.spec.edges = state.spec.edges.filter(function (e) {
+          return e.from !== id && e.to !== id;
+        });
+        if (state.sel === id) state.sel = null;
+        render();
+      });
+
+      head.appendChild(dot);
+      head.appendChild(b);
+      head.appendChild(idTag);
+      head.appendChild(del);
+      card.appendChild(head);
+
+      card.addEventListener('click', function (ev) {
+        if (ev.target.closest('button')) return;
+        state.sel = id;
+        render();
+      });
+
+      /* Drop logo langsung ke kartu node. */
+      card.addEventListener('dragover', function (ev) {
+        if (!ev.dataTransfer) return;
+        ev.preventDefault();
+        card.classList.add('is-drop');
+      });
+      card.addEventListener('dragleave', function () { card.classList.remove('is-drop'); });
+      card.addEventListener('drop', function (ev) {
+        ev.preventDefault();
+        card.classList.remove('is-drop');
+        var logo = ev.dataTransfer.getData('text/x-logo');
+        if (!logo) return;
+        nodeArr(id)[2] = logo;
+        state.sel = id;
+        render();
+        toast('Logo → ' + id);
+      });
+
+      var g2 = document.createElement('div');
+      g2.className = 'grid2';
+
+      var lab = document.createElement('label');
+      lab.className = 'field';
+      lab.innerHTML = '<span>Label</span>';
+      var labInp = document.createElement('input');
+      labInp.className = 'inp';
+      labInp.type = 'text';
+      labInp.value = n[0] || '';
+      labInp.addEventListener('input', function () { n[0] = labInp.value; render(); });
+      lab.appendChild(labInp);
+      g2.appendChild(lab);
+
+      var sub = document.createElement('label');
+      sub.className = 'field';
+      sub.innerHTML = '<span>Sub label</span>';
+      var subInp = document.createElement('input');
+      subInp.className = 'inp';
+      subInp.type = 'text';
+      subInp.value = n[1] || '';
+      subInp.addEventListener('input', function () { n[1] = subInp.value; render(); });
+      sub.appendChild(subInp);
+      g2.appendChild(sub);
+      card.appendChild(g2);
+
+      var g3 = document.createElement('div');
+      g3.className = 'grid3';
+
+      var icon = document.createElement('label');
+      icon.className = 'field';
+      icon.innerHTML = '<span>Icon</span>';
+      var iconInp = document.createElement('input');
+      iconInp.className = 'inp mono';
+      iconInp.type = 'text';
+      iconInp.value = n[2] || '';
+      iconInp.placeholder = 'customer / stack:docker';
+      iconInp.addEventListener('input', function () { n[2] = iconInp.value; render(); });
+      icon.appendChild(iconInp);
+      g3.appendChild(icon);
+
+      var kind = document.createElement('label');
+      kind.className = 'field';
+      kind.innerHTML = '<span>Kind</span>';
+      var kindSel = document.createElement('select');
+      kindSel.className = 'inp';
+      KINDS.forEach(function (k) {
+        var o = document.createElement('option');
+        o.value = k; o.textContent = k;
+        if ((n[3] || 'process') === k) o.selected = true;
+        kindSel.appendChild(o);
+      });
+      kindSel.addEventListener('change', function () { n[3] = kindSel.value; render(); });
+      kind.appendChild(kindSel);
+      g3.appendChild(kind);
+
+      var col = document.createElement('label');
+      col.className = 'field';
+      col.innerHTML = '<span>Col</span>';
+      var colInp = document.createElement('input');
+      colInp.className = 'inp';
+      colInp.type = 'number';
+      colInp.min = '1';
+      colInp.max = '9';
+      colInp.value = String(parseInt(n._col || 1, 10));
+      colInp.addEventListener('input', function () {
+        n._col = Math.max(1, parseInt(colInp.value, 10) || 1);
+        rebuildColumns();
+        render();
+      });
+      col.appendChild(colInp);
+      g3.appendChild(col);
+      card.appendChild(g3);
+
+      var href = document.createElement('label');
+      href.className = 'field';
+      href.style.marginBottom = '0';
+      href.innerHTML = '<span>Link (opsional)</span>';
+      var hrefInp = document.createElement('input');
+      hrefInp.className = 'inp';
+      hrefInp.type = 'url';
+      hrefInp.placeholder = 'https://…';
+      hrefInp.value = n[4] || '';
+      hrefInp.addEventListener('input', function () {
+        if (hrefInp.value) n[4] = hrefInp.value;
+        else if (n.length > 4) n.length = 4;
+        render();
+      });
+      href.appendChild(hrefInp);
+      card.appendChild(href);
+
+      el.nodeList.appendChild(card);
+    });
+  }
+
+  /* -------------------------------------------------------------- edges */
+
+  function renderEdges() {
+    var spec = state.spec;
+    var ids = Object.keys(spec.nodes);
+    el.edgeList.innerHTML = '';
+
+    if (!ids.length) {
+      el.edgeList.innerHTML = '<div class="empty">Tambah node dulu.</div>';
+      return;
+    }
+    if (!spec.edges.length) {
+      el.edgeList.innerHTML = '<div class="empty">Belum ada kabel.</div>';
+    }
+
+    spec.edges.forEach(function (e, i) {
+      var card = document.createElement('div');
+      card.className = 'card';
+
+      var head = document.createElement('div');
+      head.className = 'card-head';
+
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.background = e.back ? '#3fb950' : edgeColor(e);
+
+      var b = document.createElement('b');
+      b.textContent = e.back ? 'Back' : 'Flow';
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'btn btn--sm btn--danger btn--icon';
+      del.style.marginLeft = 'auto';
+      del.textContent = '×';
+      del.addEventListener('click', function () {
+        spec.edges.splice(i, 1);
+        render();
+      });
+
+      head.appendChild(dot);
+      head.appendChild(b);
+      head.appendChild(del);
+      card.appendChild(head);
+
+      /* from -> to */
+      var line = document.createElement('div');
+      line.className = 'edge-line';
+
+      [['From', 'from'], ['To', 'to']].forEach(function (pair) {
+        var lab = document.createElement('label');
+        lab.className = 'field';
+        lab.style.margin = '0';
+        lab.innerHTML = '<span>' + pair[0] + '</span>';
+        var sel = document.createElement('select');
+        sel.className = 'inp';
+        ids.forEach(function (id) {
+          var o = document.createElement('option');
+          o.value = id; o.textContent = id;
+          if (e[pair[1]] === id) o.selected = true;
+          sel.appendChild(o);
+        });
+        sel.addEventListener('change', function () { e[pair[1]] = sel.value; render(); });
+        lab.appendChild(sel);
+        line.appendChild(lab);
+        if (pair[1] === 'from') {
+          var arw = document.createElement('div');
+          arw.className = 'arw';
+          arw.textContent = e.back ? '←' : '→';
+          line.appendChild(arw);
+        }
+      });
+      card.appendChild(line);
+
+      var badge = document.createElement('label');
+      badge.className = 'field';
+      badge.style.marginTop = '8px';
+      badge.innerHTML = '<span>Label / konteks</span>';
+      var badgeInp = document.createElement('input');
+      badgeInp.className = 'inp';
+      badgeInp.type = 'text';
+      badgeInp.placeholder = e.back ? 'Response' : 'Request';
+      badgeInp.value = e.badge || '';
+      badgeInp.addEventListener('input', function () {
+        if (badgeInp.value) e.badge = badgeInp.value;
+        else delete e.badge;
+        render();
+      });
+      badge.appendChild(badgeInp);
+      card.appendChild(badge);
+
+      /* color + width */
+      var sw = document.createElement('div');
+      sw.className = 'field';
+      var swHead = document.createElement('span');
+      swHead.textContent = 'Warna kabel';
+      sw.appendChild(swHead);
+      var swWrap = document.createElement('div');
+      swWrap.className = 'swatches';
+
+      TONES.forEach(function (t) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sw' + ((e.color || '') === t[0] ? ' is-on' : '');
+        btn.style.background = t[1];
+        btn.style.color = t[1];
+        btn.title = t[0];
+        btn.addEventListener('click', function () {
+          if (e.color === t[0]) delete e.color;
+          else e.color = t[0];
+          render();
+        });
+        swWrap.appendChild(btn);
+      });
+
+      var none = document.createElement('button');
+      none.type = 'button';
+      none.className = 'sw sw--none' + (!e.color ? ' is-on' : '');
+      none.title = 'Auto (biru/hijau)';
+      none.addEventListener('click', function () { delete e.color; render(); });
+      swWrap.appendChild(none);
+
+      sw.appendChild(swWrap);
+      card.appendChild(sw);
+
+      var g3 = document.createElement('div');
+      g3.className = 'grid3';
+
+      var wLab = document.createElement('label');
+      wLab.className = 'field';
+      wLab.style.margin = '0';
+      wLab.innerHTML = '<span>Tebal</span>';
+      var wInp = document.createElement('input');
+      wInp.className = 'inp';
+      wInp.type = 'number';
+      wInp.min = '1';
+      wInp.max = '8';
+      wInp.step = '0.5';
+      wInp.value = String(e.width || 2);
+      wInp.addEventListener('input', function () {
+        var v = parseFloat(wInp.value);
+        if (v > 0) e.width = v; else delete e.width;
+        render();
+      });
+      wLab.appendChild(wInp);
+      g3.appendChild(wLab);
+
+      var dLab = document.createElement('label');
+      dLab.className = 'field';
+      dLab.style.margin = '0';
+      dLab.innerHTML = '<span>Gaya</span>';
+      var dSel = document.createElement('select');
+      dSel.className = 'inp';
+      ['solid', 'dashed', 'dotted', 'dash'].forEach(function (d) {
+        var o = document.createElement('option');
+        o.value = d; o.textContent = d;
+        if ((e.dash || 'solid') === d) o.selected = true;
+        dSel.appendChild(o);
+      });
+      dSel.addEventListener('change', function () {
+        if (dSel.value === 'solid') delete e.dash;
+        else e.dash = dSel.value;
+        render();
+      });
+      dLab.appendChild(dSel);
+      g3.appendChild(dLab);
+
+      var mLab = document.createElement('label');
+      mLab.className = 'field';
+      mLab.style.margin = '0';
+      mLab.innerHTML = '<span>Motion</span>';
+      var mSel = document.createElement('select');
+      mSel.className = 'inp';
+      [['flow', 'flow'], ['none', 'none']].forEach(function (m) {
+        var o = document.createElement('option');
+        o.value = m[0]; o.textContent = m[1];
+        if ((e.motion || 'flow') === m[0]) o.selected = true;
+        mSel.appendChild(o);
+      });
+      mSel.addEventListener('change', function () {
+        if (mSel.value === 'flow') delete e.motion;
+        else e.motion = mSel.value;
+        render();
+      });
+      mLab.appendChild(mSel);
+      g3.appendChild(mLab);
+      card.appendChild(g3);
+
+      var backRow = document.createElement('label');
+      backRow.className = 'switch';
+      backRow.style.marginTop = '9px';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!e.back;
+      cb.addEventListener('change', function () {
+        if (cb.checked) { e.back = true; if (!e.color || e.color === 'blue') e.color = 'green'; }
+        else { delete e.back; if (e.color === 'green') delete e.color; }
+        render();
+      });
+      backRow.appendChild(cb);
+      backRow.appendChild(document.createTextNode('Jalur balik (response)'));
+      card.appendChild(backRow);
+
+      el.edgeList.appendChild(card);
+    });
+  }
+
+  /* --------------------------------------------------------------- look */
+
+  function renderLook() {
+    var spec = state.spec;
+    if (document.activeElement !== $('fTitle')) $('fTitle').value = spec.title || '';
+    Array.prototype.forEach.call($('fVertical').children, function (b) {
+      var on = spec.vertical === false ? b.dataset.v === '0' : b.dataset.v === '1';
+      b.classList.toggle('is-on', on);
+    });
+    $('fBadges').checked = spec.badges !== false;
+    if (document.activeElement !== $('fFlow')) $('fFlow').value = (spec.legend && spec.legend.flow) || '';
+    if (document.activeElement !== $('fBack')) $('fBack').value = (spec.legend && spec.legend.back) || '';
+    if (document.activeElement !== $('fFacLabel')) $('fFacLabel').value = spec.facilitiesLabel || '';
+
+    var facs = Array.isArray(spec.facilities) ? spec.facilities : [];
+    el.facList.innerHTML = '';
+    if (!facs.length) el.facList.innerHTML = '<div class="empty">Belum ada chip.</div>';
+
+    facs.forEach(function (f, i) {
+      var icon = Array.isArray(f) ? f[0] : '';
+      var label = Array.isArray(f) ? f[1] : f;
+      var row = document.createElement('div');
+      row.className = 'row';
+
+      var ic = document.createElement('input');
+      ic.className = 'inp mono';
+      ic.style.flex = '0 0 96px';
+      ic.placeholder = 'server';
+      ic.value = icon;
+      ic.addEventListener('input', function () {
+        state.spec.facilities[i] = [ic.value, lab.value];
+        render();
+      });
+
+      var lab = document.createElement('input');
+      var labInp = document.createElement('input');
+      labInp.className = 'inp';
+      labInp.placeholder = 'Core';
+      labInp.value = label;
+      labInp.addEventListener('input', function () {
+        state.spec.facilities[i] = [ic.value, labInp.value];
+        render();
+      });
+      lab.appendChild(labInp);
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'btn btn--sm btn--danger btn--icon';
+      del.textContent = '×';
+      del.addEventListener('click', function () {
+        state.spec.facilities.splice(i, 1);
+        render();
+      });
+
+      row.appendChild(ic);
+      row.appendChild(labInp);
+      row.appendChild(del);
+      el.facList.appendChild(row);
+    });
+
+    /* default cable swatches */
+    if (!el.defSwatches.childElementCount) {
+      TONES.forEach(function (t) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sw';
+        btn.style.background = t[1];
+        btn.style.color = t[1];
+        btn.title = t[0];
+        btn.dataset.tone = t[0];
+        btn.addEventListener('click', function () {
+          state.def.color = t[0];
+          paintDefaults();
+        });
+        el.defSwatches.appendChild(btn);
+      });
+    }
+    paintDefaults();
+  }
+
+  function paintDefaults() {
+    Array.prototype.forEach.call(el.defSwatches.children, function (b) {
+      b.classList.toggle('is-on', b.dataset.tone === state.def.color);
+    });
+    $('defWidth').value = String(state.def.width);
+    $('defDash').value = state.def.dash;
+    $('defMotion').value = state.def.motion;
+  }
+
+  /* -------------------------------------------------------------- logos */
+
+  function renderLogos() {
+    if (!window.AlurLogos) return;
+    var sel = el.logoCat;
+    if (!sel.options.length) {
+      var all = document.createElement('option');
+      all.value = 'all';
+      all.textContent = 'All · ' + AlurLogos.total;
+      sel.appendChild(all);
+      AlurLogos.categories().forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.id;
+        o.textContent = c.label + ' · ' + c.count;
+        sel.appendChild(o);
+      });
+    }
+
+    el.logoGrid.innerHTML = '';
+    AlurLogos.search(el.logoSearch.value, sel.value).slice(0, 300).forEach(function (entry) {
+      var tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.draggable = true;
+      tile.title = entry.id + ' — drag to a node';
+
+      var res = AlurLogos.resolve(entry.id);
+      if (res && res.kind === 'file') {
+        var img = document.createElement('img');
+        img.src = res.href;
+        img.alt = entry.name;
+        img.loading = 'lazy';
+        img.draggable = false;
+        tile.appendChild(img);
+      } else if (res && res.kind === 'sprite') {
+        tile.innerHTML = '<svg viewBox="0 0 24 24"><use href="' + res.ref + '"></use></svg>';
+      }
+
+      tile.addEventListener('dragstart', function (ev) {
+        ev.dataTransfer.setData('text/x-logo', entry.id);
+        ev.dataTransfer.setData('text/plain', entry.id);
+        ev.dataTransfer.effectAllowed = 'copy';
+      });
+
+      tile.addEventListener('click', function () {
+        if (!state.sel) { toast('Pilih node dulu'); return; }
+        nodeArr(state.sel)[2] = entry.id;
+        render();
+        toast('Logo → ' + state.sel);
+      });
+
+      el.logoGrid.appendChild(tile);
+    });
+  }
+
+  /* --------------------------------------------------------- drag target */
+
+  function wirePreviewDrop() {
+    el.preview.addEventListener('dragover', function (ev) {
+      var node = ev.target.closest && ev.target.closest('.topo-node');
+      if (!node) return;
+      ev.preventDefault();
+      if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'copy';
+      Array.prototype.forEach.call(el.preview.querySelectorAll('.topo-node'), function (n) {
+        n.classList.toggle('is-drop', n === node);
+      });
+    });
+
+    el.preview.addEventListener('dragleave', function (ev) {
+      var node = ev.target.closest && ev.target.closest('.topo-node');
+      if (node) node.classList.remove('is-drop');
+    });
+
+    el.preview.addEventListener('drop', function (ev) {
+      var node = ev.target.closest && ev.target.closest('.topo-node');
+      if (!node) return;
+      ev.preventDefault();
+      var logo = ev.dataTransfer.getData('text/x-logo') || ev.dataTransfer.getData('text/plain');
+      node.classList.remove('is-drop');
+      if (!logo) return;
+      var id = node.dataset.node;
+      if (!id || !state.spec.nodes[id]) return;
+      nodeArr(id)[2] = logo;
+      state.sel = id;
+      render();
+      toast('Logo → ' + id);
+    });
+  }
+
+  /* --------------------------------------------------------------- save */
+
+  function queueSave() {
+    clearTimeout(queueSave._t);
+    queueSave._t = setTimeout(function () {
+      try { localStorage.setItem(SAVE_KEY, JSON.stringify(cleanSpec())); } catch (err) {}
+    }, 300);
+  }
+
+  function loadInitial() {
+    var spec = null;
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (raw) spec = JSON.parse(raw);
+    } catch (err) {}
+    if (!spec || !spec.nodes) spec = clone(PRESETS[0].spec);
+
+    state.spec = spec;
+    (spec.columns || []).forEach(function (c, i) {
+      var ids = Array.isArray(c) ? c : (c && c.nodes) || [];
+      ids.forEach(function (id) {
+        if (spec.nodes[id]) spec.nodes[id]._col = i + 1;
+      });
+    });
+    Object.keys(spec.nodes).forEach(function (id) {
+      if (!spec.nodes[id]._col) spec.nodes[id]._col = 1;
+    });
+    normalizeEdges();
+  }
+
+  /* ------------------------------------------------------------- events */
+
+  Array.prototype.forEach.call(document.querySelectorAll('.dock-tab'), function (tab) {
+    tab.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('.dock-tab'), function (t) {
+        t.classList.toggle('is-on', t === tab);
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.pane'), function (p) {
+        p.classList.toggle('is-on', p.dataset.pane === tab.dataset.pane);
+      });
+      if (tab.dataset.pane === 'logos') renderLogos();
+      if (tab.dataset.pane === 'json') {
+        el.specBox.value = fence();
+        codeStatus('ok', statusLine());
+      }
+    });
+  });
+
+  PRESETS.forEach(function (p) {
+    var o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.label;
+    el.presetSel.appendChild(o);
+  });
+
+  el.presetSel.addEventListener('change', function () {
+    var p = PRESETS.filter(function (x) { return x.id === el.presetSel.value; })[0];
+    el.presetSel.value = '';
+    if (!p) return;
+    var n = Object.keys(state.spec.nodes || {}).length;
+    if (n > 1 && !confirm('Replace the current diagram (' + n + ' nodes) with "' + p.label + '"?')) return;
+    state.spec = clone(p.spec);
+    state.sel = null;
+    Object.keys(state.spec.nodes).forEach(function (id, i) {
+      state.spec.nodes[id]._col = i + 1;
+    });
+    normalizeEdges();
+    render();
+    toast(p.label);
+  });
+
+  $('addNode').addEventListener('click', function () {
+    var id = uid('N');
+    state.spec.nodes[id] = [id, 'Sub label', 'circle-dot', 'process'];
+    state.spec.nodes[id]._col = 1;
+    rebuildColumns();
+    state.sel = id;
+    render();
+  });
+
+  $('addEdge').addEventListener('click', function () {
+    var ids = Object.keys(state.spec.nodes);
+    if (ids.length < 2) { toast('Butuh minimal dua node'); return; }
+    state.spec.edges.push({
+      from: ids[0],
+      to: ids[1],
+      color: state.def.color,
+      width: state.def.width,
+      dash: state.def.dash === 'solid' ? undefined : state.def.dash,
+      motion: state.def.motion === 'flow' ? undefined : state.def.motion
+    });
+    var e = state.spec.edges[state.spec.edges.length - 1];
+    if (e.dash === undefined) delete e.dash;
+    if (e.motion === undefined) delete e.motion;
+    render();
+  });
+
+  $('addFac').addEventListener('click', function () {
+    state.spec.facilities = state.spec.facilities || [];
+    state.spec.facilities.push(['circle-dot', 'Chip']);
+    render();
+  });
+
+  function setTitle(v) {
+    if (v) state.spec.title = v;
+    else delete state.spec.title;
+    if (document.activeElement !== el.docTitle) el.docTitle.value = state.spec.title || '';
+    if (document.activeElement !== $('fTitle')) $('fTitle').value = state.spec.title || '';
+    queueSave();
+  }
+
+  el.docTitle.addEventListener('input', function () { setTitle(el.docTitle.value); });
+
+  $('fTitle').addEventListener('input', function (e) {
+    setTitle(e.target.value);
+    render();
+  });
+
+  Array.prototype.forEach.call($('fVertical').children, function (b) {
+    b.addEventListener('click', function () {
+      state.spec.vertical = b.dataset.v !== '0';
+      render();
+    });
+  });
+
+  $('fBadges').addEventListener('change', function (e) {
+    state.spec.badges = e.target.checked;
+    render();
+  });
+
+  function setLegend(which, value) {
+    state.spec.legend = state.spec.legend || {};
+    if (value) state.spec.legend[which] = value;
+    else delete state.spec.legend[which];
+    render();
+  }
+
+  $('fFlow').addEventListener('input', function (e) { setLegend('flow', e.target.value); });
+  $('fBack').addEventListener('input', function (e) { setLegend('back', e.target.value); });
+
+  /* Terapkan konteks ke semua kabel: ini yang membuat "Request/Response" jadi
+     label nyata di tiap kabel, bukan cuma legenda.
+     Apply the context to every cable so Request/Response becomes a real label
+     on each edge, not just a legend. */
+  $('applyCtx').addEventListener('click', function () {
+    var flow = ($('fFlow').value || '').trim();
+    var back = ($('fBack').value || '').trim();
+    if (!flow && !back) { toast('Isi label dulu'); return; }
+    state.spec.edges.forEach(function (e) {
+      var label = e.back ? back : flow;
+      if (label) e.badge = label;
+      else delete e.badge;
+    });
+    render();
+    toast('Konteks diterapkan ke ' + state.spec.edges.length + ' kabel');
+  });
+
+  $('clearCtx').addEventListener('click', function () {
+    state.spec.edges.forEach(function (e) { delete e.badge; });
+    render();
+    toast('Label kabel dikosongkan');
+  });
+
+  $('defWidth').addEventListener('input', function (e) {
+    state.def.width = parseFloat(e.target.value) || 2;
+  });
+  $('defDash').addEventListener('change', function (e) { state.def.dash = e.target.value; });
+  $('defMotion').addEventListener('change', function (e) { state.def.motion = e.target.value; });
+
+  $('fFacLabel').addEventListener('input', function (e) {
+    if (e.target.value) state.spec.facilitiesLabel = e.target.value;
+    else delete state.spec.facilitiesLabel;
+    render();
+  });
+
+  var codeTimer = null;
+
+  el.specBox.addEventListener('input', function () {
+    clearTimeout(codeTimer);
+    codeTimer = setTimeout(liveParse, 220);
+  });
+
+  el.specBox.addEventListener('blur', function () {
+    clearTimeout(codeTimer);
+    if (liveParse()) el.specBox.value = fence();
+  });
+
+  el.specBox.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      var s = this.selectionStart, t = this.selectionEnd;
+      this.value = this.value.slice(0, s) + '  ' + this.value.slice(t);
+      this.selectionStart = this.selectionEnd = s + 2;
+      clearTimeout(codeTimer);
+      liveParse();
+    }
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('Tersalin ```topology'); }
+    catch (err) { toast('Gagal menyalin — pakai Export'); }
+    document.body.removeChild(ta);
+  }
+
+  function copyFence() {
+    var text = fence();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { toast('Tersalin ```topology'); },
+        function () { fallbackCopy(text); });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  $('copyBtn').addEventListener('click', copyFence);
+
+  $('exportBtn').addEventListener('click', function () {
+    var blob = new Blob([fence() + '\n'], { type: 'text/markdown' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'topology.md';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast('Export topology.md');
+  });
+
+  $('guidesBtn').addEventListener('click', function (e) {
+    state.guides = !state.guides;
+    $('stage').classList.toggle('is-guides', state.guides);
+    e.currentTarget.textContent = 'Guides: ' + (state.guides ? 'on' : 'off');
+    e.currentTarget.classList.toggle('is-on', state.guides);
+  });
+
+  $('dockToggle').addEventListener('click', function () {
+    $('dock').classList.toggle('is-open');
+  });
+
+  el.logoSearch.addEventListener('input', renderLogos);
+  el.logoCat.addEventListener('change', renderLogos);
+
+  el.preview.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('.topo-node');
+    if (!card) return;
+    state.sel = card.dataset.node || null;
+    render();
+  });
+
+  /* ----------------------------------------------------------- bootstrap */
+
+  loadInitial();
+  rebuildColumns();
+  render();
+  renderLogos();
+  wirePreviewDrop();
+  paintDefaults();
+
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(render, 200);
+  });
+})();
+</script>
+</body>
+</html>

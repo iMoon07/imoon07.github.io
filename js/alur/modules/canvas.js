@@ -49,24 +49,86 @@
         return { cols: cols, rows: rows };
     }
 
-    function drawTableNode(parent, n, selected) {
-        var w = n.w || 420;
-        var h = n.h || 240;
+    /* Table nodes stay editable wherever they render: the editor and the
+       reading page share this code, so readers can add rows and type too.
+       Mutating the node object is enough — no host wiring required. */
+    function mutateTable(n, action) {
+        var d = tableData(n);
+        if (action === 'add-row') {
+            d.rows.push(new Array(d.cols.length).fill(''));
+        } else if (action === 'del-row') {
+            if (d.rows.length > 1) d.rows.pop();
+        } else if (action === 'add-col') {
+            d.cols.push('Column ' + (d.cols.length + 1));
+            d.rows.forEach(function (row) { row.push(''); });
+        } else if (action === 'del-col') {
+            if (d.cols.length > 1) {
+                d.cols.pop();
+                d.rows.forEach(function (row) { row.pop(); });
+            }
+        }
+        n.columns = d.cols;
+        n.rows = d.rows;
+        return d;
+    }
+
+    function writeCell(n, cell) {
+        var d = tableData(n);
+        var r = parseInt(cell.getAttribute('data-r'), 10);
+        var c = parseInt(cell.getAttribute('data-c'), 10);
+        if (r === -1) {
+            if (d.cols[c] != null) d.cols[c] = cell.textContent;
+        } else if (d.rows[r] && d.rows[r][c] != null) {
+            d.rows[r][c] = cell.textContent;
+        }
+        n.columns = d.cols;
+        n.rows = d.rows;
+    }
+
+    function fillTable(table, n) {
         var data = tableData(n);
-        var g = kit.g(parent, 'alur-node alur-canvas-node alur-table-node' + (selected ? ' is-selected' : ''));
-        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
-        g.setAttribute('data-node-id', n.id);
-        if (n.opacity != null) g.setAttribute('opacity', n.opacity);
-        var inner = kit.g(g, 'alur-node-inner');
-        kit.rect(inner, 0, 0, w, h, 'alur-node-box alur-table-box', {
-            rx: 8, fill: '#0c1117', stroke: kit.color(n.color || '#3d4652'), 'stroke-width': 1.2
+        table.innerHTML = '';
+
+        var thead = document.createElement('thead');
+        var htr = document.createElement('tr');
+        data.cols.forEach(function (label, c) {
+            var th = document.createElement('th');
+            th.setAttribute('contenteditable', 'true');
+            th.setAttribute('spellcheck', 'false');
+            th.setAttribute('data-table-node', n.id);
+            th.setAttribute('data-r', '-1');
+            th.setAttribute('data-c', String(c));
+            th.textContent = label;
+            htr.appendChild(th);
         });
-        var fo = kit.el('foreignObject', {
-            x: 0, y: 0, width: Math.max(20, w), height: Math.max(20, h), class: 'alur-table-fo'
-        }, inner);
-        var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        thead.appendChild(htr);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+        data.rows.forEach(function (row, r) {
+            var tr = document.createElement('tr');
+            data.cols.forEach(function (_, c) {
+                var td = document.createElement('td');
+                td.setAttribute('contenteditable', 'true');
+                td.setAttribute('spellcheck', 'false');
+                td.setAttribute('data-table-node', n.id);
+                td.setAttribute('data-r', String(r));
+                td.setAttribute('data-c', String(c));
+                td.textContent = row[c] || '';
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        return data;
+    }
+
+    /* Table UI shared by the canvas node and the plain reading-page table.
+       Both stay editable; only the chrome around them differs. */
+    function buildTableUI(n, onChange) {
+        var div = document.createElement('div');
         div.className = 'alur-table-wrap';
-        div.setAttribute('data-table-node', n.id);
+        if (n.id) div.setAttribute('data-table-node', n.id);
 
         var tools = document.createElement('div');
         tools.className = 'alur-table-tools';
@@ -84,45 +146,68 @@
         scroll.className = 'alur-table-scroll';
         var table = document.createElement('table');
         table.className = 'alur-table';
-        var thead = document.createElement('thead');
-        var htr = document.createElement('tr');
-        data.cols.forEach(function (label, c) {
-            var th = document.createElement('th');
-            th.setAttribute('contenteditable', 'true');
-            th.setAttribute('spellcheck', 'false');
-            th.setAttribute('data-table-node', n.id);
-            th.setAttribute('data-r', '-1');
-            th.setAttribute('data-c', String(c));
-            th.textContent = label;
-            htr.appendChild(th);
-        });
-        thead.appendChild(htr);
-        table.appendChild(thead);
-        var tbody = document.createElement('tbody');
-        data.rows.forEach(function (row, r) {
-            var tr = document.createElement('tr');
-            data.cols.forEach(function (_, c) {
-                var td = document.createElement('td');
-                td.setAttribute('contenteditable', 'true');
-                td.setAttribute('spellcheck', 'false');
-                td.setAttribute('data-table-node', n.id);
-                td.setAttribute('data-r', String(r));
-                td.setAttribute('data-c', String(c));
-                td.textContent = row[c] || '';
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
+        fillTable(table, n);
         scroll.appendChild(table);
         div.appendChild(scroll);
-        fo.appendChild(div);
+
+        div.addEventListener('click', function (ev) {
+            var btn = ev.target.closest && ev.target.closest('[data-table-action]');
+            if (!btn) return;
+            ev.preventDefault();
+            ev.stopPropagation();
+            var action = btn.getAttribute('data-table-action');
+            mutateTable(n, action);
+            fillTable(table, n);
+            if (onChange) onChange(action);
+        });
+
+        div.addEventListener('input', function (ev) {
+            var cell = ev.target.closest && ev.target.closest('td[data-r], th[data-r]');
+            if (!cell) return;
+            writeCell(n, cell);
+        });
+
+        return { root: div, table: table };
+    }
+
+    function drawTableNode(parent, n, selected) {
+        var w = n.w || 420;
+        var h = n.h || 240;
+        var g = kit.g(parent, 'alur-node alur-canvas-node alur-table-node' + (selected ? ' is-selected' : ''));
+        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+        g.setAttribute('data-node-id', n.id);
+        if (n.opacity != null) g.setAttribute('opacity', n.opacity);
+        var inner = kit.g(g, 'alur-node-inner');
+        kit.rect(inner, 0, 0, w, h, 'alur-node-box alur-table-box', {
+            rx: 8, fill: '#0c1117', stroke: kit.color(n.color || '#3d4652'), 'stroke-width': 1.2
+        });
+        var fo = kit.el('foreignObject', {
+            x: 0, y: 0, width: Math.max(20, w), height: Math.max(20, h), class: 'alur-table-fo'
+        }, inner);
+        fo.appendChild(buildTableUI(n, function (action) {
+            var svg = parent.ownerSVGElement;
+            if (!svg || typeof global.CustomEvent !== 'function') return;
+            try {
+                svg.dispatchEvent(new global.CustomEvent('alur:table', {
+                    bubbles: true,
+                    detail: {
+                        id: n.id,
+                        action: action,
+                        columns: (n.columns || []).slice(),
+                        rows: (n.rows || []).map(function (r) { return r.slice(); })
+                    }
+                }));
+            } catch (err) {}
+        }).root);
         return g;
     }
 
     function drawNode(parent, n, selected) {
         if (n.shape === 'module' && n.module) {
             return drawModuleNode(parent, n, selected);
+        }
+        if (n.shape === 'chart') {
+            return drawChartNode(parent, n, selected);
         }
         if (n.shape === 'table') {
             return drawTableNode(parent, n, selected);
@@ -259,6 +344,39 @@
         if (n.sub) {
             kit.text(inner, labelX, labelY + size * lineHeight + 2, n.sub, 'alur-node-sub', { 'text-anchor': anchor });
         }
+        return g;
+    }
+
+    /* A chart template becomes a flat node: the chart is the content, there is
+       no card wrapper, and the normal node inspector edits it. */
+    function drawChartNode(parent, n, selected) {
+        var w = n.w || 440;
+        var h = n.h || 300;
+        var g = kit.g(parent, 'alur-node alur-canvas-node alur-chart-node' +
+            (selected ? ' is-selected' : ''));
+        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+        g.setAttribute('data-node-id', n.id);
+        if (n.opacity != null) g.setAttribute('opacity', n.opacity);
+        var inner = kit.g(g, 'alur-node-inner');
+        /* No card: no panel, no frame, no title bar. The chart is the object.
+           A fully transparent rect only carries the pointer so the chart can be
+           selected, moved and resized like any other node. */
+        kit.rect(inner, 0, 0, w, h, 'alur-node-box alur-chart-box', {
+            rx: 8, fill: '#0c1117', stroke: kit.color(n.color || 'blue'),
+            'stroke-width': 1.2, 'pointer-events': 'all'
+        });
+        var fo = kit.el('foreignObject', {
+            x: 0, y: 0, width: Math.max(12, w), height: Math.max(12, h),
+            'class': 'alur-chart-fo'
+        }, inner);
+        var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        div.className = 'alur-module-embed';
+        div.setAttribute('data-module', 'chart');
+        /* The canvas already paints one grid behind everything. The chart must
+           not paint a second, differently scaled grid inside its own box. */
+        var chartSpec = Object.assign({}, n.staticSpec || { module: 'chart' }, { grid: false });
+        div.setAttribute('data-spec', JSON.stringify(chartSpec));
+        fo.appendChild(div);
         return g;
     }
 
@@ -429,13 +547,69 @@
         };
     }
 
+    /* A canvas that only holds tables renders as plain article tables: no
+       artboard, no dark card, no blue frame — just the table, growing with the
+       page when a reader adds rows. */
+    function isTableOnly(spec) {
+        var ids = Object.keys(spec.nodes || {});
+        if (!ids.length) return false;
+        if ((spec.edges || []).length || (spec.drawings || []).length) return false;
+        return ids.every(function (id) {
+            var n = spec.nodes[id];
+            return n && n.shape === 'table';
+        });
+    }
+
+    function mountTableOnly(host, spec) {
+        var wrap = document.createElement('div');
+        wrap.className = 'alur-tables';
+
+        Object.keys(spec.nodes || {}).forEach(function (id) {
+            var n = spec.nodes[id];
+            if (!n) return;
+            n.id = id;
+            var ui = buildTableUI(n, function (action) {
+                if (typeof global.CustomEvent !== 'function') return;
+                try {
+                    wrap.dispatchEvent(new global.CustomEvent('alur:table', {
+                        bubbles: true,
+                        detail: {
+                            id: id,
+                            action: action,
+                            columns: (n.columns || []).slice(),
+                            rows: (n.rows || []).map(function (r) { return r.slice(); })
+                        }
+                    }));
+                } catch (err) {}
+            });
+            wrap.appendChild(ui.root);
+        });
+
+        host.appendChild(wrap);
+        return {
+            destroy: function () {
+                if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+            }
+        };
+    }
+
     function mount(host, spec, env) {
+        /* The reading page renders a table-only spec as plain article tables.
+           In the editor a table-only canvas is still a canvas: nodes must be
+           selectable and resizable, so the artboard path is kept. */
+        if (!(env && env.editor) && isTableOnly(spec)) return mountTableOnly(host, spec);
         var W = spec.width || 900;
         var H = spec.height || 520;
         var svg = kit.svgRoot(host, { w: W, h: H, label: spec.title || 'Alur canvas' });
         var zoom = Math.max(0.35, Math.min(3, spec.zoom || 1));
-        svg.setAttribute('viewBox',
-            (spec.panX || 0) + ' ' + (spec.panY || 0) + ' ' + (W / zoom) + ' ' + (H / zoom));
+        var fit = !env || !env.editor;
+        var vb = {
+            x: spec.panX || 0,
+            y: spec.panY || 0,
+            w: W / zoom,
+            h: H / zoom
+        };
+        svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
         var palette = (env && env.palette) || kit.palette;
         var speed = spec.speed || 1;
         var stops = [];
@@ -469,9 +643,36 @@
             nodeEls[id] = drawNode(nodeLayer, nodes[id], selected.indexOf(id) >= 0);
         });
 
+        /* Reading page only: shrink table boxes to their content, then frame
+           the whole drawing so it fills the column. */
+        function fitView() {
+            Array.prototype.forEach.call(svg.querySelectorAll('.alur-table-node'), function (g) {
+                var wrap = g.querySelector('.alur-table-wrap');
+                var fo = g.querySelector('.alur-table-fo');
+                var box = g.querySelector('.alur-table-box');
+                if (!wrap || !fo) return;
+                var tools = wrap.querySelector('.alur-table-tools');
+                var table = wrap.querySelector('.alur-table');
+                var h = Math.max(90, (tools ? tools.offsetHeight : 0) + (table ? table.offsetHeight : 0) + 2);
+                fo.setAttribute('height', h);
+                if (box) box.setAttribute('height', h);
+            });
+
+            var bb = null;
+            try { bb = nodeLayer.getBBox(); } catch (err) {}
+            if (!bb || !bb.width || !bb.height) return;
+            var pad = 24;
+            svg.setAttribute('viewBox',
+                (bb.x - pad) + ' ' + (bb.y - pad) + ' ' +
+                (bb.width + pad * 2) + ' ' + (bb.height + pad * 2));
+        }
+
         var embeddedModules = [];
         Object.keys(nodes).forEach(function (id) {
-            if (!nodes[id] || nodes[id].shape !== 'module' || !nodes[id].module) return;
+            var host = nodes[id];
+            if (!host) return;
+            if (host.shape !== 'module' && !(host.shape === 'chart' && host.staticSpec)) return;
+            if (host.shape === 'module' && !host.module) return;
             var holder = nodeEls[id] && nodeEls[id].querySelector
                 ? nodeEls[id].querySelector('.alur-module-embed') : null;
             if (!holder) return;
@@ -484,6 +685,8 @@
                 holder.innerHTML = '<p class="alur-error">Module error</p>';
             }
         });
+
+        if (fit) fitView();
 
         /* Sembunyikan kabel di dalam node supaya tidak menimpa label/logo.
            Node tetap transparan; hanya bagian kabel yang masuk area node yang

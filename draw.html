@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alur Visual Lab — sketch canvas</title>
-<link rel="stylesheet" href="css/alur.css?v=4">
+<link rel="stylesheet" href="css/alur.css?v=6">
 <style>
   :root {
     --bg: #090c11;
@@ -54,9 +54,14 @@
 
   #stage.alur {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Starts under the floating topbar: a node or an arrow at the top of the
+       canvas is never hidden behind it. */
+    top: 56px;
+    width: auto;
+    height: auto;
     /* The canvas owns the gesture. Without this the browser starts a scroll
        and cancels the pointer before pointerup, so touch links never finish. */
     touch-action: none;
@@ -371,6 +376,18 @@
     border: 0;
     background: transparent;
   }
+  /* Fit is the button people look for: paint it so it is impossible to miss. */
+  #zoomFit {
+    min-width: 46px;
+    margin-left: 4px;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #0b0f14;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  #zoomFit:hover { filter: brightness(1.1); }
+  #zoomFit:active { transform: translateY(1px); }
   .zoom-cluster {
     display: flex;
     align-items: center;
@@ -960,6 +977,12 @@
     overflow: visible;
     background: transparent;
   }
+  .alur-chart-fo { pointer-events: none; }
+  .alur-chart-box { fill: #0c1117; }
+  .alur-chart-node.is-selected .alur-chart-box {
+    stroke: var(--accent);
+    stroke-dasharray: 4 3;
+  }
   .alur-module-embed .alur-host { width: 100%; height: 100%; }
   .alur-module-embed .alur-svg { width: 100%; height: 100%; }
 
@@ -1359,7 +1382,9 @@
 
   /* ------------------------------------------------------ clean canvas */
   #stage.alur {
-    background: transparent;
+    /* The canvas paints its own full-bleed background: there is no page showing
+       through and no small artboard box floating in the middle. */
+    background: #111827;
   }
 
   #stage.alur .alur-canvas-grid { pointer-events: none; }
@@ -1869,14 +1894,8 @@
 </style>
 </head>
 <body>
-<div id="stage" class="alur" data-module="canvas"></div>
+<div id="stage" class="alur" data-module="canvas" data-editor="1"></div>
 
-<div id="emptyHint" class="empty-hint" hidden>
-  <span class="ico">▦</span>
-  <b>Sketch canvas</b>
-  <span>Pick a tool, then drag to draw. Add text, shapes, arrows, and freehand strokes.</span>
-  <span>Open Assets (L) to insert Flow, Chart, Pipeline, or Graph modules.</span>
-</div>
 
 <header class="topbar">
   <a class="brand" href="index.html#home" title="Alur Visual Lab by iMoon07">
@@ -1891,6 +1910,7 @@
   <nav class="top-nav" aria-label="Site">
     <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
     <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
+    <a class="top-link" href="topology.html" title="Topology editor"><span class="ico">⌗</span><span class="lbl">Topology</span></a>
     <a class="top-link" href="index.html#about" title="About"><span class="ico">☺</span><span class="lbl">About</span></a>
   </nav>
 </header>
@@ -1907,6 +1927,7 @@
   <button class="tool" data-tool="line" title="Line (L / 6)" data-name="Line (L / 6)" aria-label="Line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19L19 5"/><circle cx="5" cy="19" r="1.4"/><circle cx="19" cy="5" r="1.4"/></svg><span class="tool-text">Line</span></button>
   <button class="tool" data-tool="draw" title="Draw (P / 7)" data-name="Draw (P / 7)" aria-label="Draw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 6l3 3"/></svg><span class="tool-text">Draw</span></button>
   <button class="tool" data-tool="text" title="Text (T / 8)" data-name="Text (T / 8)" aria-label="Text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M12 6v13M8 19h8"/></svg><span class="tool-text">Text</span></button>
+  <button class="tool" data-tool="table" title="Table (9)" data-name="Table (9)" aria-label="Table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></svg><span class="tool-text">Table</span></button>
   <button class="tool" data-tool="eraser" title="Eraser (E / 0)" data-name="Eraser (E / 0)" aria-label="Eraser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20l-4-4L14 5l5 5L8 21z"/><path d="M9 10l5 5"/></svg><span class="tool-text">Eraser</span></button>
   <button class="tool" data-tool="laser" title="Laser (K)" data-name="Laser (K)" aria-label="Laser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="15" r="2"/><path d="M10 14L20 4M15 4h5v5"/></svg><span class="tool-text">Laser</span></button>
   <div class="tool-sep"></div>
@@ -1929,7 +1950,7 @@
     <button id="zoomOut" class="tool" title="Zoom out" data-name="Zoom out" aria-label="Zoom out">−</button>
     <span id="zoomVal" class="zoom-val">100%</span>
     <button id="zoomIn" class="tool" title="Zoom in" data-name="Zoom in" aria-label="Zoom in">+</button>
-    <button id="zoomFit" class="tool" title="Zoom to fit" data-name="Zoom to fit" aria-label="Zoom to fit">Fit</button>
+    <button id="zoomFit" class="tool" title="Fit — show the whole canvas (Ctrl+0)" data-name="Fit (Ctrl+0)" aria-label="Zoom to fit">Fit</button>
   </div>
 </div>
 
@@ -1954,6 +1975,7 @@
       <button class="mobile-menu-item" type="button" data-mobile-tool="line"><span class="mi">╱</span>Line</button>
       <button class="mobile-menu-item" type="button" data-mobile-tool="draw"><span class="mi">✎</span>Draw</button>
       <button class="mobile-menu-item" type="button" data-mobile-tool="text"><span class="mi">T</span>Text</button>
+      <button class="mobile-menu-item" type="button" data-mobile-tool="table"><span class="mi">▦</span>Table</button>
       <button class="mobile-menu-item" type="button" data-mobile-tool="eraser"><span class="mi">⌫</span>Eraser</button>
       <button class="mobile-menu-item" type="button" data-mobile-tool="laser"><span class="mi">✦</span>Laser</button>
       <button class="mobile-menu-item" type="button" data-mobile-action="delete"><span class="mi">✕</span>Delete</button>
@@ -2230,13 +2252,12 @@
           <button class="ghost" data-scene-module="pipeline" title="Insert a Pipeline block into the current canvas"><span class="btn-ico">＋</span>Pipeline</button>
           <button class="ghost" data-scene-module="graph" title="Insert a Graph block into the current canvas"><span class="btn-ico">＋</span>Graph</button>
           <button class="ghost" data-scene-module="table" title="Insert an editable Table block into the current canvas"><span class="btn-ico">＋</span>Table</button>
-          <button class="ghost" data-scene-module="topology" title="Insert a Topology block into the current canvas"><span class="btn-ico">＋</span>Topology</button>
         </div>
       </div>
 
       <div class="scene-step">
-        <div class="scene-step-head"><b>2 · Scene templates</b><span>replace canvas</span></div>
-        <p class="hint">Loads a complete scene. Undo restores the previous canvas.</p>
+        <div class="scene-step-head"><b>2 · Scene templates</b><span>add to canvas</span></div>
+        <p class="hint">Adds the whole scene into the canvas you are on. Nothing is replaced, and every block stays editable.</p>
         <select id="preset" hidden></select>
         <div id="templateLibrary" class="template-library" aria-label="All scene templates"></div>
       </div>
@@ -2253,7 +2274,7 @@
           <label>Motion
             <select id="motion"></select>
           </label>
-          <p class="hint">Applies to every edge in flow and pipeline.</p>
+          <p class="hint">Applies to every edge in this scene.</p>
         </div>
 
         <label id="chartTypeRow" style="display:none">Chart type
@@ -2300,14 +2321,7 @@
       </div>
 
       <details class="scene-advanced">
-        <summary>Advanced · spec JSON &amp; export</summary>
-        <label>Spec JSON
-          <textarea id="spec" spellcheck="false"></textarea>
-        </label>
-        <div class="row">
-          <button id="apply" class="ghost">Apply JSON</button>
-          <button id="reset" class="ghost">Reset</button>
-        </div>
+        <summary>Export</summary>
         <div class="row">
           <button id="exportJson" class="ghost">Export JSON</button>
           <button id="exportSvg" class="ghost">Export SVG</button>
@@ -2315,6 +2329,9 @@
         <div class="row">
           <button id="exportDraw" class="ghost">Export draw</button>
           <button id="copyDraw" class="ghost">Copy draw</button>
+        </div>
+        <div class="row">
+          <button id="reset" class="ghost">Reset scene</button>
         </div>
         <p class="hint">Export produces a fenced <code>```draw</code> block: JSON that read.html can render again.</p>
         <p class="hint">Scene saves to this browser automatically, so a refresh keeps your canvas. Reset clears it.</p>
@@ -2348,20 +2365,18 @@
 <button id="focusExit" class="focus-exit" title="Exit focus mode">Exit focus</button>
 
 <script src="js/topology-icons.js?v=4"></script>
-<script src="js/topology.js?v=4"></script>
 <script src="js/logo-manifest.js"></script>
 <script src="js/alur/logos.js?v=4"></script>
-<script src="js/alur/kit.js?v=4"></script>
+<script src="js/alur/kit.js?v=6"></script>
 <script src="js/alur/cables.js?v=4"></script>
 <script src="js/alur/motions.js?v=4"></script>
-<script src="js/alur/core.js?v=4"></script>
-<script src="js/alur/modules/canvas.js?v=4"></script>
+<script src="js/alur/core.js?v=6"></script>
+<script src="js/alur/modules/canvas.js?v=6"></script>
 <script src="js/alur/modules/flow.js?v=4"></script>
 <script src="js/alur/modules/reverse-proxy.js?v=4"></script>
 <script src="js/alur/modules/chart.js?v=4"></script>
 <script src="js/alur/modules/pipeline.js?v=4"></script>
 <script src="js/alur/modules/graph.js?v=4"></script>
-<script src="js/alur/modules/topology.js?v=4"></script>
 <script>
 (function () {
   'use strict';
@@ -2759,59 +2774,6 @@
         return s;
       }]
     ],
-    topology: [
-      ['chain', 'Linear chain', function () {
-        return JSON.parse(JSON.stringify({
-          "module": "topology",
-          "title": "Linear chain",
-          "vertical": true,
-          "columns": [["C"], ["P"], ["K"], ["G"]],
-          "nodes": {
-            "C": ["Customer", "Places an order", "customer", "actor"],
-            "P": ["Waiter", "Takes the order", "waiter", "process"],
-            "K": ["Chef", "Prepares the order", "cook", "process"],
-            "G": ["Pantry", "Stores ingredients", "warehouse", "store"]
-          },
-          "edges": [["C", "P"], ["P", "K"], ["K", "G"],
-                    ["G", "K", "", true], ["K", "P", "", true], ["P", "C", "", true]]
-        }));
-      }],
-      ['fan', 'Fan-out to grid', function () {
-        return JSON.parse(JSON.stringify({
-          "module": "topology",
-          "title": "Fan-out to grid",
-          "vertical": true,
-          "columns": [["B"], { "nodes": ["C", "D", "E", "F", "G", "H"], "grid": 3 }, ["I"]],
-          "nodes": {
-            "B": ["Where to run it?", "", "git-branch", "choice"],
-            "C": ["Bare Metal", "Own hardware", "hard-drive", "host"],
-            "D": ["Virtual Machine", "Private room", "monitor", "host"],
-            "E": ["Container", "Food-court stall", "si-docker", "host"],
-            "F": ["PaaS", "Franchise", "cloud", "host"],
-            "G": ["Serverless", "Pop-up stall", "zap", "host"],
-            "H": ["Edge", "Food cart", "radio", "host"],
-            "I": ["All components", "Run in one place", "layers", "out"]
-          },
-          "edges": [["B", "C"], ["B", "D"], ["B", "E"], ["B", "F"], ["B", "G"], ["B", "H"],
-                    ["C", "I"], ["D", "I"], ["E", "I"], ["F", "I"], ["G", "I"], ["H", "I"]]
-        }));
-      }],
-      ['nogroup', 'No grid, plain flow', function () {
-        var s = JSON.parse(JSON.stringify({
-          "module": "topology",
-          "title": "Plain flow (no grid)",
-          "grid": false,
-          "columns": [["A"], ["B"], ["C"]],
-          "nodes": {
-            "A": ["Client", "browser", "customer", "client"],
-            "B": ["Server", "nginx", "waiter", "server"],
-            "C": ["Database", "postgres", "warehouse", "database"]
-          },
-          "edges": [["A", "B"], ["B", "C"]]
-        }));
-        return s;
-      }]
-    ],
     graph: [
       ['tree', 'Tree 7', function () { return makeGraph(7, 'tree'); }],
       ['line', 'Line 5', function () { return makeGraph(5, 'line'); }],
@@ -2824,6 +2786,13 @@
   function presetFor(id) {
     var list = PRESETS[id] || PRESETS.flow;
     return list[0][2]();
+  }
+
+  function presetById(module, id) {
+    var list = PRESETS[module] || [];
+    var out = null;
+    list.forEach(function (p) { if (p[0] === id) out = p[2](); });
+    return out;
   }
 
   var SAVE_KEY = 'ruang.scene.v1';
@@ -2841,7 +2810,9 @@
   } catch (err) {}
 
   var stage = document.getElementById('stage');
-  var specBox = document.getElementById('spec');
+  /* The raw JSON editor is gone — the canvas is the only source of truth.
+     A stub keeps the remaining sync helpers working without a textarea. */
+  var specBox = { value: '' };
 
   function fillSelect(sel, items) {
     items.forEach(function (it) {
@@ -2990,7 +2961,7 @@
   document.getElementById('templateLibrary').addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-tpl-module]');
     if (!b) return;
-    loadPreset(b.getAttribute('data-tpl-module'), b.getAttribute('data-tpl-id'));
+    insertTemplateBlock(b.getAttribute('data-tpl-module'), b.getAttribute('data-tpl-id'));
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-scene-module]'), function (b) {
@@ -3194,108 +3165,16 @@
     render();
   }
 
-  function insertModuleScene(id, spec) {
-    var s = state.spec;
-    if (!s.nodes) s.nodes = {};
-    var c = viewportSceneCenter();
-    var baseX = Math.round(c.x - 300);
-    var baseY = Math.round(c.y - 160);
-    var map = {};
-    var newEdges = [];
-    var first = null;
-
-    function add(srcId, n, x, y, w, h) {
-      var nid;
-      do { nid = 'n' + (++nodeSeq); } while (s.nodes[nid]);
-      map[srcId] = nid;
-      if (!first) first = nid;
-      s.nodes[nid] = {
-        id: nid,
-        x: Math.round(x),
-        y: Math.round(y),
-        w: Math.round(w || 170),
-        h: Math.round(h || 64),
-        shape: 'box',
-        label: (n && n.label) || '',
-        sub: (n && n.sub) || '',
-        logo: (n && n.logo) || (n && n.logos && n.logos[0]) || '',
-        color: (n && n.color) || COLOR_KEYS[Object.keys(s.nodes).length % COLOR_KEYS.length]
-      };
-      if (n && n.logos && n.logos.length) {
-        s.nodes[nid].logos = n.logos.slice();
-        if (!s.nodes[nid].logo) s.nodes[nid].logo = n.logos[0];
-      }
-      return nid;
-    }
-
-    function link(a, b) {
-      if (map[a] && map[b] && map[a] !== map[b]) {
-        newEdges.push({
-          from: map[a],
-          to: map[b],
-          cable: state.spec.cable || 'solid',
-          motion: state.spec.motion || 'flow'
-        });
-      }
-    }
-
-    if (id === 'flow') {
-      (spec.columns || []).forEach(function (col, ci) {
-        (col || []).forEach(function (nid, ri) {
-          var n = (spec.nodes && spec.nodes[nid]) || {};
-          add(nid, n, baseX + ci * 220, baseY + ri * 100);
-        });
-      });
-      (spec.edges || []).forEach(function (e) { link(e.from, e.to); });
-    } else if (id === 'reverse-proxy') {
-      var order = ['client', 'proxy'].concat(Object.keys(spec.nodes || {}).filter(function (k) {
-        return /^backend/.test(k);
-      }));
-      order.forEach(function (nid) {
-        var n = spec.nodes[nid];
-        if (!n) return;
-        var col = nid === 'client' ? 0 : (nid === 'proxy' ? 1 : 2);
-        var row = (nid === 'client' || nid === 'proxy') ? 0 :
-          (parseInt(nid.replace('backend', ''), 10) - 1);
-        add(nid, n, baseX + col * 230, baseY + row * 92, 160, 60);
-      });
-      link('client', 'proxy');
-      Object.keys(spec.nodes || {}).forEach(function (k) {
-        if (/^backend/.test(k)) link('proxy', k);
-      });
-    } else if (id === 'pipeline') {
-      (spec.stages || []).forEach(function (n, i) {
-        add('s' + i, n, baseX + i * 200, baseY, 170, 60);
-      });
-      for (var i = 0; i < (spec.stages || []).length - 1; i++) link('s' + i, 's' + (i + 1));
-    } else if (id === 'graph') {
-      (spec.nodes || []).forEach(function (n, i) {
-        var nid = n.id || ('n' + i);
-        add(nid, n, baseX + (n.x || 0) * 0.7, baseY + (n.y || 0) * 0.7, 120, 54);
-      });
-      (spec.edges || []).forEach(function (e) { link(e.from, e.to); });
-    }
-
-    s.edges = (s.edges || []).concat(newEdges);
-    s.selected = first;
-    s.selectedEdge = null;
-    s.selectedDrawing = null;
-    s.selectedEdges = [];
-    touchSpec();
-    syncControls();
-    syncEditor();
-    render();
-  }
-
   function insertTableBlock() {
-    if (!isCanvas()) switchModule('canvas');
-    var c = viewportSceneCenter();
     pushHistory();
+    ensureCanvasForBlock();
+    var c = viewportSceneCenter();
     var id = addNode('table', c.x - 210, c.y - 120, 420, 240);
     var n = state.spec.nodes && state.spec.nodes[id];
     if (n) {
       ensureTableData(n);
       n.color = n.color || 'blue';
+      revealScene();
       touchSpec();
       syncControls();
       syncEditor();
@@ -3303,30 +3182,294 @@
     }
   }
 
+  /* Templates and blocks are merged as ordinary nodes and edges. No wrapper
+     card, no locked module: everything lands editable, cables included. */
+  var NODE_W = 136, NODE_H = 66, GAP_X = 78, GAP_Y = 22;
+  /* The canvas grid is minor 22 / major 110 (AlurKit.grid). Everything that
+     lands on the canvas snaps to it, so grid is the only mode. */
+  var GRID = 22;
+
+  /* Module presets describe their own layout (or none at all). Flatten them
+     into plain canvas nodes so the result is a normal, editable scene. */
+  function materializeScene(spec) {
+    var out = { nodes: {}, edges: [] };
+    if (!spec) return out;
+    var mod = spec.module;
+
+    if (mod === 'chart') {
+      /* A chart is live: it counts the objects on the canvas instead of
+         carrying a frozen snapshot of sample numbers. */
+      out.nodes.n0 = {
+        id: 'n0', x: 0, y: 0, w: 440, h: 300, shape: 'chart',
+        label: spec.title || 'Chart', color: spec.color || 'blue',
+        chartType: spec.type || 'bar', dataSource: 'canvas',
+        groupBy: 'sub', agg: 'count'
+      };
+      return out;
+    }
+
+    if (mod === 'pipeline') {
+      var stages = spec.stages || [];
+      stages.forEach(function (st, i) {
+        out.nodes['n' + i] = {
+          id: 'n' + i, x: i * (NODE_W + GAP_X), y: 0, w: NODE_W, h: NODE_H,
+          shape: 'box', label: st.label || ('Stage ' + (i + 1)), sub: st.sub || '',
+          logo: st.logo, color: st.color || spec.color || 'blue'
+        };
+        if (i) out.edges.push({ from: 'n' + (i - 1), to: 'n' + i });
+      });
+      return out;
+    }
+
+    if (!spec.nodes) return out;
+
+    var raw = spec.nodes;
+    var list = [];
+    if (Array.isArray(raw)) {
+      raw.forEach(function (nd) { if (nd) list.push(nd); });
+    } else {
+      Object.keys(raw).forEach(function (k) {
+        if (!raw[k]) return;
+        list.push(Object.assign({ __key: k }, raw[k]));
+      });
+    }
+
+    list.forEach(function (src) {
+      var key = src.id || src.__key;
+      if (!key) return;
+      var copy = Object.assign({}, src);
+      delete copy.__key;
+      copy.id = String(key);
+      if (typeof copy.w !== 'number') copy.w = NODE_W;
+      if (typeof copy.h !== 'number') copy.h = NODE_H;
+      if (typeof copy.x !== 'number' || typeof copy.y !== 'number') {
+        delete copy.x; delete copy.y;
+      }
+      copy.shape = copy.shape || 'box';
+      out.nodes[copy.id] = copy;
+    });
+
+    var rawEdges = (spec.edges || []).filter(function (e) {
+      return e && out.nodes[e.from] && out.nodes[e.to];
+    });
+    rawEdges.forEach(function (e) { out.edges.push(Object.assign({}, e)); });
+
+    /* Reverse proxy keeps its cables as real edges: client -> proxy -> each
+       backend, so the scene stays wired after it lands on the canvas. */
+    if (mod === 'reverse-proxy') {
+      var order = Object.keys(out.nodes);
+      var client = order.filter(function (k) { return /client/i.test(k); })[0] || order[0];
+      var proxy = order.filter(function (k) { return /proxy/i.test(k); })[0];
+      var backends = order.filter(function (k) { return /backend/i.test(k); });
+      var targets = backends.length ? backends : order.filter(function (k) { return k !== client && k !== proxy; });
+      if (proxy) {
+        if (client && client !== proxy) out.edges.push({ from: client, to: proxy });
+        targets.forEach(function (b) {
+          if (b !== proxy && b !== client) out.edges.push({ from: proxy, to: b });
+        });
+        /* fan out to the right of the proxy */
+        if (client) { out.nodes[client].x = 0; out.nodes[client].y = -NODE_H / 2; }
+        out.nodes[proxy].x = NODE_W + GAP_X;
+        out.nodes[proxy].y = -NODE_H / 2;
+        targets.forEach(function (b, i) {
+          out.nodes[b].x = (NODE_W + GAP_X) * 2;
+          out.nodes[b].y = (i - (targets.length - 1) / 2) * (NODE_H + GAP_Y) - NODE_H / 2;
+        });
+        return out;
+      }
+    }
+
+    /* Anything still without a position gets a layered layout driven by the
+       edges, so a stack of nodes never lands on top of itself. */
+    var missing = Object.keys(out.nodes).filter(function (k) {
+      return typeof out.nodes[k].x !== 'number';
+    });
+    if (missing.length) layoutScene(out);
+    return out;
+  }
+
+  function layoutScene(scene) {
+    var nodes = scene.nodes;
+    var ids = Object.keys(nodes);
+    var depth = {};
+    ids.forEach(function (id) { depth[id] = 0; });
+    for (var pass = 0; pass < ids.length + 1; pass++) {
+      var moved = false;
+      scene.edges.forEach(function (e) {
+        if (depth[e.from] == null || depth[e.to] == null) return;
+        if (depth[e.to] < depth[e.from] + 1) { depth[e.to] = depth[e.from] + 1; moved = true; }
+      });
+      if (!moved) break;
+    }
+    var cols = {};
+    ids.forEach(function (id) {
+      var d = depth[id] || 0;
+      (cols[d] = cols[d] || []).push(id);
+    });
+    Object.keys(cols).forEach(function (d) {
+      var col = cols[d];
+      var total = col.length * NODE_H + (col.length - 1) * GAP_Y;
+      col.forEach(function (id, i) {
+        var nd = nodes[id];
+        nd.w = nd.w || NODE_W;
+        nd.h = nd.h || NODE_H;
+        nd.x = d * (NODE_W + GAP_X);
+        nd.y = Math.round(-total / 2 + i * (NODE_H + GAP_Y));
+      });
+    });
+  }
+
+  function sceneBounds(spec) {
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    Object.keys((spec && spec.nodes) || {}).forEach(function (k) {
+      var n = spec.nodes[k];
+      if (!n) return;
+      minX = Math.min(minX, n.x || 0);
+      minY = Math.min(minY, n.y || 0);
+      maxX = Math.max(maxX, (n.x || 0) + (n.w || 0));
+      maxY = Math.max(maxY, (n.y || 0) + (n.h || 0));
+    });
+    if (minX === Infinity) return { x: 0, y: 0, w: 0, h: 0 };
+    return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  }
+
+  function mergeScene(spec) {
+    var flat = materializeScene(spec);
+    /* A doc-style preset can carry no layout at all; fall back to the module's
+       default scene so the insert is never a silent no-op. */
+    if (!Object.keys(flat.nodes).length) flat = materializeScene(presetFor((spec && spec.module) || 'flow'));
+    var s = state.spec;
+    s.nodes = s.nodes || {};
+    s.edges = s.edges || [];
+    var b = sceneBounds(flat);
+    var c = viewportSceneCenter();
+    var existing = Object.keys(s.nodes).map(function (k) { return s.nodes[k]; });
+    var dx, dy;
+    if (existing.length) {
+      /* Keep it on screen: to the right of what is already there while that
+         still fits in the view, otherwise start a new row underneath. */
+      var svgEl = stage.querySelector('svg');
+      var vb = svgEl && svgEl.viewBox ? svgEl.viewBox.baseVal : null;
+      var viewX = vb && vb.width ? vb.x : 0;
+      var viewW = vb && vb.width ? vb.width : 900;
+      var viewY = vb && vb.height ? vb.y : 0;
+      var viewH = vb && vb.height ? vb.height : 600;
+      var maxX = -Infinity, maxY = -Infinity, minY = Infinity;
+      existing.forEach(function (nd) {
+        maxX = Math.max(maxX, (nd.x || 0) + (nd.w || 0));
+        maxY = Math.max(maxY, (nd.y || 0) + (nd.h || 0));
+        minY = Math.min(minY, nd.y || 0);
+      });
+      if (maxX + GRID * 2 + b.w <= viewX + viewW - GRID) {
+        dx = snapGrid(maxX + GRID * 2 - b.x);
+        dy = snapGrid(minY - b.y);
+      } else {
+        dx = snapGrid(viewX + GRID - b.x);
+        dy = snapGrid(maxY + GRID * 2 - b.y);
+      }
+    } else {
+      dx = snapGrid(c.x - b.w / 2 - b.x);
+      dy = snapGrid(c.y - b.h / 2 - b.y);
+    }
+    var map = {};
+    var first = null;
+    Object.keys(flat.nodes).forEach(function (k) {
+      var src = flat.nodes[k];
+      var nid;
+      do { nid = 'n' + (++nodeSeq); } while (s.nodes[nid]);
+      var copy = Object.assign({}, src);
+      copy.id = nid;
+      copy.x = snapGrid((src.x || 0) + dx);
+      copy.y = snapGrid((src.y || 0) + dy);
+      copy.w = snapGrid(src.w || NODE_W);
+      copy.h = snapGrid(src.h || NODE_H);
+      s.nodes[nid] = copy;
+      map[k] = nid;
+      if (!first) first = nid;
+    });
+    flat.edges.forEach(function (e) {
+      if (!map[e.from] || !map[e.to]) return;
+      s.edges.push(Object.assign({}, e, { from: map[e.from], to: map[e.to] }));
+    });
+    if (first) {
+      s.selected = first;
+      s.selectedEdge = null;
+      s.selectedEdges = [];
+      s.selectedDrawing = null;
+    }
+    revealScene();
+    return first;
+  }
+
+  /* An insert must be visible: frame everything that is now on the canvas. */
+  /* Reveal only what is off screen. The zoom is left alone unless the new
+     content is bigger than the viewport, so inserting never re-frames the
+     canvas and never depends on Fit. */
+  function revealScene(b) {
+    var box = b || sceneBounds(state.spec);
+    if (!box.w || !box.h) return;
+    var m = viewMetrics();
+    var pad = 48;
+    var z = m.z;
+    var vw = m.vw;
+    var vh = m.vh;
+    var px = state.spec.panX || 0;
+    var py = state.spec.panY || 0;
+    var touched = false;
+    if (box.w > vw - pad * 2) {
+      var zw = clampZoom((m.w - pad * 2) / box.w);
+      if (zw < z) { z = zw; vw = m.w / z; vh = m.h / z; touched = true; }
+    }
+    if (box.h > vh - pad * 2) {
+      var zh = clampZoom((m.h - pad * 2) / box.h);
+      if (zh < z) { z = zh; vw = m.w / z; vh = m.h / z; touched = true; }
+    }
+    if (box.x < px + pad) { px = box.x - pad; touched = true; }
+    else if (box.x + box.w > px + vw - pad) { px = box.x + box.w - vw + pad; touched = true; }
+    if (box.y < py + pad) { py = box.y - pad; touched = true; }
+    else if (box.y + box.h > py + vh - pad) { py = box.y + box.h - vh + pad; touched = true; }
+    if (!touched) return;
+    state.spec.zoom = z;
+    state.spec.panX = px;
+    state.spec.panY = py;
+  }
+
+  /* When the current scene is a module scene, open a canvas and carry the
+     scene over as real nodes instead of keeping it behind a block. */
+  function ensureCanvasForBlock() {
+    if (isCanvas()) return;
+    var prev = state.spec;
+    var grid = true;
+    state.spec = presetFor('canvas');
+    state.spec.grid = grid;
+    mergeScene(prev);
+  }
+
+  /* Scene templates land in the current canvas as plain editable nodes. */
+  function insertTemplateBlock(module, id) {
+    var spec = presetById(module, id);
+    if (!spec) return;
+    pushHistory();
+    ensureCanvasForBlock();
+    mergeScene(spec);
+    touchSpec();
+    syncControls();
+    render();
+  }
+
   function insertModule(id) {
-    if (!isCanvas()) switchModule('canvas');
     var spec = presetFor(id);
     if (!spec) return;
-    /* chart dan topology adalah blok modul: spec-nya utuh, tidak dipecah jadi
-       kotak-kotak. topology butuh layout + bus routing miliknya sendiri, jadi
-       memecahnya ke node canvas akan membuang fitur itu.
-       chart and topology are module blocks: their spec stays whole. Topology
-       needs its own layout and bus routing, so flattening it into plain canvas
-       nodes would throw those features away. */
-    if (id !== 'chart' && id !== 'topology') {
-      pushHistory();
-      insertModuleScene(id, spec);
-      return;
-    }
-    var dims = {
-      flow: [420, 260],
-      'reverse-proxy': [420, 260],
-      chart: [420, 280],
-      pipeline: [420, 220],
-      graph: [420, 260],
-      topology: [560, 420]
-    };
-    var d = dims[id] || [380, 240];
+    pushHistory();
+    ensureCanvasForBlock();
+    mergeScene(spec);
+    touchSpec();
+    syncControls();
+    render();
+  }
+
+  function addModuleBlock(id, spec) {
+    var d = MODULE_DIMS[id] || [380, 240];
     var s = state.spec;
     var moduleCount = Object.keys(s.nodes || {}).filter(function (k) {
       return s.nodes[k] && s.nodes[k].shape === 'module';
@@ -3339,7 +3482,6 @@
     var screenX = sr.left + 24 + (moduleCount % 3) * 28;
     var screenY = sr.top + 118 + (moduleCount % 3) * 24;
     var c = svg ? svgPoint(svg, { clientX: screenX, clientY: screenY }) : viewportSceneCenter();
-    pushHistory();
     s.nodes = s.nodes || {};
     var nid;
     do { nid = 'n' + (++nodeSeq); } while (s.nodes[nid]);
@@ -3363,8 +3505,7 @@
     s.selectedEdge = null;
     s.selectedEdges = [];
     s.selectedDrawing = null;
-    syncControls();
-    render();
+    return nid;
   }
 
   function toggleModuleBlock(id) {
@@ -3522,7 +3663,7 @@
     base.motion = state.spec.motion || 'flow';
     base.speed = state.spec.speed || 1;
     base.vertical = !!state.spec.vertical;
-    base.grid = state.spec.grid !== false;
+    base.grid = true;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3536,7 +3677,7 @@
     base.motion = state.spec.motion || 'packets';
     base.speed = state.spec.speed || 1;
     base.color = state.spec.color || 'cyan';
-    base.grid = state.spec.grid !== false;
+    base.grid = true;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3546,7 +3687,7 @@
 
   function regenGraph(n, pattern) {
     var base = makeGraph(n, pattern);
-    base.grid = state.spec.grid !== false;
+    base.grid = true;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3556,7 +3697,7 @@
 
   function regenProxy(n) {
     var base = makeProxy(n);
-    base.grid = state.spec.grid !== false;
+    base.grid = true;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3566,7 +3707,7 @@
 
   function regenChart(series, points) {
     var base = chartPreset(state.spec.type || 'bar', series, points);
-    base.grid = state.spec.grid !== false;
+    base.grid = true;
     base._preset = 'custom';
     state.spec = base;
     syncScene();
@@ -3583,25 +3724,40 @@
     ['graph', 'Graph']
   ];
 
+  /* One canvas, always: a template is added to the canvas you are on. The
+     page never swaps scene, never re-renders a different module, and keeps the
+     grid exactly as it was. */
   function loadPreset(module, id) {
-    var list = PRESETS[module] || [];
-    var def = null;
-    list.forEach(function (p) { if (p[0] === id) def = p; });
+    var def = (PRESETS[module] || []).filter(function (p) { return p[0] === id; })[0];
     if (!def) return;
-    var grid = state.spec.grid !== false;
-    state.spec = def[2]();
-    state.spec.grid = grid;
-    state.spec._preset = def[0];
-    state.spec.module = module;
-    syncScene();
-    syncControls();
-    render();
+    var s = state.spec;
+    s._preset = def[0];
+    /* Blank canvas empties the canvas you are on: same page, same grid, same
+       view. Undo brings the scene back. */
+    if (module === 'canvas' && id === 'blank') {
+      pushHistory();
+      s.nodes = {};
+      s.edges = [];
+      s.drawings = [];
+      s.zoom = 1;
+      s.panX = 0;
+      s.panY = 0;
+      s.selected = null;
+      s.selectedEdge = null;
+      s.selectedEdges = [];
+      s.selectedDrawing = null;
+      touchSpec();
+      syncControls();
+      render();
+      return;
+    }
+    insertTemplateBlock(module, id);
   }
 
   function chartSourceNodes() {
     var nodes = state.spec.nodes || {};
     return Object.keys(nodes).map(function (id) { return nodes[id]; }).filter(function (n) {
-      return n && n.shape !== 'module';
+      return n && n.shape !== 'module' && n.shape !== 'chart';
     });
   }
 
@@ -3720,7 +3876,11 @@
     var nodes = state.spec.nodes || {};
     Object.keys(nodes).forEach(function (id) {
       var n = nodes[id];
-      if (n && n.shape === 'module' && n.module === 'chart' &&
+      if (!n) return;
+      if (n.shape === 'chart' &&
+          (n.dataSource === 'canvas' || n.dataSource === 'table')) {
+        n.staticSpec = buildChartSpecFromCanvas(n);
+      } else if (n.shape === 'module' && n.module === 'chart' &&
           (n.dataSource === 'canvas' || n.dataSource === 'table')) {
         n.moduleSpec = buildChartSpecFromCanvas(n);
       }
@@ -3732,7 +3892,7 @@
     if (!section) return;
     var info = isCanvas() ? selectionInfo() : null;
     var n = info && info.node;
-    var chart = !!(n && n.shape === 'module' && n.module === 'chart');
+    var chart = !!(n && (n.shape === 'chart' || (n.shape === 'module' && n.module === 'chart')));
     section.hidden = !chart;
     if (!chart) return;
     var source = keepSource
@@ -3967,6 +4127,49 @@
     return pt.matrixTransform(ctm.inverse());
   }
 
+  /* Infinite canvas model: panX/panY is the world point under the viewport's
+     top-left corner, zoom is screen pixels per world unit. The view is a free
+     window into the plane, so pan and zoom never depend on each other and no
+     artboard edge is ever re-centered by a zoom change. */
+  var MIN_ZOOM = 0.05;
+  var MAX_ZOOM = 4;
+
+  function clampZoom(z) {
+    var v = typeof z === 'number' ? z : parseFloat(z);
+    if (!isFinite(v) || v <= 0) v = 1;
+    return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, v));
+  }
+
+  function viewMetrics() {
+    var svg = stage.querySelector('svg');
+    var rect = svg && svg.getBoundingClientRect ? svg.getBoundingClientRect() :
+      { left: 0, top: 0, width: 900, height: 520 };
+    var w = rect.width || 900;
+    var h = rect.height || 520;
+    var z = clampZoom(state.spec.zoom);
+    return { left: rect.left || 0, top: rect.top || 0, w: w, h: h, z: z, vw: w / z, vh: h / z };
+  }
+
+  /* Keep a world box centred without touching the zoom level. */
+  function centerBox(b, z) {
+    var m = viewMetrics();
+    var scale = z || m.z;
+    state.spec.panX = (b.x + b.w / 2) - (m.w / scale) / 2;
+    state.spec.panY = (b.y + b.h / 2) - (m.h / scale) / 2;
+  }
+
+  /* Fit a world box: the largest zoom that still shows it whole. */
+  function fitBox(b, maxZoom) {
+    var m = viewMetrics();
+    if (!b || !b.w || !b.h) return null;
+    var pad = 80;
+    var z = Math.min((m.w - pad) / b.w, (m.h - pad) / b.h);
+    z = clampZoom(Math.min(z, maxZoom || 1));
+    state.spec.zoom = z;
+    centerBox(b, z);
+    return z;
+  }
+
   function viewportSceneCenter() {
     var svg = stage.querySelector('svg');
     if (!svg) return { x: 370, y: 200 };
@@ -4028,28 +4231,26 @@
     }
     var svg = stage.querySelector('svg');
     if (!svg) return;
-    var W = state.spec.width || 900;
-    var H = state.spec.height || 520;
-    var z = state.spec.zoom || 1;
     var rect = svg.getBoundingClientRect();
-    var aspect = rect.width / Math.max(1, rect.height);
-    var topbar = document.querySelector('.topbar');
-    var rail = document.getElementById('editorBar');
-    var railRect = rail && rail.style.display !== 'none' ? rail.getBoundingClientRect() : null;
-    var railAtTop = railRect ? railRect.top < rect.top + rect.height / 2 : true;
-    var railTop = railAtTop && railRect
-      ? Math.max(0, railRect.bottom - rect.top + 8) : 0;
-    var railBottom = !railAtTop && railRect
-      ? Math.max(0, rect.bottom - railRect.top + 8) : 0;
-    var topbarBottom = topbar ? Math.max(0, topbar.getBoundingClientRect().bottom - rect.top + 8) : 0;
-    var safeTop = Math.max(topbarBottom, railTop);
-    var availableH = Math.max(120, rect.height - safeTop - railBottom);
-    var availableAspect = rect.width / availableH;
-    var baseW = Math.max(W, H * availableAspect);
-    var vw = baseW / z;
-    var vh = vw / aspect;
-    var vx = (state.spec.panX || 0) + (W - vw) / 2;
-    var vy = (state.spec.panY || 0) + (H - vh) / 2 - safeTop * vh / (2 * Math.max(1, rect.height));
+    /* The stage already starts below the floating topbar, so the whole stage is
+       usable canvas. No hidden band, no reserved strip. */
+    var availableH = Math.max(120, rect.height);
+    /* The canvas is the whole workspace: the artboard matches the space that is
+       actually visible, so there is no fixed 900×520 page floating inside. */
+    if (rect.width > 40 && Math.abs((state.spec.width || 0) - rect.width) > 1) {
+      state.spec.width = Math.round(rect.width);
+      queueSave();
+    }
+    if (Math.abs((state.spec.height || 0) - availableH) > 1) {
+      state.spec.height = Math.round(availableH);
+      queueSave();
+    }
+    var z = clampZoom(state.spec.zoom);
+    state.spec.zoom = z;
+    var vw = rect.width / z;
+    var vh = rect.height / z;
+    var vx = state.spec.panX || 0;
+    var vy = state.spec.panY || 0;
     svg.setAttribute('viewBox', vx + ' ' + vy + ' ' + vw + ' ' + vh);
     var gridRect = svg.querySelector('.alur-canvas-grid');
     if (gridRect) {
@@ -4058,6 +4259,9 @@
       gridRect.setAttribute('width', vw);
       gridRect.setAttribute('height', vh);
     }
+    /* Keep the mounted spec in step with the view so a re-mount (or any
+       external reader) never sees the pre-pan zoom. */
+    if (!editor.drag) stage.setAttribute('data-spec', JSON.stringify(state.spec));
     var pct = Math.round(z * 100) + '%';
     var zv = document.getElementById('zoomVal');
     if (zv) zv.textContent = pct;
@@ -4068,7 +4272,15 @@
   }
 
   function setZoom(z) {
-    state.spec.zoom = Math.max(0.35, Math.min(3, z));
+    var m = viewMetrics();
+    var target = clampZoom(z);
+    var ax = m.left + m.w / 2;
+    var ay = m.top + m.h / 2;
+    var sx = (state.spec.panX || 0) + (ax - m.left) / m.z;
+    var sy = (state.spec.panY || 0) + (ay - m.top) / m.z;
+    state.spec.zoom = target;
+    state.spec.panX = sx - (ax - m.left) / target;
+    state.spec.panY = sy - (ay - m.top) / target;
     applyView();
     touchSpec();
   }
@@ -4498,7 +4710,7 @@
   function switchModule(id) {
     /* Grid is a view preference, not part of a module preset. Keep it when
        switching between flow, chart, canvas, and every other page. */
-    var grid = state.spec.grid !== false;
+    var grid = true;
     state.spec = presetFor(id);
     state.spec.grid = grid;
     syncScene();
@@ -4845,6 +5057,8 @@
     });
   }
 
+  function snapGrid(v) { return Math.round((v || 0) / GRID) * GRID; }
+
   function addNode(shape, x, y, w, h) {
     if (!isCanvas()) switchModule('canvas');
     var s = state.spec;
@@ -4855,15 +5069,16 @@
     var nodeShape = isText ? 'plain' : shape;
     s.nodes[id] = {
       id: id,
-      x: Math.round(x),
-      y: Math.round(y),
-      w: Math.round(w),
-      h: Math.round(h),
+      x: snapGrid(x),
+      y: snapGrid(y),
+      w: Math.max(GRID, snapGrid(w)),
+      h: Math.max(GRID, snapGrid(h)),
       shape: nodeShape,
       label: '',
       sub: '',
       color: isText ? editor.textStyle.color : COLOR_KEYS[Object.keys(s.nodes).length % COLOR_KEYS.length]
     };
+    if (shape === 'table') ensureTableData(s.nodes[id]);
     if (isText) {
       s.nodes[id].isText = true;
       s.nodes[id].textRole = 'text';
@@ -5122,9 +5337,13 @@
 
     host.appendChild(textField('Label', n.label, function (v) { n.label = v; }));
     host.appendChild(textField('Sub', n.sub, function (v) { n.sub = v; }));
-    host.appendChild(selectField('Shape', [
-      ['box', 'Box'], ['pill', 'Pill'], ['circle', 'Circle'], ['plain', 'Plain (no box)']
-    ], n.shape || 'box', function (v) { n.shape = v; }));
+    /* Tables and charts own their rendering; switching the shape would break
+       them, so the shape picker stays out of their way. */
+    if (n.shape !== 'table' && n.shape !== 'chart') {
+      host.appendChild(selectField('Shape', [
+        ['box', 'Box'], ['pill', 'Pill'], ['circle', 'Circle'], ['plain', 'Plain (no box)']
+      ], n.shape || 'box', function (v) { n.shape = v; }));
+    }
     host.appendChild(textField('Color hex', AlurKit.color(n.color || 'blue'), function (v) {
       if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) n.color = v;
     }));
@@ -5945,6 +6164,7 @@
       diamond: 'Drag on the canvas to draw a transparent diamond.',
       circle: 'Drag on the canvas to draw a transparent ellipse.',
       text: 'Drag to place text. Enter or double-click edits it.',
+      table: 'Drag on the canvas to size a table. Handles resize it; + Row / − Row add rows.',
       arrow: 'Drag from a node to a node to connect, or drag empty space for an editable arrow.',
       line: 'Drag to draw a line. Select it, then drag its point handles.',
       draw: 'Drag to sketch a freehand stroke with the pen.',
@@ -6348,7 +6568,7 @@
       return;
     }
 
-    if (editor.tool === 'box' || editor.tool === 'diamond' || editor.tool === 'circle' || editor.tool === 'text') {
+    if (editor.tool === 'box' || editor.tool === 'diamond' || editor.tool === 'circle' || editor.tool === 'text' || editor.tool === 'table') {
       pushHistory();
       var shape = editor.tool === 'round' ? 'pill' : editor.tool;
       var previewShape = makeCreatePreview(shape);
@@ -6574,6 +6794,31 @@
         ' L ' + (w / 2) + ' ' + h + ' L 0 ' + (h / 2) + ' Z';
       var paths = inner.querySelectorAll('path');
       Array.prototype.forEach.call(paths, function (p) { p.setAttribute('d', d); });
+    } else if (shape === 'chart') {
+      var foChart = inner.querySelector('.alur-chart-fo');
+      if (foChart) {
+        foChart.setAttribute('width', Math.max(12, w));
+        foChart.setAttribute('height', Math.max(12, h));
+        foChart.setAttribute('y', 0);
+      }
+      var chartRects = inner.querySelectorAll('rect');
+      if (chartRects[0]) {
+        chartRects[0].setAttribute('width', w);
+        chartRects[0].setAttribute('height', h);
+      }
+    } else if (shape === 'table') {
+      /* The table lives in a foreignObject: the box alone is not enough, the
+         embedded table has to follow the node when it is resized. */
+      var foTable = inner.querySelector('.alur-table-fo');
+      if (foTable) {
+        foTable.setAttribute('width', Math.max(20, w));
+        foTable.setAttribute('height', Math.max(20, h));
+      }
+      var tableRects = inner.querySelectorAll('rect');
+      if (tableRects[0]) {
+        tableRects[0].setAttribute('width', w);
+        tableRects[0].setAttribute('height', h);
+      }
     } else if (shape !== 'plain' && shape !== 'none') {
       var rects = inner.querySelectorAll('rect');
       if (rects[0]) {
@@ -6678,12 +6923,31 @@
         });
       }
       main.setAttribute('d', d);
-      /* Arrowheads are rebuilt on pointerup. Hide the stale ones while the
-         node is moving so they do not float away from the new border point. */
-      Array.prototype.forEach.call(
-        stage.querySelectorAll('.alur-edge-head[data-edge="' + i + '"]'),
-        function (h) { h.style.opacity = '0'; }
-      );
+      /* Panah ikut pindah, tidak disembunyikan. Sebelumnya head di-opacity:0
+         selama drag dan hanya digambar ulang saat pointerup, sehingga panah
+         "hilang" beberapa saat. Sekarang geometrinya dihitung ulang dari titik
+         sambung yang baru, jadi panah menempel di border walau node bergerak.
+         Heads now follow the edge: the old code hid them during a drag and only
+         redrew on pointerup, which is why arrows kept vanishing. */
+      var heads = stage.querySelectorAll('.alur-edge-head[data-edge="' + i + '"]');
+      if (heads.length) {
+        var color = AlurKit.color(e.color || state.spec.color || 'blue');
+        var type = e.arrowType || 'arrow';
+        var width = e.width || 2.4;
+        var startHead = !!e.arrowStart;
+        var endHead = e.arrowEnd !== undefined ? e.arrowEnd : true;
+        Array.prototype.forEach.call(heads, function (h, hi) {
+          var isStart = startHead && heads.length > 1 ? hi === 0 : false;
+          var tip = isStart ? ends[0] : ends[1];
+          var from = isStart ? ends[1] : ends[0];
+          h.style.opacity = '';
+          if (!AlurKit.arrowInto(h, tip, from, type, color, { width: width })) {
+            /* bentuk tidak bisa diperbarui (mis. circle -> arrow): buang, biar
+               render berikutnya menggambar yang benar. */
+            if (h.parentNode) h.parentNode.removeChild(h);
+          }
+        });
+      }
     });
   }
 
@@ -6737,29 +7001,18 @@
     });
   }
 
-  stage.addEventListener('click', function (ev) {
-    var btn = ev.target.closest && ev.target.closest('[data-table-action]');
-    if (!btn) return;
-    var host = btn.closest('[data-table-node]');
-    var id = host && host.getAttribute('data-table-node');
-    var n = state.spec.nodes && state.spec.nodes[id];
-    if (!n) return;
-    ensureTableData(n);
-    var action = btn.getAttribute('data-table-action');
-    pushHistory();
-    if (action === 'add-row') {
-      n.rows.push(new Array(n.columns.length).fill(''));
-    } else if (action === 'del-row') {
-      if (n.rows.length > 1) n.rows.pop();
-    } else if (action === 'add-col') {
-      n.columns.push('Column ' + (n.columns.length + 1));
-      n.rows.forEach(function (row) { row.push(''); });
-    } else if (action === 'del-col') {
-      if (n.columns.length > 1) {
-        n.columns.pop();
-        n.rows.forEach(function (row) { row.pop(); });
-      }
-    }
+  /* Table edits are made inside the canvas module (so the reading page gets
+     them for free); the editor only mirrors the result into state.spec. */
+  stage.addEventListener('pointerdown', function (ev) {
+    if (ev.target.closest && ev.target.closest('[data-table-action]')) pushHistory();
+  });
+
+  stage.addEventListener('alur:table', function (ev) {
+    var d = ev.detail || {};
+    var n = state.spec.nodes && state.spec.nodes[d.id];
+    if (!n || !d.columns || !d.rows) return;
+    n.columns = d.columns;
+    n.rows = d.rows;
     touchSpec();
     syncControls();
     render();
@@ -6859,7 +7112,7 @@
     if (editor.drag.type === 'edge-point') {
       var ee = state.spec.edges && state.spec.edges[editor.drag.edge];
       if (!ee || !ee.points) return;
-      var snap = (state.spec.grid !== false && !ev.altKey) ? 4 : 1;
+      var snap = ev.altKey ? 1 : GRID;
       var ex = snap > 1 ? Math.round(p.x / snap) * snap : Math.round(p.x);
       var ey = snap > 1 ? Math.round(p.y / snap) * snap : Math.round(p.y);
       ee.points[editor.drag.index] = [ex, ey];
@@ -6921,7 +7174,7 @@
       var dx = p.x - drag.startX;
       var dy = p.y - drag.startY;
       if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 1) drag.moved = true;
-      var snap = (state.spec.grid !== false && !ev.altKey && editor.snap !== false) ? 8 : 1;
+      var snap = (ev.altKey || editor.snap === false) ? 1 : GRID;
       var lead = drag.items[0];
       var leadX = lead.x + dx;
       var leadY = lead.y + dy;
@@ -6958,7 +7211,7 @@
       if (editor.drag.handle.indexOf('s') >= 0) h2 = editor.drag.h0 + dy;
       if (editor.drag.handle.indexOf('w') >= 0) { x2 = editor.drag.x0 + dx; w2 = editor.drag.w0 - dx; }
       if (editor.drag.handle.indexOf('n') >= 0) { y2 = editor.drag.y0 + dy; h2 = editor.drag.h0 - dy; }
-      var snap = (state.spec.grid !== false && !ev.altKey && editor.snap !== false) ? 8 : 1;
+      var snap = (ev.altKey || editor.snap === false) ? 1 : GRID;
       if (snap > 1) {
         x2 = Math.round(x2 / snap) * snap;
         y2 = Math.round(y2 / snap) * snap;
@@ -7015,6 +7268,12 @@
         syncControls();
         syncEditor();
         render();
+        /* Say it out loud: an existing cable is selected, not a dead tool. */
+        var dup = document.getElementById('statusTool');
+        if (dup) {
+          dup.textContent = 'already connected — cable selected';
+          setTimeout(function () { if (dup) dup.textContent = 'tool: ' + editor.tool; }, 1400);
+        }
         return true;
       }
     }
@@ -7022,7 +7281,10 @@
       from: from,
       to: to,
       cable: state.spec.cable || 'solid',
-      motion: state.spec.motion || 'flow'
+      motion: state.spec.motion || 'flow',
+      arrowStart: false,
+      arrowEnd: true,
+      arrowType: 'arrow'
     });
     state.spec.selected = null;
     state.spec.selectedEdge = edges.length - 1;
@@ -7358,31 +7620,23 @@
     ev.preventDefault();
     var svg = stage.querySelector('svg');
     if (!svg) return;
-    var rect = svg.getBoundingClientRect();
-    var vb = svg.viewBox && svg.viewBox.baseVal;
-    if (!rect.width || !rect.height || !vb || !vb.width) return;
+    var m = viewMetrics();
+    if (!m.w || !m.h) return;
     if (!ev.ctrlKey && !ev.metaKey) {
-      var sx = vb.width / rect.width;
-      state.spec.panX = (state.spec.panX || 0) + (ev.deltaX || 0) * sx;
-      state.spec.panY = (state.spec.panY || 0) + (ev.deltaY || 0) * sx;
+      state.spec.panX = (state.spec.panX || 0) + (ev.deltaX || 0) / m.z;
+      state.spec.panY = (state.spec.panY || 0) + (ev.deltaY || 0) / m.z;
       applyView();
       touchSpec();
       return;
     }
-    var fx = (ev.clientX - rect.left) / rect.width;
-    var fy = (ev.clientY - rect.top) / rect.height;
-    var sceneX = vb.x + fx * vb.width;
-    var sceneY = vb.y + fy * vb.height;
-    var z = Math.max(0.35, Math.min(3, (state.spec.zoom || 1) * (ev.deltaY < 0 ? 1.1 : 0.9)));
-    var W = state.spec.width || 900;
-    var H = state.spec.height || 520;
-    var aspect = rect.width / rect.height;
-    var baseW = Math.max(W, H * aspect);
-    var vw = baseW / z;
-    var vh = vw / aspect;
+    var fx = (ev.clientX - m.left) / m.w;
+    var fy = (ev.clientY - m.top) / m.h;
+    var sceneX = (state.spec.panX || 0) + fx * m.vw;
+    var sceneY = (state.spec.panY || 0) + fy * m.vh;
+    var z = clampZoom(m.z * (ev.deltaY < 0 ? 1.1 : 0.9));
     state.spec.zoom = z;
-    state.spec.panX = sceneX - fx * vw - (W - vw) / 2;
-    state.spec.panY = sceneY - fy * vh - (H - vh) / 2;
+    state.spec.panX = sceneX - fx * (m.w / z);
+    state.spec.panY = sceneY - fy * (m.h / z);
     applyView();
     touchSpec();
   }, { passive: false });
@@ -7413,11 +7667,7 @@
   document.getElementById('zoomIn').addEventListener('click', function () { setZoom((state.spec.zoom || 1) * 1.15); });
   document.getElementById('zoomOut').addEventListener('click', function () { setZoom((state.spec.zoom || 1) / 1.15); });
   document.getElementById('zoomFit').addEventListener('click', function () {
-    state.spec.zoom = 1;
-    state.spec.panX = 0;
-    state.spec.panY = 0;
-    applyView();
-    touchSpec();
+    zoomFit();
   });
 
   function download(name, text, type) {
@@ -7543,21 +7793,29 @@
   function zoomToSelection() {
     var bb = selectionBBox();
     if (!bb) { zoomFit(); return; }
-    var svg = stage.querySelector('svg');
-    var rect = svg ? svg.getBoundingClientRect() : { width: 900, height: 520 };
-    var z = Math.max(0.35, Math.min(3,
-      Math.min((rect.width - 140) / Math.max(1, bb.w), (rect.height - 180) / Math.max(1, bb.h))));
-    state.spec.zoom = z;
-    state.spec.panX = (state.spec.width || 900) / 2 - (bb.x + bb.w / 2);
-    state.spec.panY = (state.spec.height || 520) / 2 - (bb.y + bb.h / 2);
+    fitBox(bb, 1);
     applyView();
     touchSpec();
     syncControls();
   }
 
+  function zoomFit() {
+    var z = fitBox(sceneBounds(state.spec));
+    if (z == null) {
+      state.spec.zoom = 1;
+      state.spec.panX = 0;
+      state.spec.panY = 0;
+    }
+    applyView();
+    touchSpec();
+    syncControls();
+  }
+
+  /* Keyboard pan: a step is in screen pixels, so it feels the same at any zoom. */
   function panPage(dx, dy) {
-    state.spec.panX = (state.spec.panX || 0) + dx * 24;
-    state.spec.panY = (state.spec.panY || 0) + dy * 24;
+    var m = viewMetrics();
+    state.spec.panX = (state.spec.panX || 0) + (dx * 60) / m.z;
+    state.spec.panY = (state.spec.panY || 0) + (dy * 60) / m.z;
     applyView();
     touchSpec();
   }
@@ -7854,10 +8112,30 @@
       return;
     }
     /* Tab is left alone so keyboard focus can move through controls. */
-    if (ev.key === 'ArrowLeft') { ev.preventDefault(); nudgeSelection(ev.shiftKey ? -10 : -1, 0); return; }
-    if (ev.key === 'ArrowRight') { ev.preventDefault(); nudgeSelection(ev.shiftKey ? 10 : 1, 0); return; }
-    if (ev.key === 'ArrowUp') { ev.preventDefault(); nudgeSelection(0, ev.shiftKey ? -10 : -1); return; }
-    if (ev.key === 'ArrowDown') { ev.preventDefault(); nudgeSelection(0, ev.shiftKey ? 10 : 1); return; }
+    if (ev.key === 'ArrowLeft') {
+      ev.preventDefault();
+      if (selectionIds().length) nudgeSelection(ev.shiftKey ? -10 : -1, 0);
+      else panPage(ev.shiftKey ? -4 : -1, 0);
+      return;
+    }
+    if (ev.key === 'ArrowRight') {
+      ev.preventDefault();
+      if (selectionIds().length) nudgeSelection(ev.shiftKey ? 10 : 1, 0);
+      else panPage(ev.shiftKey ? 4 : 1, 0);
+      return;
+    }
+    if (ev.key === 'ArrowUp') {
+      ev.preventDefault();
+      if (selectionIds().length) nudgeSelection(0, ev.shiftKey ? -10 : -1);
+      else panPage(0, ev.shiftKey ? -4 : -1);
+      return;
+    }
+    if (ev.key === 'ArrowDown') {
+      ev.preventDefault();
+      if (selectionIds().length) nudgeSelection(0, ev.shiftKey ? 10 : 1);
+      else panPage(0, ev.shiftKey ? 4 : 1);
+      return;
+    }
     var map = {
       v: 'select', '1': 'select',
       h: 'pan',
@@ -7868,6 +8146,7 @@
       l: 'line', '6': 'line',
       p: 'draw', '7': 'draw',
       t: 'text', '8': 'text',
+      '9': 'table',
       e: 'eraser', '0': 'eraser',
       k: 'laser'
     };
@@ -8233,8 +8512,9 @@
       if (!rect.width || !rect.height || !vb || !vb.width) return;
       var sx = vb.x + (ev.clientX - rect.left) / rect.width * vb.width;
       var sy = vb.y + (ev.clientY - rect.top) / rect.height * vb.height;
-      state.spec.panX = sx - (state.spec.width || 900) / 2;
-      state.spec.panY = sy - (state.spec.height || 520) / 2;
+      var m = viewMetrics();
+      state.spec.panX = sx - m.vw / 2;
+      state.spec.panY = sy - m.vh / 2;
       applyView();
       touchSpec();
     });
@@ -8279,7 +8559,7 @@
     document.getElementById('module').value = m;
     document.getElementById('chartTypeRow').style.display = m === 'chart' ? '' : 'none';
     if (m === 'chart') document.getElementById('chartType').value = s.type || 'bar';
-    document.getElementById('linkControls').style.display = (m === 'flow' || m === 'pipeline' || m === 'canvas') ? '' : 'none';
+    document.getElementById('linkControls').style.display = (m === 'flow' || m === 'pipeline' || m === 'canvas' || m === 'reverse-proxy' || m === 'graph') ? '' : 'none';
     document.getElementById('speedRow').style.display = m === 'chart' ? 'none' : '';
     document.getElementById('cable').value = s.cable || 'solid';
     document.getElementById('motion').value = s.motion || 'flow';
@@ -8316,19 +8596,16 @@
   }
 
   document.getElementById('module').addEventListener('change', function (ev) {
-    var grid = state.spec.grid !== false;
-    state.spec = presetFor(ev.target.value);
-    state.spec.grid = grid;
-    syncScene();
-    syncControls();
-    render();
+    /* Hidden legacy switch: it adds the module to the canvas, never swaps it. */
+    insertModule(ev.target.value);
+    ev.target.value = state.spec.module || 'canvas';
   });
 
   document.getElementById('chartType').addEventListener('change', function (ev) {
     var s = state.spec;
     var spec = chartPreset(ev.target.value, s._series || 2, s._points || 7);
     spec._preset = 'custom';
-    spec.grid = state.spec.grid !== false;
+    spec.grid = true;
     state.spec = spec;
     syncScene();
     syncControls();
@@ -8367,16 +8644,6 @@
     });
     syncControls();
     render();
-  });
-
-  document.getElementById('apply').addEventListener('click', function () {
-    try {
-      state.spec = JSON.parse(specBox.value);
-      syncControls();
-      render();
-    } catch (err) {
-      alert('Invalid JSON: ' + err.message);
-    }
   });
 
   document.getElementById('reset').addEventListener('click', function () {
@@ -8440,7 +8707,8 @@
   document.getElementById('chartApply').addEventListener('click', function () {
     var info = selectionInfo();
     var n = info && info.node;
-    if (!n || n.shape !== 'module' || n.module !== 'chart') return;
+    if (!n || (n.shape !== 'module' && n.shape !== 'chart')) return;
+    if (n.shape === 'module' && n.module !== 'chart') return;
     pushHistory();
     n.dataSource = document.getElementById('chartSource').value;
     n.sourceTable = document.getElementById('chartTable').value || null;
@@ -8486,6 +8754,25 @@
     logoState.limit += 96;
     renderLogoGrid();
   }, { passive: true });
+
+  /* One canvas only. A saved module scene (flow, chart, proxy, pipeline, graph)
+     is flattened into plain nodes and edges on load, so the arrow tool and every
+     other tool work on every scene, whatever was saved before. */
+  (function normalizeScene() {
+    var s = state.spec;
+    if (!s || s.module === 'canvas') return;
+    var flat = materializeScene(s);
+    var base = presetFor('canvas');
+    base.grid = true;
+    base.nodes = flat.nodes;
+    base.edges = flat.edges;
+    base.drawings = (s.drawings || []).slice();
+    if (s.title) base.title = s.title;
+    base.zoom = 1;
+    base.panX = 0;
+    base.panY = 0;
+    state.spec = base;
+  })();
 
   Alur.init(document);
   syncScene();

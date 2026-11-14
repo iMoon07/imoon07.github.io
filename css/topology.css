@@ -11,7 +11,16 @@
    toolbar, or manual zoom. The backdrop is transparent so it blends with the page.
    ============================================================================= */
 
+@font-face {
+    font-family: 'Excalifont';
+    src: url('https://excalidraw.nyc3.cdn.digitaloceanspaces.com/fonts/Excalifont-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 .topo {
+    font-family: 'Excalifont', ui-sans-serif, system-ui, sans-serif;
     --topo-bg: var(--bg, #111827);
     --topo-panel: #1f2937;
     --topo-line: #30363d;
@@ -34,6 +43,11 @@
 .topo-canvas {
     position: relative;
     margin: 0 auto;
+}
+
+.topo text,
+.topo tspan {
+    font-family: 'Excalifont', ui-sans-serif, system-ui, sans-serif;
 }
 
 .topo-svg {

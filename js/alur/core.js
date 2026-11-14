@@ -163,7 +163,10 @@
             palette: global.AlurKit ? global.AlurKit.palette : null,
             kit: global.AlurKit,
             cables: global.AlurCables,
-            motions: global.AlurMotions
+            motions: global.AlurMotions,
+            /* The editor owns pan/zoom and a fixed artboard; the reading page
+               fits the drawing to the column instead. */
+            editor: el.getAttribute('data-editor') === '1'
         };
         var inst;
         try {

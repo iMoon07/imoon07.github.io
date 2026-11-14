@@ -197,11 +197,14 @@ column width, stacks vertically on narrow screens, and draws solid edges with ar
 under `prefers-reduced-motion`. See **[docs/topology-guide.md](docs/topology-guide.md)** for
 the full authoring guide, recipes, and verification steps.
 
-The same renderer is also an Alur module (`js/alur/modules/topology.js`), so a topology
-can be inserted into the `draw.html` canvas as a block with `＋ Topology`. Both engines share
-one syntax: the block keeps the whole ```topology spec, and `"grid": false` turns the
-background off (grid is CSS here, because topology nodes are DOM and an SVG grid would sit
-on top of the cards).
+**`topology.html`** is the authoring page for this syntax: a live preview on the left, a
+Nodes/Edges/Look/Logos/JSON panel on the right, four presets, and a `Copy ```topology`
+button that emits exactly the fence above. It is a separate page on purpose: topology and
+`draw` are different concepts. Topology is a transparent, flow-driven diagram that the
+renderer lays out for you (no grid, no canvas); `draw.html` is a free canvas with a grid.
+The editor's *Guides* toggle is preview-only and never reaches the exported fence. Logos
+resolve through `AlurLogos`, so `stack:docker` works as a node icon, and the same string
+stays valid inside an article.
 
 ```topology
 {

@@ -472,6 +472,36 @@
         let edgeSeq = 0;
         let backBase = 0;
         let backLaneX = 0;
+
+        /* Cat per-edge: warna, ketebalan, dash, motion. Diambil dari spec.edges
+           supaya satu diagram bisa punya kabel berwarna dan berlabel konteks
+           (Request/Query/Read), bukan cuma satu gaya untuk semua.
+
+           Per-edge paint: colour, width, dash, and motion come from spec.edges, so
+           one diagram can mix coloured, labelled cables instead of one style for
+           every edge. */
+        const EDGE_TONE = { flow: '#58a6ff', back: '#3fb950' };
+        const EDGE_DASH = { dashed: '7 5', dotted: '2 4', dash: '14 6' };
+        const EDGE_COLORS = {
+            blue: '#58a6ff', green: '#3fb950', amber: '#d29922', red: '#f85149',
+            purple: '#bc8cff', cyan: '#39d0d8', pink: '#f778ba', lime: '#a5d64a',
+            slate: '#8b949e', white: '#e6edf3'
+        };
+        let paint = null;
+
+        function paintOf(e, isBack) {
+            if (!e) return null;
+            const raw = e.color || e.tone;
+            const named = raw && EDGE_COLORS[String(raw).toLowerCase()];
+            return {
+                color: named || (typeof raw === 'string' && raw.charAt(0) === '#' ? raw : '') ||
+                    (isBack ? EDGE_TONE.back : EDGE_TONE.flow),
+                width: e.width > 0 ? e.width : 0,
+                dash: e.dash || e.strokeStyle || 'solid',
+                motion: e.motion === undefined ? 'flow' : e.motion
+            };
+        }
+
         function addPath(d, cls, marker) {
             const id = 'topo-e-' + (++edgeSeq);
             const attrs = { d: d, class: cls, id: id };
@@ -480,6 +510,13 @@
                 attrs['marker-end'] = 'url(#' + arrowId + ')';
             }
             const p = svgEl('path', attrs);
+            if (paint) {
+                if (paint.color) p.setAttribute('stroke', paint.color);
+                if (paint.width) p.setAttribute('stroke-width', String(paint.width));
+                const dash = EDGE_DASH[paint.dash];
+                if (dash) p.setAttribute('stroke-dasharray', dash);
+                p.dataset.motion = paint.motion || 'flow';
+            }
             gEdges.appendChild(p);
             return p;
         }
@@ -494,7 +531,11 @@
                sweep in draw() guarantees no edge is left unanimated. */
             if (pathEl.dataset && pathEl.dataset.flow === '1') return;
             if (pathEl.dataset) pathEl.dataset.flow = '1';
-            const color = kind === 'back' ? '#3fb950' : '#58a6ff';
+            /* motion: 'none' pada edge = kabel statis, tanpa titik.
+               motion 'none' on an edge = static cable, no dot. */
+            if (paint && paint.motion === 'none') return;
+            const color = (paint && paint.color) ||
+                (kind === 'back' ? EDGE_TONE.back : EDGE_TONE.flow);
             const g = svgEl('g', { class: 'topo-dot' });
             /* Halo tipis supaya titik terbaca di kabel panjang tanpa filter.
                A soft halo keeps the dot readable on long cables without a filter. */
@@ -1113,6 +1154,12 @@
             }
 
             fanGroups().forEach(function (bus) {
+                /* Bus memakai satu gaya (mewarnai tiap cabang berbeda akan
+                   membuat trunk terlihat putus-putus). A bus uses one style:
+                   painting each branch differently would make the trunk look
+                   broken. */
+                const first = (bus.ids2 && bus.ids2[0] && bus.ids2[0].e) || null;
+                paint = paintOf(first, false);
                 if (bus.vertical) {
                     if (bus.kind === 'out') busOutGridV(bus.from, bus.ids);
                     else busInGridV(bus.to, bus.ids);
@@ -1120,6 +1167,7 @@
                     if (bus.kind === 'out') busOutGrid(bus.from, bus.ids);
                     else busInGrid(bus.to, bus.ids);
                 }
+                paint = null;
             });
 
             /* Root bus only when the spec did not spell out a root edge.
@@ -1129,7 +1177,9 @@
                 const rootIds = (spec.columns || [])
                     .map(c => c.nodes && c.nodes[0])
                     .filter(id => id && nodeEls.has(id));
+                paint = paintOf(spec.root, false);
                 if (rootIds.length) busOutRoot('__root__', rootIds);
+                paint = null;
             }
 
             let backIndex = 0;
@@ -1140,6 +1190,7 @@
 
                 const sr = rectOf(s), tr = rectOf(t);
                 const isBack = e.back || e.style === 'back';
+                paint = paintOf(e, isBack);
                 let depth = 0;
                 let backGeom = null;
 
@@ -1157,8 +1208,9 @@
                         'topo-edge--flow', 'flow');
                     addFlowDot(p, 'flow');
                     if (e.badge && spec.badges !== false) {
-                        addBadge((sr.cx + tr.cx) / 2, midY, e.badge, '#58a6ff');
+                        addBadge((sr.cx + tr.cx) / 2, midY, e.badge, paint ? paint.color : '#58a6ff');
                     }
+                    paint = null;
                     return;
                 }
 
@@ -1197,7 +1249,7 @@
                 }
 
                 if (e.badge && spec.badges !== false) {
-                    const tone = isBack ? '#3fb950' : '#58a6ff';
+                    const tone = (paint && paint.color) || (isBack ? EDGE_TONE.back : EDGE_TONE.flow);
                     if (vertical) {
                         if (isBack) {
                             /* Angka ditaruh di sisi kabel, bukan menempel di
@@ -1227,6 +1279,7 @@
                         }
                     }
                 }
+                paint = null;
             });
 
             /* Sapuan akhir: setiap path yang belum punya titik diberi satu, jadi

@@ -205,7 +205,15 @@
        type: arrow (default) | triangle | circle | dot | diamond | bar | none
        Kembalikan elemen yang sudah digambar, atau null bila type === 'none'.
        Draws the head and returns the element, or null for type 'none'. */
-    function arrowHead(parent, tip, from, type, color, opts) {
+    /* Geometri murni: menghasilkan deskripsi bentuk tanpa menyentuh DOM, jadi
+       bisa dipakai untuk membuat head baru maupun memperbarui head yang sudah
+       ada (saat node digeser). Ini yang membuat panah tidak perlu
+       disembunyikan lalu digambar ulang.
+
+       Pure geometry: returns a shape description without touching the DOM, so
+       the same maths can create a head or move an existing one (while a node is
+       dragged). That is why an arrow no longer has to be hidden and redrawn. */
+    function arrowGeom(tip, from, type, opts) {
         if (!tip || !from) return null;
         var kind = type || 'arrow';
         if (kind === 'none') return null;
@@ -213,60 +221,52 @@
         var ang = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
         var segLen = Math.sqrt(Math.pow(tip[0] - from[0], 2) + Math.pow(tip[1] - from[1], 2));
         var full = arrowSize(kind);
-        /* Skala turun bila segmen terakhir terlalu pendek (aturan 0.5 Excalidraw).
-           Scale down when the last segment is too short (Excalidraw's 0.5). */
         var size = Math.min(full, segLen * (kind === 'diamond' ? 0.25 : 0.5));
         var sw = o.width || 2.4;
 
         if (kind === 'circle' || kind === 'dot') {
-            /* Excalidraw: diameter = size + strokeWidth - 2, di titik ujung. */
-            return circle(parent, tip[0], tip[1], Math.max(2, (size + sw - 2) / 2),
-                'alur-edge-head', { fill: color, stroke: 'none' });
+            return {
+                kind: 'circle', tip: tip,
+                cx: tip[0], cy: tip[1],
+                r: Math.max(2, (size + sw - 2) / 2),
+                fill: o.color, stroke: 'none'
+            };
         }
 
         if (kind === 'bar') {
-            /* Garis tegak lurus di ujung, panjang = size (90°). */
             var bx = Math.cos(ang + Math.PI / 2) * size / 2;
             var by = Math.sin(ang + Math.PI / 2) * size / 2;
-            return path(parent,
-                'M ' + (tip[0] - bx) + ' ' + (tip[1] - by) + ' L ' + (tip[0] + bx) + ' ' + (tip[1] + by),
-                'alur-edge-head', {
-                    stroke: color, 'stroke-width': sw, fill: 'none',
-                    'stroke-linecap': 'round'
-                });
+            return {
+                kind: 'path', tip: tip,
+                d: 'M ' + (tip[0] - bx) + ' ' + (tip[1] - by) +
+                   ' L ' + (tip[0] + bx) + ' ' + (tip[1] + by),
+                fill: 'none', stroke: o.color, width: sw, cap: 'round'
+            };
         }
 
-        if (kind === 'diamond') {
+        if (kind === 'diamond' || kind === 'diamond_outline') {
             var dx = Math.cos(ang), dy = Math.sin(ang);
-            var tipX = tip[0], tipY = tip[1];
             var backX = tip[0] - dx * size, backY = tip[1] - dy * size;
             var midX = tip[0] - dx * size / 2, midY = tip[1] - dy * size / 2;
             var wx = Math.cos(ang + Math.PI / 2) * size * 0.5;
             var wy = Math.sin(ang + Math.PI / 2) * size * 0.5;
-            var d = 'M ' + tipX + ' ' + tipY +
-                ' L ' + (midX + wx) + ' ' + (midY + wy) +
-                ' L ' + backX + ' ' + backY +
-                ' L ' + (midX - wx) + ' ' + (midY - wy) + ' Z';
-            if (kind === 'diamond_outline' || o.outline) {
-                return path(parent, d, 'alur-edge-head', {
-                    fill: 'none', stroke: color, 'stroke-width': sw,
-                    'stroke-linejoin': 'round'
-                });
-            }
-            return path(parent, d, 'alur-edge-head', { fill: color, stroke: 'none' });
+            var outline = kind === 'diamond_outline' || o.outline;
+            return {
+                kind: 'path', tip: tip,
+                d: 'M ' + tip[0] + ' ' + tip[1] +
+                   ' L ' + (midX + wx) + ' ' + (midY + wy) +
+                   ' L ' + backX + ' ' + backY +
+                   ' L ' + (midX - wx) + ' ' + (midY - wy) + ' Z',
+                fill: outline ? 'none' : o.color,
+                stroke: outline ? o.color : 'none',
+                width: outline ? sw : 0,
+                join: outline ? 'round' : null
+            };
         }
 
-        /* V terbuka (arrow) dan segitiga terisi (triangle) memakai dua titik
-           pangkal yang sama; bedanya hanya isian.
-           Open V (arrow) and filled triangle share the same base points; only
-           the fill differs. */
         var openAngle = (arrowAngle(size, full) * Math.PI) / 180;
         var bx2 = tip[0] - Math.cos(ang) * size;
         var by2 = tip[1] - Math.sin(ang) * size;
-        /* Lebar pangkal = size * tan(sudut buka), tepat seperti memutar titik
-           pangkal sejauh ±sudut mengelilingi ujung.
-           Base half-width = size * tan(angle): the same as rotating the base
-           point ±angle around the tip. */
         var halfBase = size * Math.tan(openAngle);
         var perpX = Math.cos(ang + Math.PI / 2);
         var perpY = Math.sin(ang + Math.PI / 2);
@@ -276,22 +276,86 @@
         var rightY = by2 - perpY * halfBase;
 
         if (kind === 'triangle') {
-            return path(parent,
-                'M ' + tip[0] + ' ' + tip[1] +
-                ' L ' + leftX + ' ' + leftY +
-                ' L ' + rightX + ' ' + rightY + ' Z',
-                'alur-edge-head', { fill: color, stroke: 'none' });
+            return {
+                kind: 'path', tip: tip,
+                d: 'M ' + tip[0] + ' ' + tip[1] +
+                   ' L ' + leftX + ' ' + leftY +
+                   ' L ' + rightX + ' ' + rightY + ' Z',
+                fill: o.color, stroke: 'none'
+            };
         }
 
-        /* arrow: dua garis terbuka, ujung membulat, tanpa isian.
-           arrow: two open strokes, round caps, no fill. */
-        return path(parent,
-            'M ' + leftX + ' ' + leftY + ' L ' + tip[0] + ' ' + tip[1] +
-            ' L ' + rightX + ' ' + rightY,
-            'alur-edge-head', {
-                fill: 'none', stroke: color, 'stroke-width': sw,
-                'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+        /* arrow: dua garis terbuka, ujung membulat, tanpa isian. */
+        return {
+            kind: 'path', tip: tip,
+            d: 'M ' + leftX + ' ' + leftY + ' L ' + tip[0] + ' ' + tip[1] +
+               ' L ' + rightX + ' ' + rightY,
+            fill: 'none', stroke: o.color, width: sw, cap: 'round', join: 'round'
+        };
+    }
+
+    function applyArrow(el, geom) {
+        if (!el || !geom) return el;
+        if (geom.kind === 'circle') {
+            el.setAttribute('cx', geom.cx);
+            el.setAttribute('cy', geom.cy);
+            el.setAttribute('r', geom.r);
+            el.setAttribute('fill', geom.fill || 'none');
+            el.setAttribute('stroke', geom.stroke || 'none');
+        } else {
+            el.setAttribute('d', geom.d);
+            el.setAttribute('fill', geom.fill || 'none');
+            if (geom.stroke && geom.stroke !== 'none') {
+                el.setAttribute('stroke', geom.stroke);
+                el.setAttribute('stroke-width', geom.width || 2);
+            }
+            if (geom.cap) el.setAttribute('stroke-linecap', geom.cap);
+            if (geom.join) el.setAttribute('stroke-linejoin', geom.join);
+        }
+        return el;
+    }
+
+    function arrowHead(parent, tip, from, type, color, opts) {
+        var geom = arrowGeom(tip, from, type, Object.assign({ color: color }, opts || {}));
+        if (!geom) return null;
+        var o = opts || {};
+        if (geom.kind === 'circle') {
+            var c = circle(parent, geom.cx, geom.cy, geom.r, 'alur-edge-head', {
+                fill: geom.fill, stroke: 'none'
             });
+            c.setAttribute('data-arrow-kind', 'circle');
+            return c;
+        }
+        var el = path(parent, geom.d, 'alur-edge-head', {
+            fill: geom.fill,
+            stroke: geom.stroke === 'none' ? null : geom.stroke,
+            'stroke-width': geom.width || 2,
+            'stroke-linecap': geom.cap || null,
+            'stroke-linejoin': geom.join || null
+        });
+        el.setAttribute('data-arrow-kind', 'path');
+        return el;
+    }
+
+    /* Perbarui head yang sudah ada (dipakai saat node digeser). Mengembalikan
+       false kalau elemen tidak bisa diperbarui, supaya pemanggil bisa menggambar
+       ulang.
+       Move an existing head (used while a node is dragged). Returns false when the
+       element cannot be updated, so the caller can redraw instead. */
+    function arrowInto(el, tip, from, type, color, opts) {
+        if (!el || el.getAttribute('data-arrow-kind') === 'circle') {
+            /* bulat: pindahkan pusatnya, tidak ada d */
+            var g0 = arrowGeom(tip, from, type, Object.assign({ color: color }, opts || {}));
+            if (!g0 || g0.kind !== 'circle') return false;
+            el.setAttribute('cx', g0.cx);
+            el.setAttribute('cy', g0.cy);
+            el.setAttribute('r', g0.r);
+            return true;
+        }
+        var g = arrowGeom(tip, from, type, Object.assign({ color: color }, opts || {}));
+        if (!g || g.kind === 'circle') return false;
+        applyArrow(el, g);
+        return true;
     }
 
     function svgRoot(host, opts) {
@@ -369,6 +433,8 @@
         clamp: clamp,
         grid: grid,
         arrowHead: arrowHead,
+        arrowInto: arrowInto,
+        arrowGeom: arrowGeom,
         arrowSize: arrowSize,
         svgRoot: svgRoot,
         ensureSprite: ensureSprite,
