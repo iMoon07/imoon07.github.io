@@ -168,6 +168,132 @@
         svg.insertBefore(r, svg.firstChild);
     }
 
+    /* ---------------------------------------------------------------- panah
+       Ujung panah mengikuti matematika Excalidraw (packages/element/src/bounds.ts:
+       getArrowheadPoints + getArrowheadSize + getArrowheadAngle). Bukan hiasan:
+       panah "arrow" Excalidraw adalah V terbuka (dua garis), bukan segitiga
+       terisi, dan panjangnya 25 unit dengan sudut buka 20°, mengecil mengikuti
+       panjang segmen terakhir.
+
+       Arrowheads follow Excalidraw's own maths (getArrowheadPoints,
+       getArrowheadSize, getArrowheadAngle). Not decoration: Excalidraw's "arrow"
+       is an open V of two strokes, not a filled triangle, 25 units long with a
+       20° opening, shrinking with the last segment. */
+    var ARROW_SIZE = 25;          /* getArrowheadSize("arrow") */
+    var ARROW_ANGLE = 20;         /* ARROW_ARROWHEAD_ANGLE */
+    var ARROW_WIDEST_ANGLE = 30;  /* ARROW_ARROWHEAD_WIDEST_ANGLE */
+    var ARROW_WIDEST_SIZE = 10;   /* ARROW_ARROWHEAD_WIDEST_SIZE */
+
+    function arrowSize(type) {
+        if (type === 'triangle') return 25;
+        if (type === 'diamond') return 12;
+        if (type === 'circle' || type === 'dot') return 15;
+        if (type === 'bar') return 25;
+        return ARROW_SIZE;
+    }
+
+    /* Sudut buka: makin kecil ukuran, makin lebar bukaannya (sama seperti
+       Excalidraw supaya panah pendek tidak menyempit jadi garis).
+       Opening angle: the smaller the size, the wider the V (as in Excalidraw,
+       so a short arrow does not collapse into the line). */
+    function arrowAngle(size, full) {
+        var shrink = clamp((full - size) / (full - ARROW_WIDEST_SIZE), 0, 1);
+        return ARROW_ANGLE + (ARROW_WIDEST_ANGLE - ARROW_ANGLE) * shrink;
+    }
+
+    /* tip: titik ujung. from: titik acuan arah (segmen sebelumnya).
+       type: arrow (default) | triangle | circle | dot | diamond | bar | none
+       Kembalikan elemen yang sudah digambar, atau null bila type === 'none'.
+       Draws the head and returns the element, or null for type 'none'. */
+    function arrowHead(parent, tip, from, type, color, opts) {
+        if (!tip || !from) return null;
+        var kind = type || 'arrow';
+        if (kind === 'none') return null;
+        var o = opts || {};
+        var ang = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
+        var segLen = Math.sqrt(Math.pow(tip[0] - from[0], 2) + Math.pow(tip[1] - from[1], 2));
+        var full = arrowSize(kind);
+        /* Skala turun bila segmen terakhir terlalu pendek (aturan 0.5 Excalidraw).
+           Scale down when the last segment is too short (Excalidraw's 0.5). */
+        var size = Math.min(full, segLen * (kind === 'diamond' ? 0.25 : 0.5));
+        var sw = o.width || 2.4;
+
+        if (kind === 'circle' || kind === 'dot') {
+            /* Excalidraw: diameter = size + strokeWidth - 2, di titik ujung. */
+            return circle(parent, tip[0], tip[1], Math.max(2, (size + sw - 2) / 2),
+                'alur-edge-head', { fill: color, stroke: 'none' });
+        }
+
+        if (kind === 'bar') {
+            /* Garis tegak lurus di ujung, panjang = size (90°). */
+            var bx = Math.cos(ang + Math.PI / 2) * size / 2;
+            var by = Math.sin(ang + Math.PI / 2) * size / 2;
+            return path(parent,
+                'M ' + (tip[0] - bx) + ' ' + (tip[1] - by) + ' L ' + (tip[0] + bx) + ' ' + (tip[1] + by),
+                'alur-edge-head', {
+                    stroke: color, 'stroke-width': sw, fill: 'none',
+                    'stroke-linecap': 'round'
+                });
+        }
+
+        if (kind === 'diamond') {
+            var dx = Math.cos(ang), dy = Math.sin(ang);
+            var tipX = tip[0], tipY = tip[1];
+            var backX = tip[0] - dx * size, backY = tip[1] - dy * size;
+            var midX = tip[0] - dx * size / 2, midY = tip[1] - dy * size / 2;
+            var wx = Math.cos(ang + Math.PI / 2) * size * 0.5;
+            var wy = Math.sin(ang + Math.PI / 2) * size * 0.5;
+            var d = 'M ' + tipX + ' ' + tipY +
+                ' L ' + (midX + wx) + ' ' + (midY + wy) +
+                ' L ' + backX + ' ' + backY +
+                ' L ' + (midX - wx) + ' ' + (midY - wy) + ' Z';
+            if (kind === 'diamond_outline' || o.outline) {
+                return path(parent, d, 'alur-edge-head', {
+                    fill: 'none', stroke: color, 'stroke-width': sw,
+                    'stroke-linejoin': 'round'
+                });
+            }
+            return path(parent, d, 'alur-edge-head', { fill: color, stroke: 'none' });
+        }
+
+        /* V terbuka (arrow) dan segitiga terisi (triangle) memakai dua titik
+           pangkal yang sama; bedanya hanya isian.
+           Open V (arrow) and filled triangle share the same base points; only
+           the fill differs. */
+        var openAngle = (arrowAngle(size, full) * Math.PI) / 180;
+        var bx2 = tip[0] - Math.cos(ang) * size;
+        var by2 = tip[1] - Math.sin(ang) * size;
+        /* Lebar pangkal = size * tan(sudut buka), tepat seperti memutar titik
+           pangkal sejauh ±sudut mengelilingi ujung.
+           Base half-width = size * tan(angle): the same as rotating the base
+           point ±angle around the tip. */
+        var halfBase = size * Math.tan(openAngle);
+        var perpX = Math.cos(ang + Math.PI / 2);
+        var perpY = Math.sin(ang + Math.PI / 2);
+        var leftX = bx2 + perpX * halfBase;
+        var leftY = by2 + perpY * halfBase;
+        var rightX = bx2 - perpX * halfBase;
+        var rightY = by2 - perpY * halfBase;
+
+        if (kind === 'triangle') {
+            return path(parent,
+                'M ' + tip[0] + ' ' + tip[1] +
+                ' L ' + leftX + ' ' + leftY +
+                ' L ' + rightX + ' ' + rightY + ' Z',
+                'alur-edge-head', { fill: color, stroke: 'none' });
+        }
+
+        /* arrow: dua garis terbuka, ujung membulat, tanpa isian.
+           arrow: two open strokes, round caps, no fill. */
+        return path(parent,
+            'M ' + leftX + ' ' + leftY + ' L ' + tip[0] + ' ' + tip[1] +
+            ' L ' + rightX + ' ' + rightY,
+            'alur-edge-head', {
+                fill: 'none', stroke: color, 'stroke-width': sw,
+                'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+            });
+    }
+
     function svgRoot(host, opts) {
         var o = opts || {};
         var node = el('svg', {
@@ -242,6 +368,8 @@
         ease: ease,
         clamp: clamp,
         grid: grid,
+        arrowHead: arrowHead,
+        arrowSize: arrowSize,
         svgRoot: svgRoot,
         ensureSprite: ensureSprite,
         icon: icon,

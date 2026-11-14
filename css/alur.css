@@ -829,3 +829,30 @@
         flex: 0 0 auto;
     }
 }
+
+/* ------------------------------------------------- topology sebagai blok Alur
+   Node topology adalah DOM, bukan SVG, jadi: (a) grid digambar dengan CSS supaya
+   tidak menutupi kartu, (b) lebar 620px untuk .alur-svg di layar sempit tidak
+   berlaku, biar topology tetap responsif seperti di artikel.
+
+   Topology nodes are DOM, not SVG, so (a) the grid is CSS so it never covers a
+   card, and (b) the 620px .alur-svg minimum for narrow screens does not apply:
+   topology stays as responsive as it is in an article. */
+.alur-topology {
+    width: 100%;
+    border-radius: 10px;
+    background-repeat: repeat;
+    background-position: 0 0;
+}
+
+.alur-topology .alur-svg {
+    min-width: 0;
+}
+
+.alur-topology .topo-canvas {
+    max-width: 100%;
+}
+
+.alur-topology .topo-stage {
+    padding: 10px 4px;
+}

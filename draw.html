@@ -2230,6 +2230,7 @@
           <button class="ghost" data-scene-module="pipeline" title="Insert a Pipeline block into the current canvas"><span class="btn-ico">＋</span>Pipeline</button>
           <button class="ghost" data-scene-module="graph" title="Insert a Graph block into the current canvas"><span class="btn-ico">＋</span>Graph</button>
           <button class="ghost" data-scene-module="table" title="Insert an editable Table block into the current canvas"><span class="btn-ico">＋</span>Table</button>
+          <button class="ghost" data-scene-module="topology" title="Insert a Topology block into the current canvas"><span class="btn-ico">＋</span>Topology</button>
         </div>
       </div>
 
@@ -2347,6 +2348,7 @@
 <button id="focusExit" class="focus-exit" title="Exit focus mode">Exit focus</button>
 
 <script src="js/topology-icons.js?v=4"></script>
+<script src="js/topology.js?v=4"></script>
 <script src="js/logo-manifest.js"></script>
 <script src="js/alur/logos.js?v=4"></script>
 <script src="js/alur/kit.js?v=4"></script>
@@ -2359,6 +2361,7 @@
 <script src="js/alur/modules/chart.js?v=4"></script>
 <script src="js/alur/modules/pipeline.js?v=4"></script>
 <script src="js/alur/modules/graph.js?v=4"></script>
+<script src="js/alur/modules/topology.js?v=4"></script>
 <script>
 (function () {
   'use strict';
@@ -2753,6 +2756,59 @@
           { from: 'n1', to: 'n2' },
           { from: 'n2', to: 'n3' }
         ];
+        return s;
+      }]
+    ],
+    topology: [
+      ['chain', 'Linear chain', function () {
+        return JSON.parse(JSON.stringify({
+          "module": "topology",
+          "title": "Linear chain",
+          "vertical": true,
+          "columns": [["C"], ["P"], ["K"], ["G"]],
+          "nodes": {
+            "C": ["Customer", "Places an order", "customer", "actor"],
+            "P": ["Waiter", "Takes the order", "waiter", "process"],
+            "K": ["Chef", "Prepares the order", "cook", "process"],
+            "G": ["Pantry", "Stores ingredients", "warehouse", "store"]
+          },
+          "edges": [["C", "P"], ["P", "K"], ["K", "G"],
+                    ["G", "K", "", true], ["K", "P", "", true], ["P", "C", "", true]]
+        }));
+      }],
+      ['fan', 'Fan-out to grid', function () {
+        return JSON.parse(JSON.stringify({
+          "module": "topology",
+          "title": "Fan-out to grid",
+          "vertical": true,
+          "columns": [["B"], { "nodes": ["C", "D", "E", "F", "G", "H"], "grid": 3 }, ["I"]],
+          "nodes": {
+            "B": ["Where to run it?", "", "git-branch", "choice"],
+            "C": ["Bare Metal", "Own hardware", "hard-drive", "host"],
+            "D": ["Virtual Machine", "Private room", "monitor", "host"],
+            "E": ["Container", "Food-court stall", "si-docker", "host"],
+            "F": ["PaaS", "Franchise", "cloud", "host"],
+            "G": ["Serverless", "Pop-up stall", "zap", "host"],
+            "H": ["Edge", "Food cart", "radio", "host"],
+            "I": ["All components", "Run in one place", "layers", "out"]
+          },
+          "edges": [["B", "C"], ["B", "D"], ["B", "E"], ["B", "F"], ["B", "G"], ["B", "H"],
+                    ["C", "I"], ["D", "I"], ["E", "I"], ["F", "I"], ["G", "I"], ["H", "I"]]
+        }));
+      }],
+      ['nogroup', 'No grid, plain flow', function () {
+        var s = JSON.parse(JSON.stringify({
+          "module": "topology",
+          "title": "Plain flow (no grid)",
+          "grid": false,
+          "columns": [["A"], ["B"], ["C"]],
+          "nodes": {
+            "A": ["Client", "browser", "customer", "client"],
+            "B": ["Server", "nginx", "waiter", "server"],
+            "C": ["Database", "postgres", "warehouse", "database"]
+          },
+          "edges": [["A", "B"], ["B", "C"]]
+        }));
         return s;
       }]
     ],
@@ -3251,7 +3307,13 @@
     if (!isCanvas()) switchModule('canvas');
     var spec = presetFor(id);
     if (!spec) return;
-    if (id !== 'chart') {
+    /* chart dan topology adalah blok modul: spec-nya utuh, tidak dipecah jadi
+       kotak-kotak. topology butuh layout + bus routing miliknya sendiri, jadi
+       memecahnya ke node canvas akan membuang fitur itu.
+       chart and topology are module blocks: their spec stays whole. Topology
+       needs its own layout and bus routing, so flattening it into plain canvas
+       nodes would throw those features away. */
+    if (id !== 'chart' && id !== 'topology') {
       pushHistory();
       insertModuleScene(id, spec);
       return;
@@ -3261,7 +3323,8 @@
       'reverse-proxy': [420, 260],
       chart: [420, 280],
       pipeline: [420, 220],
-      graph: [420, 260]
+      graph: [420, 260],
+      topology: [560, 420]
     };
     var d = dims[id] || [380, 240];
     var s = state.spec;

@@ -294,35 +294,16 @@
         return g;
     }
 
+    /* Ujung panah memakai geometri Excalidraw lewat AlurKit.arrowHead, supaya
+       bentuknya sama dengan panah tangan di Excalidraw: V terbuka, bukan
+       segitiga terisi. "triangle" tetap disediakan untuk yang mau versi penuh.
+       Heads come from AlurKit.arrowHead (Excalidraw maths) so the shape matches
+       a hand-drawn Excalidraw arrow: an open V, not a filled triangle.
+       "triangle" stays available for the filled look. */
     function arrowHeadAt(layer, tip, from, type, color, specIndex) {
         if (!tip || !from || type === 'none') return;
-        var ang = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
-        var len = type === 'triangle' ? 13 : 9;
-        var spread = type === 'triangle' ? 7 : 4.5;
-        var x1 = tip[0] - len * Math.cos(ang) + spread * Math.sin(ang);
-        var y1 = tip[1] - len * Math.sin(ang) - spread * Math.cos(ang);
-        var x2 = tip[0] - len * Math.cos(ang) - spread * Math.sin(ang);
-        var y2 = tip[1] - len * Math.sin(ang) + spread * Math.cos(ang);
-        var attrs = { fill: color, stroke: 'none', 'data-edge': String(specIndex) };
-        if (type === 'circle') {
-            kit.circle(layer, tip[0], tip[1], 4, 'alur-edge-head', attrs);
-        } else if (type === 'diamond') {
-            kit.path(layer,
-                'M ' + tip[0] + ' ' + (tip[1] - 6) +
-                ' L ' + (tip[0] + 6) + ' ' + tip[1] +
-                ' L ' + tip[0] + ' ' + (tip[1] + 6) +
-                ' L ' + (tip[0] - 6) + ' ' + tip[1] + ' Z',
-                'alur-edge-head', attrs);
-        } else if (type === 'bar') {
-            kit.path(layer,
-                'M ' + x1 + ' ' + y1 + ' L ' + x2 + ' ' + y2,
-                'alur-edge-head', { stroke: color, 'stroke-width': 2, fill: 'none', 'data-edge': String(specIndex) });
-        } else {
-            kit.path(layer,
-                'M ' + tip[0] + ' ' + tip[1] + ' L ' + x1 + ' ' + y1 +
-                ' L ' + x2 + ' ' + y2 + ' Z',
-                'alur-edge-head', attrs);
-        }
+        var el = kit.arrowHead(layer, tip, from, type, color, { width: 2 });
+        if (el && specIndex !== undefined) el.setAttribute('data-edge', String(specIndex));
     }
 
     function smoothPath(pts) {

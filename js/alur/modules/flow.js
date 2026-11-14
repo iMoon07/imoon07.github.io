@@ -105,21 +105,11 @@
         };
     }
 
+    /* Sama dengan panah Excalidraw: V terbuka, bukan segitiga terisi.
+       Same as an Excalidraw arrow: an open V, not a filled triangle. */
     function arrowHead(layer, end, color) {
         if (!end) return;
-        var tip = end.tip;
-        var from = end.from;
-        var ang = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
-        var len = 9;
-        var spread = 4.5;
-        var x1 = tip[0] - len * Math.cos(ang) + spread * Math.sin(ang);
-        var y1 = tip[1] - len * Math.sin(ang) - spread * Math.cos(ang);
-        var x2 = tip[0] - len * Math.cos(ang) - spread * Math.sin(ang);
-        var y2 = tip[1] - len * Math.sin(ang) + spread * Math.cos(ang);
-        kit.path(layer,
-            'M ' + tip[0] + ' ' + tip[1] + ' L ' + x1 + ' ' + y1 +
-            ' L ' + x2 + ' ' + y2 + ' Z',
-            'alur-edge-head', { fill: color, stroke: 'none' });
+        return kit.arrowHead(layer, end.tip, end.from, 'arrow', color, { width: 2 });
     }
 
     function drawNode(parent, box, node, palette) {

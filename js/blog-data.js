@@ -94,7 +94,9 @@ const myProjects = [
     publishedDate: "2026-09-19",
     publishedTime: "19:00",
     rawUrl:
-      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION/reverse-shell-server-side.md",
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION/reverse-shell-server-side-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION/reverse-shell-server-side-en.md",
     repoUrl:
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Experiments/linux-investigation/REVERSE-SHELL-DETECTION",
   },

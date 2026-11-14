@@ -1991,10 +1991,19 @@ function thumbnailPlaceholder(label) {
     return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+/* Satu sumber untuk URL raw yang sadar bahasa: rawUrlEn menang untuk non-id,
+   kalau tidak ada, -id.md -> -<lang>.md. Dipakai thumbnail dan artikel supaya
+   keduanya tidak pernah menunjuk file yang berbeda. */
+function articleSourceUrl(project) {
+    if (!project || !project.rawUrl) return null;
+    if (ARTICLE_LANG === 'id') return project.rawUrl;
+    if (project.rawUrlEn) return project.rawUrlEn;
+    if (project.rawUrl.endsWith('-id.md')) return project.rawUrl.replace('-id.md', `-${ARTICLE_LANG}.md`);
+    return project.rawUrl.replace(/\.md$/, `-${ARTICLE_LANG}.md`);
+}
+
 function loadThumbnail(project) {
-    const url = ARTICLE_LANG !== 'id'
-        ? (project.rawUrlEn || project.rawUrl)
-        : project.rawUrl;
+    const url = articleSourceUrl(project);
 
     if (!url) return Promise.resolve(null);
 
@@ -2547,11 +2556,7 @@ if (docMode) {
     const project = myProjects.find(item => item.id === postId);
     if (project && typeof project.id === 'string' && project.id.trim() !== '') {
         currentProject = project;
-        repoUrl = lang !== 'id'
-            ? (project.rawUrlEn || (project.rawUrl
-                ? (project.rawUrl.endsWith('-id.md') ? project.rawUrl.replace('-id.md', `-${lang}.md`) : project.rawUrl.replace('.md', `-${lang}.md`))
-                : project.rawUrl))
-            : project.rawUrl;
+        repoUrl = articleSourceUrl(project);
     }
 }
 

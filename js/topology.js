@@ -1048,6 +1048,80 @@
             });
             const covered = new Set();
 
+            /* Satu simpul yang bercabang ke banyak simpul di dalam satu grid
+               (atau sebaliknya) digambar sebagai satu bus, bukan N kurva.
+               N kurva dari satu induk saling menembus kartu di baris tengah,
+               jadi kabel tampak "terbang" menembus kotak dan teks.
+               One node branching into a whole grid (or the reverse) is drawn as
+               one bus, not N curves: N curves from one parent cross the cards
+               in the middle rows, so the cables look like they fly through
+               boxes and text. */
+            function fanGroups() {
+                const groups = spec.groups || [];
+                const labelled = ids => groups.some(gr =>
+                    ids.some(id => gr.nodes.indexOf(id) >= 0));
+                const out = [];
+                const byFrom = new Map();
+                const byTo = new Map();
+                edgeList.forEach((e, i) => {
+                    if (e.back || e.style === 'back') return;
+                    if (!byFrom.has(e.from)) byFrom.set(e.from, []);
+                    byFrom.get(e.from).push({ e: e, i: i });
+                    if (!byTo.has(e.to)) byTo.set(e.to, []);
+                    byTo.get(e.to).push({ e: e, i: i });
+                });
+                /* Jangan rebut edge yang sudah dipakai bus lain. Do not claim an
+                   edge that another bus already uses. */
+                const free = list => list.filter(x => !covered.has(x.i));
+                byFrom.forEach((list, from) => {
+                    const items = free(list);
+                    if (items.length < 3) return;
+                    const ids = items.map(x => x.e.to);
+                    const g = gridInfo(ids);
+                    if (!g || labelled(ids)) return;
+                    const s = rectOf(nodeEls.get(from));
+                    if (!s) return;
+                    const above = s.y + s.h <= g.top - 4;
+                    const left = s.x + s.w <= g.left - 4;
+                    if (vertical && !above) return;
+                    if (!vertical && !left) return;
+                    items.forEach(x => covered.add(x.i));
+                    out.push({
+                        kind: 'out', from: from, ids: ids, ids2: items,
+                        vertical: vertical
+                    });
+                });
+                byTo.forEach((list, to) => {
+                    const items = free(list);
+                    if (items.length < 3) return;
+                    const ids = items.map(x => x.e.from);
+                    const g = gridInfo(ids);
+                    if (!g || labelled(ids)) return;
+                    const t = rectOf(nodeEls.get(to));
+                    if (!t) return;
+                    const below = t.y >= g.bottom + 4;
+                    const right = t.x >= g.right + 4;
+                    if (vertical && !below) return;
+                    if (!vertical && !right) return;
+                    items.forEach(x => covered.add(x.i));
+                    out.push({
+                        kind: 'in', to: to, ids: ids, ids2: items,
+                        vertical: vertical
+                    });
+                });
+                return out;
+            }
+
+            fanGroups().forEach(function (bus) {
+                if (bus.vertical) {
+                    if (bus.kind === 'out') busOutGridV(bus.from, bus.ids);
+                    else busInGridV(bus.to, bus.ids);
+                } else {
+                    if (bus.kind === 'out') busOutGrid(bus.from, bus.ids);
+                    else busInGrid(bus.to, bus.ids);
+                }
+            });
+
             /* Root bus only when the spec did not spell out a root edge.
                Explicit __root__ edges are drawn as ordinary direct edges so
                rootWires:false means "do not auto-bus", not "delete the root". */
