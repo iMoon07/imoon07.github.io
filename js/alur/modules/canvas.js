@@ -458,9 +458,14 @@
         var sketch = slop ? kit.roughPath(body,
             typeof kit.nodeSeed(n) === 'string' ? kitSeedLocal(kit.nodeSeed(n)) : kit.nodeSeed(n),
             slop, Number(n.strokeWidth) || 2, w, h) : null;
+        /* .alur-node-box carries a dark default fill, and a stylesheet rule beats
+           an SVG presentation attribute, so the paper colour only reaches the
+           page when it is an inline style. */
         kit.path(inner, body, 'alur-node-box alur-sticky', {
             fill: fill, stroke: sketch ? 'none' : color, 'stroke-width': 1.2,
-            'stroke-linejoin': 'round'
+            'stroke-linejoin': 'round',
+            style: 'fill:' + fill + ';stroke:' + (sketch ? 'none' : color) +
+                ';stroke-width:1.2;'
         });
         if (sketch) {
             sketch.strokes.forEach(function (d) {

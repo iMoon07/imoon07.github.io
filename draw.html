@@ -2799,7 +2799,7 @@
   <span id="topStatus" class="top-status">0 nodes · 0 edges</span>
   <!-- Build stamp: always visible, so "nothing changed" can be told apart from
        "this page is a cached copy". Bump it whenever draw.html changes. -->
-  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15a</span>
+  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15b</span>
   <nav class="top-nav" aria-label="Site">
     <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
     <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
@@ -3222,7 +3222,7 @@
 <script src="js/alur/cables.js?v=4"></script>
 <script src="js/alur/motions.js?v=4"></script>
 <script src="js/alur/core.js?v=6"></script>
-<script src="js/alur/modules/canvas.js?v=14"></script>
+<script src="js/alur/modules/canvas.js?v=15"></script>
 <script src="js/alur/modules/flow.js?v=4"></script>
 <script src="js/alur/modules/reverse-proxy.js?v=4"></script>
 <script src="js/alur/modules/chart.js?v=4"></script>
@@ -8103,6 +8103,14 @@
 
     if (info.kind === 'node') {
       var n = info.node;
+      /* A table is written in its own cells, in place. A style panel here would
+         only repaint a frame the table does not use, so it stays out of the way
+         and the node behaves like any plain object: drag, resize, delete. */
+      if (n.shape === 'table') {
+        panel.hidden = true;
+        body.innerHTML = '';
+        return;
+      }
       title.textContent = (n.shape || 'box') + ' · ' + (n.id || 'node');
       if (n.shape === 'module') {
         title.textContent = (n.module || 'module') + ' card';
