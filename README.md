@@ -197,6 +197,12 @@ column width, stacks vertically on narrow screens, and draws solid edges with ar
 under `prefers-reduced-motion`. See **[docs/topology-guide.md](docs/topology-guide.md)** for
 the full authoring guide, recipes, and verification steps.
 
+The same renderer is also an Alur module (`js/alur/modules/topology.js`), so a topology
+can be inserted into the `draw.html` canvas as a block with `＋ Topology`. Both engines share
+one syntax: the block keeps the whole ```topology spec, and `"grid": false` turns the
+background off (grid is CSS here, because topology nodes are DOM and an SVG grid would sit
+on top of the cards).
+
 ```topology
 {
   "title": "Alur",
