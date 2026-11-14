@@ -40,10 +40,21 @@
         return el('circle', attrs, parent);
     }
 
+    /* Presentation attributes lose to any stylesheet rule (`.alur-node-label
+       { fill, font-size, font-weight, ... }`), so a per-node value must also be
+       inline or bold/italic/size/colour silently do nothing. */
+    var INLINE_STYLE = {
+        fill: 1, 'font-size': 1, 'font-family': 1, 'font-weight': 1,
+        'font-style': 1, 'text-decoration': 1, 'letter-spacing': 1
+    };
+
     function text(parent, x, y, str, cls, extra) {
         var attrs = { x: x, y: y, class: cls || null };
         if (extra) Object.keys(extra).forEach(function (k) { attrs[k] = extra[k]; });
         var node = el('text', attrs, parent);
+        Object.keys(attrs).forEach(function (k) {
+            if (INLINE_STYLE[k] && attrs[k] != null) node.style[k] = attrs[k];
+        });
         node.textContent = str;
         return node;
     }
@@ -65,6 +76,7 @@
 
     function color(name) {
         if (!name) return palette.blue;
+        if (name === 'inherit' || name === 'currentColor') return name;
         if (palette[name]) return palette[name];
         return name;
     }
@@ -183,6 +195,174 @@
     var ARROW_ANGLE = 20;         /* ARROW_ARROWHEAD_ANGLE */
     var ARROW_WIDEST_ANGLE = 30;  /* ARROW_ARROWHEAD_WIDEST_ANGLE */
     var ARROW_WIDEST_SIZE = 10;   /* ARROW_ARROWHEAD_WIDEST_SIZE */
+
+    /* ---- Hand-drawn strokes (Rough.js) ----------------------------------
+       Rough.js (MIT, vendored in vendor/rough.js) does the hand-drawn maths:
+       bowing, roughness, seeded randomness, multi-pass strokes, hachure fills.
+       We only ask it for the *outline*, because the fill stays an SVG pattern
+       (a hachure path costs ~9 KB of path data per node; a pattern costs
+       nothing and stays crisp at any zoom).
+
+       Roughness 0 / 1 / 2 is Excalidraw's architect / artist / cartoonist.
+       Everything is seeded from the node, so a shape keeps its handwriting
+       across pans, zooms and re-renders, and two shapes never match. */
+    var roughGen = null;
+    function roughGenerator() {
+        if (roughGen) return roughGen;
+        var R = global.rough;
+        if (!R || typeof R.generator !== 'function') return null;
+        try { roughGen = R.generator(); } catch (err) { roughGen = null; }
+        return roughGen;
+    }
+
+    /* Rough.js is the engine, not an optional filter. Only an explicit
+       "architect" turns it off: a node that never picked a sloppiness is drawn
+       by Rough.js, like Excalidraw's default "artist". */
+    function roughAmount(sloppiness) {
+        if (sloppiness === 'architect') return 0;
+        return sloppiness === 'cartoonist' ? 2 : 1;
+    }
+
+    function r1(v) { return Math.round(v * 100) / 100; }
+
+    /* Rounded rectangle as path data: Rough.js has no radius on rectangle(),
+       but its path() roughens any path, so round and pill corners work too. */
+    function roundedRectPath(w, h, radius) {
+        var r = Math.max(0, Math.min(radius, Math.min(w, h) / 2));
+        if (!r) return 'M 0 0 L ' + w + ' 0 L ' + w + ' ' + h + ' L 0 ' + h + ' Z';
+        return 'M ' + r + ' 0 L ' + (w - r) + ' 0 A ' + r + ' ' + r + ' 0 0 1 ' + w + ' ' + r +
+            ' L ' + w + ' ' + (h - r) + ' A ' + r + ' ' + r + ' 0 0 1 ' + (w - r) + ' ' + h +
+            ' L ' + r + ' ' + h + ' A ' + r + ' ' + r + ' 0 0 1 0 ' + (h - r) +
+            ' L 0 ' + r + ' A ' + r + ' ' + r + ' 0 0 1 ' + r + ' 0 Z';
+    }
+
+    /* Geometry cache. Key covers everything that changes the ink. */
+    var roughCache = {};
+    function roughCacheGet(key) { return roughCache[key]; }
+    function roughCacheSet(key, val) {
+        if (Object.keys(roughCache).length > 4000) roughCache = {};
+        roughCache[key] = val;
+        return val;
+    }
+
+    /* Excalidraw's adjustRoughness(): small shapes get proportionally less
+       wobble so a 12 px handle does not turn into a scribble. */
+    function adjustRoughness(w, h, roughness) {
+        var maxSize = Math.max(w, h);
+        var minSize = Math.min(w, h);
+        if (minSize >= 20 && maxSize >= 50) return roughness;
+        return Math.min(roughness / (maxSize < 10 ? 3 : 2), 2.5);
+    }
+
+    /* Rough.js strokes for an arbitrary path, with the same options as
+       roughShape(). Used by shapes whose outline is not a plain box (sticky note
+       with its folded corner). */
+    function roughPath(d, seed, roughness, strokeWidth, w, h) {
+        var gen = roughGenerator();
+        if (!gen || !roughness || !d) return null;
+        var opts = {
+            seed: seed >>> 0,
+            roughness: adjustRoughness(w || 160, h || 60, roughness),
+            bowing: 1,
+            stroke: '#000',
+            strokeWidth: Number(strokeWidth) || 2,
+            fill: undefined,
+            fillWeight: (Number(strokeWidth) || 2) / 2,
+            hachureGap: (Number(strokeWidth) || 2) * 4,
+            disableMultiStroke: false,
+            preserveVertices: roughness < 2
+        };
+        var paths;
+        try { paths = gen.toPaths(gen.path(d, opts)); } catch (err) { return null; }
+        var strokes = [];
+        (paths || []).forEach(function (p) {
+            if (p && p.d && p.stroke !== 'none') strokes.push(p.d);
+        });
+        return strokes.length ? { strokes: strokes } : null;
+    }
+
+    /* Returns { strokes: [d, ...] } or null. Local coordinates (0..w, 0..h).
+
+       Options mirror Excalidraw's generateRoughOptions() (shape.ts): the same
+       seed, the same stroke width, fillWeight = sw/2, hachureGap = sw*4,
+       preserveVertices unless the style is cartoonist, and curveFitting for the
+       ellipse. Nothing here is scaled by hand; Excalidraw's amplitude is what
+       makes a shape read as drawn, and it is deliberate. */
+    function roughShape(kind, w, h, seed, roughness, strokeWidth) {
+        var gen = roughGenerator();
+        if (!gen || !roughness) return null;
+        var sw = Number(strokeWidth) || 2;
+        var key = kind + ':' + Math.round(w) + ':' + Math.round(h) + ':' +
+            Math.round(roughness * 10) + ':' + Math.round(sw * 10) + ':' + seed;
+        var hit = roughCacheGet(key);
+        if (hit) return hit;
+
+        var opts = {
+            seed: seed >>> 0,
+            roughness: adjustRoughness(w, h, roughness),
+            bowing: 1,
+            stroke: '#000',
+            strokeWidth: sw,
+            fill: undefined,
+            fillWeight: sw / 2,
+            hachureGap: sw * 4,
+            disableMultiStroke: false,
+            preserveVertices: roughness < 2
+        };
+        var drawable;
+        try {
+            if (kind === 'circle') {
+                opts.curveFitting = 1;
+                drawable = gen.ellipse(w / 2, h / 2, Math.max(2, w - 4), Math.max(2, h - 4), opts);
+            } else if (kind === 'diamond') {
+                drawable = gen.polygon([[w / 2, 0], [w, h / 2], [w / 2, h], [0, h / 2]], opts);
+            } else if (kind === 'pill') {
+                drawable = gen.path(roundedRectPath(w, h, h / 2), opts);
+            } else if (kind === 'round') {
+                drawable = gen.path(roundedRectPath(w, h, 14), opts);
+            } else {
+                drawable = gen.rectangle(0, 0, w, h, opts);
+            }
+        } catch (err) {
+            return null;
+        }
+        var paths;
+        try { paths = gen.toPaths(drawable); } catch (err2) { return null; }
+        var strokes = [];
+        (paths || []).forEach(function (p) {
+            if (p && p.d && p.stroke !== 'none') strokes.push(p.d);
+        });
+        if (!strokes.length) return null;
+        return roughCacheSet(key, { strokes: strokes });
+    }
+
+    function nodeSeed(n) {
+        return n.id || ((n.shape || 'box') + ':' + (n.x || 0) + ':' + (n.y || 0) + ':' + (n.label || ''));
+    }
+
+    /* Rough outline for a canvas node, or null when the shape is drawn clean. */
+    function nodeRough(n) {
+        if (!n) return null;
+        var roughness = roughAmount(n.sloppiness);
+        if (!roughness) return null;
+        var shape = n.shape || 'box';
+        if (shape === 'plain' || shape === 'none') return null;
+        if (shape === 'chart' || shape === 'table' || shape === 'image' || shape === 'module') return null;
+        return roughShape(shape, n.w || 160, n.h || 60,
+            typeof nodeSeed(n) === 'string' ? kitSeed(nodeSeed(n)) : nodeSeed(n),
+            roughness, Number(n.strokeWidth) || 2);
+    }
+
+    /* Seeds must be uint32 for Rough.js; ids are strings, so hash them. */
+    function kitSeed(str) {
+        var s = String(str);
+        var h = 2166136261 >>> 0;
+        for (var i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
 
     function arrowSize(type) {
         if (type === 'triangle') return 25;
@@ -439,6 +619,11 @@
         svgRoot: svgRoot,
         ensureSprite: ensureSprite,
         icon: icon,
-        iconRow: iconRow
+        iconRow: iconRow,
+        roughShape: roughShape,
+        roughPath: roughPath,
+        roughAmount: roughAmount,
+        nodeSeed: nodeSeed,
+        nodeRough: nodeRough
     };
 })(window);

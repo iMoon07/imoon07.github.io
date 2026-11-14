@@ -176,12 +176,22 @@
     <script src="js/logo-manifest.js"></script>
     <script src="js/alur/logos.js?v=4"></script>
     <script src="js/topology.js?v=4"></script>
-    <script src="js/alur/kit.js?v=6"></script>
+    <script src="vendor/rough.js?v=1"></script>
+    <!-- Rough.js is vendored (pinned, offline). If that file is ever missing
+         we still want hand-drawn strokes, so pull the same library from the
+         CDN before the editor code runs. -->
+    <script>
+      (function () {
+        if (window.rough) return;
+        document.write('<script src="https://unpkg.com/roughjs@latest/bundled/rough.js"><\/script>');
+      })();
+    </script>
+    <script src="js/alur/kit.js?v=12"></script>
     <script src="js/alur/cables.js?v=4"></script>
     <script src="js/alur/motions.js?v=4"></script>
     <script src="js/alur/core.js?v=6"></script>
     <script src="js/alur/draw-tabs.js?v=4"></script>
-    <script src="js/alur/modules/canvas.js?v=6"></script>
+    <script src="js/alur/modules/canvas.js?v=12"></script>
     <script src="js/alur/modules/flow.js?v=4"></script>
     <script src="js/alur/modules/reverse-proxy.js?v=4"></script>
     <script src="js/alur/modules/chart.js?v=4"></script>

@@ -203,6 +203,9 @@
     }
 
     function drawNode(parent, n, selected) {
+        if (n.shape === 'sticky') {
+            return drawStickyNode(parent, n, selected);
+        }
         if (n.shape === 'module' && n.module) {
             return drawModuleNode(parent, n, selected);
         }
@@ -256,64 +259,77 @@
             (n.strokeStyle === 'dotted' ? '2 4' : '');
         var style = 'fill:' + fillPaint + ';stroke:' + color + ';stroke-width:' + sw + ';' +
             (dash ? 'stroke-dasharray:' + dash + ';' : '');
-        var rough = n.sloppiness && n.sloppiness !== 'architect';
+        /* Hand-drawn: the ink line bows, so the outline is its own rough path and
+           the exact element underneath only carries the fill. Architect (amp 0)
+           stays a clean vector, like Excalidraw. */
+        var sketch = kit.nodeRough(n);
         var g = kit.g(parent, 'alur-node alur-canvas-node' + (selected ? ' is-selected' : ''));
-        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+        /* Excalidraw rotates about the element centre, so the frame and the art
+           turn together and only the bounding box stays axis-aligned. */
+        var nodeT = 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')';
+        if (n.angle) {
+            nodeT += ' rotate(' + n.angle + ' ' + (w / 2) + ' ' + (h / 2) + ')';
+        }
+        g.setAttribute('transform', nodeT);
         g.setAttribute('data-node-id', n.id);
         if (n.opacity != null) g.setAttribute('opacity', n.opacity);
         var inner = kit.g(g, 'alur-node-inner');
 
+        /* The exact element: fill, plus the stroke only when the line is clean.
+           Same geometry as the hit test (nodeBoundaryPoint) so arrows land on
+           the edge either way. */
+        function ink(attrs) {
+            if (sketch) attrs.stroke = 'none';
+            else attrs.stroke = color;
+            attrs['stroke-width'] = sw;
+            attrs['stroke-dasharray'] = dash || null;
+            attrs.style = style;
+            return attrs;
+        }
+
         if (shape === 'circle') {
-            var r = Math.max(18, Math.min(w, h) / 2 - 2);
-            kit.circle(inner, w / 2, h / 2, r, 'alur-node-box', {
-                stroke: color, fill: fillPaint, 'stroke-width': sw,
-                'stroke-dasharray': dash || null, style: style
-            });
-            if (rough) {
-                kit.circle(inner, w / 2, h / 2, r, 'alur-node-rough', {
-                    fill: 'none', stroke: color, 'stroke-width': Math.max(0.6, sw * 0.55),
-                    opacity: 0.42,
-                    transform: 'rotate(-0.5 ' + (w / 2) + ' ' + (h / 2) + ')'
-                });
-            }
+            /* A real ellipse: rx and ry come from the node box, so dragging the
+               side handles stretches it lengthwise instead of staying a ball. */
+            var erx = Math.max(10, w / 2 - 2);
+            var ery = Math.max(10, h / 2 - 2);
+            kit.el('ellipse', ink({
+                cx: w / 2, cy: h / 2, rx: erx, ry: ery,
+                class: 'alur-node-box'
+            }), inner);
         } else if (shape === 'diamond') {
             var dd = 'M ' + (w / 2) + ' 0 L ' + w + ' ' + (h / 2) +
                 ' L ' + (w / 2) + ' ' + h + ' L 0 ' + (h / 2) + ' Z';
-            kit.path(inner, dd, 'alur-node-box', {
-                stroke: color, fill: fillPaint, 'stroke-width': sw,
-                'stroke-dasharray': dash || null, style: style
-            });
-            if (rough) {
-                kit.path(inner, dd, 'alur-node-rough', {
-                    fill: 'none', stroke: color, 'stroke-width': Math.max(0.6, sw * 0.55),
-                    opacity: 0.42,
-                    transform: 'rotate(-0.45 ' + (w / 2) + ' ' + (h / 2) + ')'
-                });
-            }
+            kit.path(inner, dd, 'alur-node-box', ink({}));
         } else if (shape !== 'plain' && shape !== 'none') {
             var rx = shape === 'pill' ? h / 2 : (n.edge === 'round' ? Math.min(14, h / 2) : 0);
-            kit.rect(inner, 0, 0, w, h, 'alur-node-box', {
-                rx: rx, stroke: color, fill: fillPaint, 'stroke-width': sw,
-                'stroke-dasharray': dash || null, style: style
-            });
-            if (rough) {
-                kit.rect(inner, 0, 0, w, h, 'alur-node-rough', {
-                    rx: rx, fill: 'none', stroke: color,
-                    'stroke-width': Math.max(0.6, sw * 0.55), opacity: 0.42,
-                    transform: 'rotate(-0.35 ' + (w / 2) + ' ' + (h / 2) + ')'
+            kit.rect(inner, 0, 0, w, h, 'alur-node-box', ink({ rx: rx }));
+        }
+
+        if (sketch) {
+            /* Rough.js gives the outline, one or two passes (its own multi-stroke
+               randomness), and the exact element above keeps the fill. The paths
+               are cached, so a pan or a re-render never redraws the ink. */
+            sketch.strokes.forEach(function (d) {
+                kit.path(inner, d, 'alur-node-rough', {
+                    fill: 'none', stroke: color,
+                    'stroke-width': Math.max(0.7, sw),
+                    'stroke-dasharray': dash || null,
+                    'stroke-linecap': 'round', 'stroke-linejoin': 'round'
                 });
-            }
+            });
         }
 
         var ids = (n.logos && n.logos.length) ? n.logos : (n.logo ? [n.logo] : []);
+        var hasLabel = String(n.label || '').trim() !== '' || String(n.sub || '').trim() !== '';
         var size = Math.max(10, Math.min(w, h) * (ids.length > 1 ? 0.24 : 0.34));
         var cx = w / 2;
         var cy = h / 2;
         if (ids.length) {
+            var iy = (ids.length === 1 && hasLabel) ? (h * 0.34 - size / 2) : (cy - size / 2);
             if (ids.length > 1) {
-                kit.iconRow(inner, ids, cx, cy - size / 2, size, 2);
+                kit.iconRow(inner, ids, cx, iy, size, 2);
             } else {
-                kit.icon(inner, ids[0], cx - size / 2, cy - size / 2, size);
+                kit.icon(inner, ids[0], cx - size / 2, iy, size);
             }
         }
 
@@ -321,29 +337,139 @@
         var anchor = align === 'center' ? 'middle' : (align === 'right' ? 'end' : 'start');
         var labelX = ids.length || shape === 'circle' ? cx :
             (align === 'center' ? w / 2 : (align === 'right' ? w - 8 : (shape === 'plain' ? 8 : 12)));
-        var labelY = ids.length ? (h - 8) : (shape === 'circle' ? h - 12 : (shape === 'plain' ? 20 : 23));
-        var size = n.fontSize || (shape === 'plain' ? 16 : 13);
+        var fontSize = n.fontSize || (shape === 'plain' ? 16 : 13);
+        /* Text sits inside the shape, not below it: an ellipse centres its word
+           the way Excalidraw does. */
+        var labelY = ids.length ? (hasLabel ? Math.min(h - 8, h * 0.7 + fontSize * 0.35) : (h - 8))
+            : (shape === 'circle'
+                ? Math.min(h - 8, Math.max(h / 2 + fontSize * 0.35, h - 16))
+                : (shape === 'plain' ? 20 : 23));
         var lineHeight = Math.max(1, n.lineHeight || 1.35);
         var weight = n.fontWeight || (n.bold ? 700 : 400);
         var fontStyle = n.fontStyle || (n.italic ? 'italic' : 'normal');
-        var label = kit.text(inner, labelX, labelY, '', 'alur-node-label', {
+        var labelColor = n.color;
+        if (!labelColor || labelColor === 'transparent') labelColor = n.isText ? 'inherit' : '#e6edf3';
+        var labelAttrs = {
             'text-anchor': anchor,
-            'font-size': size,
+            'font-size': fontSize,
             'font-family': n.fontFamily || 'Excalifont, sans-serif',
             'font-weight': weight,
             'font-style': fontStyle,
-            fill: kit.color(n.color || '#e6edf3')
-        });
+            fill: kit.color(labelColor)
+        };
+        if (n.textDecoration && n.textDecoration !== 'none') {
+            labelAttrs['text-decoration'] = n.textDecoration;
+        }
+        var label = kit.text(inner, labelX, labelY, '', 'alur-node-label', labelAttrs);
         String(n.label || '').split('\n').forEach(function (line, i) {
             var span = kit.el('tspan', {
                 x: labelX,
-                y: labelY + i * size * lineHeight
+                y: labelY + i * fontSize * lineHeight
             }, label);
             span.textContent = line;
         });
         if (n.sub) {
-            kit.text(inner, labelX, labelY + size * lineHeight + 2, n.sub, 'alur-node-sub', { 'text-anchor': anchor });
+            kit.text(inner, labelX, labelY + fontSize * lineHeight + 2, n.sub, 'alur-node-sub', { 'text-anchor': anchor, fill: kit.color(labelColor) });
         }
+        return g;
+    }
+
+    /* Sticky note: a pad of paper, not a shape. Folded corner, soft drop
+       shadow, and text that wraps inside the pad the way a real note does. */
+    /* FNV-1a, same as kit.kitSeed: node ids are strings and Rough.js wants a
+       uint32 so a note keeps its handwriting across re-renders. */
+    function kitSeedLocal(str) {
+        var s = String(str);
+        var h = 2166136261 >>> 0;
+        for (var i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619) >>> 0;
+        }
+        return h >>> 0;
+    }
+
+    function drawStickyNode(parent, n, selected) {
+        var w = n.w || 180;
+        var h = n.h || 180;
+        /* The note's ink is its text colour: outline, fold and type agree, and
+           the sticky follows whatever ink the user picked instead of borrowing
+           the node stroke colour (which used to leave a blue rim on yellow). */
+        var ink = (n.textColor && n.textColor !== 'transparent') ? kit.color(n.textColor) : '#1f2328';
+        var fill = (n.fill && n.fill !== 'transparent') ? kit.color(n.fill) : '#ffec99';
+        var color = ink;
+        var fold = Math.max(12, Math.min(30, Math.min(w, h) * 0.16));
+        var g = kit.g(parent, 'alur-node alur-canvas-node alur-sticky-node' +
+            (selected ? ' is-selected' : ''));
+        g.setAttribute('transform', 'translate(' + (n.x || 0) + ' ' + (n.y || 0) + ')');
+        g.setAttribute('data-node-id', n.id);
+        if (n.opacity != null) g.setAttribute('opacity', n.opacity);
+        var inner = kit.g(g, 'alur-node-inner');
+
+        kit.rect(inner, 2.5, 3.5, w, h, 'alur-sticky-shadow', { rx: 2, fill: 'rgba(15, 23, 42, .30)' });
+
+        var body = 'M 0 0 L ' + w + ' 0 L ' + w + ' ' + (h - fold) +
+            ' L ' + (w - fold) + ' ' + h + ' L 0 ' + h + ' Z';
+        /* A sticky can be hand-drawn too: the sloppiness control in the panel
+           feeds this, so the setting is real rather than decorative. */
+        var slop = kit.roughAmount(n.sloppiness);
+        var sketch = slop ? kit.roughPath(body,
+            typeof kit.nodeSeed(n) === 'string' ? kitSeedLocal(kit.nodeSeed(n)) : kit.nodeSeed(n),
+            slop, Number(n.strokeWidth) || 2, w, h) : null;
+        kit.path(inner, body, 'alur-node-box alur-sticky', {
+            fill: fill, stroke: sketch ? 'none' : color, 'stroke-width': 1.2,
+            'stroke-linejoin': 'round'
+        });
+        if (sketch) {
+            sketch.strokes.forEach(function (d) {
+                kit.path(inner, d, 'alur-node-rough', {
+                    fill: 'none', stroke: color,
+                    'stroke-width': Math.max(0.7, Number(n.strokeWidth) || 1.4),
+                    'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+                });
+            });
+        }
+        /* The dog-ear: a darker triangle where the corner folds up. */
+        kit.path(inner, 'M ' + (w - fold) + ' ' + (h - fold) + ' L ' + w + ' ' + (h - fold) +
+            ' L ' + (w - fold) + ' ' + h + ' Z', 'alur-sticky-fold', {
+            fill: 'rgba(15, 23, 42, .16)', stroke: color, 'stroke-width': 0.9,
+            'stroke-linejoin': 'round'
+        });
+
+        /* Word wrap to the pad width, then centre the block vertically. */
+        var pad = Math.max(10, Math.min(w, h) * 0.1);
+        var fontSize = Math.max(11, n.fontSize || 14);
+        var lineHeight = Math.max(1.15, n.lineHeight || 1.32);
+        var perLine = Math.max(4, Math.floor((w - pad * 2) / (fontSize * 0.54)));
+        var lines = [];
+        String(n.label || '').split('\n').forEach(function (para) {
+            var words = para.split(/\s+/).filter(Boolean);
+            if (!words.length) { lines.push(''); return; }
+            var line = '';
+            words.forEach(function (word) {
+                var next = line ? line + ' ' + word : word;
+                if (next.length > perLine && line) { lines.push(line); line = word; }
+                else line = next;
+            });
+            if (line) lines.push(line);
+        });
+        if (!lines.length) lines = [''];
+        var blockH = (lines.length - 1) * fontSize * lineHeight;
+        var startY = Math.max(pad + fontSize * 0.85, (h - blockH) / 2 + fontSize * 0.35);
+        var labelColor = n.textColor || '#1f2328';
+        var anchor = 'middle';
+        var labelX = w / 2;
+        var weight = n.fontWeight || 500;
+        var label = kit.text(inner, labelX, startY, '', 'alur-node-label alur-sticky-label', {
+            'text-anchor': anchor,
+            'font-size': fontSize,
+            'font-family': n.fontFamily || 'Excalifont, sans-serif',
+            'font-weight': weight,
+            fill: kit.color(labelColor)
+        });
+        lines.forEach(function (line, i) {
+            var span = kit.el('tspan', { x: labelX, y: startY + i * fontSize * lineHeight }, label);
+            span.textContent = line;
+        });
         return g;
     }
 
@@ -424,6 +550,55 @@
         if (el && specIndex !== undefined) el.setAttribute('data-edge', String(specIndex));
     }
 
+    /* Label at the middle of the cable — Excalidraw's arrow label: the words
+       sit on the path, with a knockout box so the line does not run through
+       them. The box is measured after the text is placed, so the label stays
+       centred on the cable whatever it says. */
+    function drawEdgeLabel(layer, pathEl, e, color, index) {
+        var mid = null;
+        try {
+            var half = pathEl.getTotalLength() / 2;
+            mid = pathEl.getPointAtLength(half);
+        } catch (err) { return null; }
+        if (!mid) return null;
+        var fs = e.labelSize || 12;
+        var lh = Math.max(1, e.labelLineHeight || 1.3);
+        var weight = e.labelWeight || 600;
+        var lines = String(e.label).split('\n');
+        var anchor = e.labelAnchor || 'middle';
+        var g = kit.g(layer, 'alur-edge-label');
+        g.setAttribute('data-edge', String(index));
+        var text = kit.text(g, mid.x, mid.y, '', 'alur-canvas-edge-label', {
+            'text-anchor': anchor,
+            'font-size': fs,
+            'font-weight': weight,
+            fill: kit.color(e.labelColor || color)
+        });
+        var top = -((lines.length - 1) * fs * lh) / 2;
+        lines.forEach(function (line, i) {
+            var span = kit.el('tspan', {
+                x: mid.x,
+                y: mid.y + top + i * fs * lh
+            }, text);
+            span.textContent = line;
+        });
+        var box = null;
+        try { box = text.getBBox(); } catch (err) { return g; }
+        if (box && box.width) {
+            var padX = 4, padY = 2;
+            var plate = kit.rect(g, box.x - padX, box.y - padY,
+                box.width + padX * 2, box.height + padY * 2, 'alur-canvas-edge-label-bg', {
+                    rx: 3
+                });
+            plate.style.fill = 'var(--bg, #0d1117)';
+            /* The plate must not swallow the click meant for the cable: the
+               glyphs and the box both belong to this edge. */
+            plate.setAttribute('data-edge', String(index));
+            g.insertBefore(plate, text);
+        }
+        return g;
+    }
+
     function smoothPath(pts) {
         if (!pts || pts.length < 3) {
             var d0 = 'M ' + pts[0][0] + ' ' + pts[0][1];
@@ -445,13 +620,182 @@
         return d;
     }
 
+    /* Batas dunia dari seluruh isi scene: node, kabel, dan coretan bebas.
+       Dipakai untuk area mask (harus seluas isi) dan untuk membingkai
+       diagram di halaman baca. */
+    function sceneBounds(nodes, edges, drawings) {
+        var x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+        function grow(x, y) {
+            if (!isFinite(x) || !isFinite(y)) return;
+            if (x < x1) x1 = x;
+            if (y < y1) y1 = y;
+            if (x > x2) x2 = x;
+            if (y > y2) y2 = y;
+        }
+        function growBox(b) {
+            grow(b.x, b.y);
+            grow(b.x + b.w, b.y + b.h);
+        }
+
+        Object.keys(nodes || {}).forEach(function (id) {
+            var n = nodes[id];
+            if (!n) return;
+            growBox(nodeVisualBounds(n));
+        });
+
+        (edges || []).forEach(function (e) {
+            if (!e) return;
+            if (e.points && e.points.length) {
+                e.points.forEach(function (p) { grow(p[0], p[1]); });
+                return;
+            }
+            var ends = edgeEnds(e, nodes || {});
+            if (ends) ends.points.forEach(function (p) { grow(p[0], p[1]); });
+        });
+
+        /* Path coretan: ambil semua angka sebagai pasangan koordinat. */
+        (drawings || []).forEach(function (dr) {
+            var nums = String((dr && dr.d) || '').match(/-?\d+(?:\.\d+)?/g);
+            if (!nums) return;
+            for (var i = 0; i + 1 < nums.length; i += 2) grow(+nums[i], +nums[i + 1]);
+        });
+
+        if (!isFinite(x1) || !isFinite(y1)) return { x: 0, y: 0, w: 900, h: 520 };
+        if (x2 <= x1) x2 = x1 + 1;
+        if (y2 <= y1) y2 = y1 + 1;
+        return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+    }
+
+    /* Orthogonal routing with rounded corners (Excalidraw's elbow arrow).
+       A dogleg through the middle of the longer axis: two nodes side by side
+       get a vertical jog, one above the other a horizontal one. */
+    function orthoPath(pts, radius) {
+        if (!pts || pts.length < 2) return '';
+        var r = Math.max(0, Math.min(radius || 12, 40));
+        var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+        for (var i = 1; i < pts.length - 1; i++) {
+            var p = pts[i];
+            var prev = pts[i - 1];
+            var next = pts[i + 1];
+            var inLen = Math.sqrt(Math.pow(p[0] - prev[0], 2) + Math.pow(p[1] - prev[1], 2));
+            var outLen = Math.sqrt(Math.pow(next[0] - p[0], 2) + Math.pow(next[1] - p[1], 2));
+            var rr = Math.min(r, inLen / 2, outLen / 2);
+            var inUx = inLen ? (p[0] - prev[0]) / inLen : 0;
+            var inUy = inLen ? (p[1] - prev[1]) / inLen : 0;
+            var outUx = outLen ? (next[0] - p[0]) / outLen : 0;
+            var outUy = outLen ? (next[1] - p[1]) / outLen : 0;
+            var ax = p[0] - inUx * rr;
+            var ay = p[1] - inUy * rr;
+            var bx = p[0] + outUx * rr;
+            var by = p[1] + outUy * rr;
+            d += ' L ' + r1(ax) + ' ' + r1(ay) +
+                 ' Q ' + r1(p[0]) + ' ' + r1(p[1]) + ' ' + r1(bx) + ' ' + r1(by);
+        }
+        var last = pts[pts.length - 1];
+        d += ' L ' + last[0] + ' ' + last[1];
+        return d;
+    }
+
+    function r1(v) { return Math.round(v * 10) / 10; }
+
+    function elbowD(a, b) {
+        var dx = b[0] - a[0];
+        var dy = b[1] - a[1];
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            var mx = a[0] + dx / 2;
+            return orthoPath([[a[0], a[1]], [mx, a[1]], [mx, b[1]], [b[0], b[1]]], 14);
+        }
+        var my = a[1] + dy / 2;
+        return orthoPath([[a[0], a[1]], [a[0], my], [b[0], my], [b[0], b[1]]], 14);
+    }
+
     function freeEdgePath(e) {
         var pts = e && e.points;
         if (!pts || pts.length < 2) return '';
+        /* Dua titik + curved = lengkung yang sama dengan panah terikat node.
+           smoothPath butuh 3 titik, jadi tanpa cabang ini panah jadi kaku. */
+        if (e.elbow && pts.length === 2) return elbowD(pts[0], pts[1]);
+        if (e.elbow) return orthoPath(pts, 14);
+        if (e.curved && pts.length === 2) {
+            return kit.curve(pts[0][0], pts[0][1], pts[1][0], pts[1][1]);
+        }
         if (e.curved) return smoothPath(pts);
         var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
         for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i][0] + ' ' + pts[i][1];
         return d;
+    }
+
+    /* Midpoint of the *drawn* path, not of its bounding box: on an elbow the
+       cable runs sideways, on a curve the belly is where the handle belongs.
+       The path is already in the document when this runs, so the browser can
+       measure it; the polyline walk is the fallback when it cannot. */
+    function edgeMidPoint(path, pts) {
+        if (path && typeof path.getTotalLength === 'function') {
+            try {
+                var total = path.getTotalLength();
+                if (total > 0) {
+                    var mp = path.getPointAtLength(total / 2);
+                    if (mp) return [mp.x, mp.y];
+                }
+            } catch (err) { /* detached or zero-length: fall through */ }
+        }
+        var segs = [];
+        var sum = 0;
+        for (var i = 1; i < pts.length; i++) {
+            var dx = pts[i][0] - pts[i - 1][0];
+            var dy = pts[i][1] - pts[i - 1][1];
+            var len = Math.sqrt(dx * dx + dy * dy);
+            segs.push(len);
+            sum += len;
+        }
+        var target = sum / 2;
+        for (var j = 0; j < segs.length; j++) {
+            if (target <= segs[j] || j === segs.length - 1) {
+                var t = segs[j] ? target / segs[j] : 0;
+                return [
+                    pts[j][0] + (pts[j + 1][0] - pts[j][0]) * t,
+                    pts[j][1] + (pts[j + 1][1] - pts[j][1]) * t
+                ];
+            }
+            target -= segs[j];
+        }
+        return pts[Math.floor(pts.length / 2)].slice();
+    }
+
+    /* Three live handles on the selected arrow: start, middle, end. Each one is
+       a <g> so the hit target (14 units) can be far larger than the dot (4.5)
+       without a fat dot on screen; draw.html reads data-edge-point off the <g>. */
+    function drawEdgeHandles(layer, path, e, ends, i) {
+        if (!ends || !ends.points || ends.points.length < 2) return;
+        var pts = ends.free
+            ? ends.points
+            : [ends.points[0], ends.points[ends.points.length - 1]];
+        var mid = edgeMidPoint(path, pts);
+        var marks = [
+            { pt: pts[0], key: '0', cls: '' },
+            { pt: mid, key: 'mid', cls: ' is-mid' },
+            { pt: pts[pts.length - 1], key: String(pts.length - 1), cls: '' }
+        ];
+        /* A free arrow with extra bends keeps every bend grabbable, so the
+           middle handle is one more point on the same wire. */
+        if (ends.free && pts.length > 2) {
+            var extra = [];
+            for (var k = 1; k < pts.length - 1; k++) {
+                if (Math.floor(pts.length / 2) === k) continue;
+                extra.push({ pt: pts[k], key: String(k), cls: '' });
+            }
+            marks = marks.concat(extra);
+        }
+        marks.forEach(function (mk) {
+            var g = kit.g(layer, 'alur-edge-handle' + mk.cls);
+            g.setAttribute('transform',
+                'translate(' + r1(mk.pt[0]) + ' ' + r1(mk.pt[1]) + ')');
+            g.setAttribute('data-edge', String(i));
+            g.setAttribute('data-edge-point', mk.key);
+            kit.circle(g, 0, 0, 14, 'alur-edge-hit', null);
+            var dot = kit.circle(g, 0, 0, 4.5, 'alur-edge-point', null);
+            dot.setAttribute('stroke-width', '1.4');
+        });
     }
 
     function nodeVisualBounds(n) {
@@ -601,7 +945,7 @@
         var W = spec.width || 900;
         var H = spec.height || 520;
         var svg = kit.svgRoot(host, { w: W, h: H, label: spec.title || 'Alur canvas' });
-        var zoom = Math.max(0.35, Math.min(3, spec.zoom || 1));
+        var zoom = Math.max(0.1, Math.min(1, spec.zoom || 1));
         var fit = !env || !env.editor;
         var vb = {
             x: spec.panX || 0,
@@ -618,7 +962,7 @@
         (spec.drawings || []).forEach(function (dr) {
             var dash = dr.strokeStyle === 'dashed' ? '7 5' :
                 (dr.strokeStyle === 'dotted' ? '2 4' : '');
-            var p = kit.path(drawLayer, dr.d, 'alur-drawing' + (spec.selectedDrawing === dr.id ? ' is-selected' : ''), {
+            var p = kit.path(drawLayer, dr.d, 'alur-drawing' + ((editing && spec.selectedDrawing === dr.id) ? ' is-selected' : ''), {
                 stroke: kit.color(dr.color || '#e6edf3'),
                 'stroke-width': dr.width || 2,
                 'stroke-dasharray': dash || null,
@@ -635,7 +979,10 @@
         var nodeLayer = kit.g(svg, 'alur-layer-nodes');
         var nodes = spec.nodes || {};
         var nodeEls = {};
-        var selected = selectedIds(spec);
+        /* Selection is editor state. A saved spec can carry "selected":
+           the reading page must not paint a selection box around it. */
+        var editing = !!(env && env.editor);
+        var selected = editing ? selectedIds(spec) : [];
         var primary = selected.length ? selected[selected.length - 1] : null;
 
         Object.keys(nodes).forEach(function (id) {
@@ -658,13 +1005,42 @@
                 if (box) box.setAttribute('height', h);
             });
 
-            var bb = null;
-            try { bb = nodeLayer.getBBox(); } catch (err) {}
-            if (!bb || !bb.width || !bb.height) return;
+            /* Bingkai seluruh isi: node, kabel, arrowhead, dan coretan.
+               nodeLayer saja tidak cukup — panah yang menjorok keluar akan
+               terpotong oleh tepi viewBox. */
+            /* Motion decorations (dots, comets, packets) live at the origin
+               until the animation places them on the path. Measuring them
+               would blow the frame up to the size of the world, so hide them
+               while the content is measured. */
+            var motion = svg.querySelectorAll(
+                '.alur-dot, .alur-comet, .alur-packet, .alur-relay');
+            Array.prototype.forEach.call(motion, function (el) {
+                el.style.display = 'none';
+            });
+            var box = null;
+            [drawLayer, edgeLayer, pointLayer, nodeLayer].forEach(function (layer) {
+                if (!layer) return;
+                var b = null;
+                try { b = layer.getBBox(); } catch (err) { return; }
+                if (!b || !b.width || !b.height) return;
+                if (!box) {
+                    box = { x: b.x, y: b.y, w: b.width, h: b.height };
+                    return;
+                }
+                var x1 = Math.min(box.x, b.x);
+                var y1 = Math.min(box.y, b.y);
+                var x2 = Math.max(box.x + box.w, b.x + b.width);
+                var y2 = Math.max(box.y + box.h, b.y + b.height);
+                box = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+            });
+            Array.prototype.forEach.call(motion, function (el) {
+                el.style.display = '';
+            });
+            if (!box || !box.w || !box.h) return;
             var pad = 24;
             svg.setAttribute('viewBox',
-                (bb.x - pad) + ' ' + (bb.y - pad) + ' ' +
-                (bb.width + pad * 2) + ' ' + (bb.height + pad * 2));
+                (box.x - pad) + ' ' + (box.y - pad) + ' ' +
+                (box.w + pad * 2) + ' ' + (box.h + pad * 2));
         }
 
         var embeddedModules = [];
@@ -686,18 +1062,30 @@
             }
         });
 
-        if (fit) fitView();
+        /* Pembingkaian dilakukan di akhir: kabel & arrowhead harus sudah
+           tergambar supaya ikut terhitung. Kalau dibingkai sebelum kabel
+           digambar, ujung panah yang keluar dari gugus node terpotong. */
 
         /* Sembunyikan kabel di dalam node supaya tidak menimpa label/logo.
            Node tetap transparan; hanya bagian kabel yang masuk area node yang
-           di-clip oleh mask. */
+           di-clip oleh mask.
+           PENTING: area mask harus mencakup seluruh dunia, bukan cuma
+           width/height. Kalau area mask dibatasi 0..W x 0..H, setiap kabel di
+           luar kotak itu ikut hitam (invisible) — itulah "arrow ada batas
+           canvas". Hitung dari isi scene, lalu beri bantalan besar. */
         var edgeMaskId = 'alur-edge-mask-' + (++uid);
         var maskDefs = kit.el('defs', {}, svg);
+        var sceneBox = sceneBounds(nodes, spec.edges || [], spec.drawings || []);
+        var maskPad = 4000;
+        var maskX = Math.floor(sceneBox.x - maskPad);
+        var maskY = Math.floor(sceneBox.y - maskPad);
+        var maskW = Math.ceil(sceneBox.w + maskPad * 2);
+        var maskH = Math.ceil(sceneBox.h + maskPad * 2);
         var edgeMask = kit.el('mask', {
             id: edgeMaskId, maskUnits: 'userSpaceOnUse',
-            x: 0, y: 0, width: W, height: H
+            x: maskX, y: maskY, width: maskW, height: maskH
         }, maskDefs);
-        kit.rect(edgeMask, 0, 0, W, H, '', { fill: '#fff' });
+        kit.rect(edgeMask, maskX, maskY, maskW, maskH, '', { fill: '#fff' });
         Object.keys(nodes).forEach(function (id) {
             var n = nodes[id];
             var w = n.w || 160;
@@ -723,7 +1111,7 @@
 
         /* Pegangan resize untuk node terpilih. Resize handles. */
         var handleLayer = kit.g(svg, 'alur-layer-handles');
-        var sel = primary && nodes[primary];
+        var sel = editing && primary && nodes[primary];
         if (sel) {
             var sw = sel.w || 160, sh = sel.h || 60;
             var sx = sel.x || 0, sy = sel.y || 0;
@@ -744,7 +1132,9 @@
             if (!ends) return;
             var d = e.points && e.points.length >= 2
                 ? freeEdgePath(e)
-                : kit.curve(ends.points[0][0], ends.points[0][1], ends.points[1][0], ends.points[1][1]);
+                : (e.elbow
+                    ? elbowD(ends.points[0], ends.points[1])
+                    : kit.curve(ends.points[0][0], ends.points[0][1], ends.points[1][0], ends.points[1][1]));
             var cable = cables.draw(edgeLayer, d, {
                 style: e.strokeStyle || e.cable || spec.cable || 'solid',
                 color: color,
@@ -769,28 +1159,10 @@
                 var prev = ends.points[ends.points.length - 2];
                 arrowHeadAt(edgeLayer, last, prev, type, color, i);
             }
-            if (e.points && spec.selectedEdge === i) {
-                e.points.forEach(function (pt, pi) {
-                    var h = kit.circle(pointLayer, pt[0], pt[1], 4.5, 'alur-edge-point' +
-                        (pi === 0 || pi === e.points.length - 1 ? ' is-end' : ''), {
-                        'data-edge': String(i),
-                        'data-edge-point': String(pi)
-                    });
-                    h.setAttribute('stroke-width', '1.4');
-                });
-                if (e.points.length === 2) {
-                    var mid = [
-                        (e.points[0][0] + e.points[1][0]) / 2,
-                        (e.points[0][1] + e.points[1][1]) / 2
-                    ];
-                    var mh = kit.circle(pointLayer, mid[0], mid[1], 4.5,
-                        'alur-edge-point is-mid', {
-                            'data-edge': String(i),
-                            'data-edge-mid': String(i)
-                        });
-                    mh.setAttribute('stroke-width', '1.4');
-                }
-            }
+            if (spec.selectedEdge === i) drawEdgeHandles(pointLayer, cable.main, e, ends, i);
+            /* Centre label: where the arrow carries a word, that word rides the
+               cable. Drawn before the motion layer so packets pass over it. */
+            if (e.label && cable.main) drawEdgeLabel(edgeLayer, cable.main, e, color, i);
             if (e.from && e.to && nodeEls[e.to]) {
                 stops.push(motions.apply(e.motion || spec.motion || 'flow', edgeLayer, cable,
                     nodeEls[e.to], {
@@ -800,6 +1172,8 @@
                     }));
             }
         });
+
+        if (fit) fitView();
 
         return {
             destroy: function () {

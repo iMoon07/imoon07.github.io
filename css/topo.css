@@ -1,0 +1,318 @@
+/* =============================================================================
+   TOPO — diagram
+   One renderer for the editor and the article. No JS scaling: pure flex/grid,
+   so desktop and mobile differ in width, not in shape.
+
+   Anatomi: .tp (root) › .tp-head (title + count) › .tp-board (framed canvas)
+   › .tp-grid (columns) › .tp-col (row/column of nodes) › .tp-node (card).
+   Kabel digambar ke SVG yang menempel di .tp-board.
+   ============================================================================= */
+
+.tp,
+.tp * { box-sizing: border-box; }
+
+.tp {
+    --tp-line: #263140;
+    --tp-line-2: #33445a;
+    --tp-text: #e6edf3;
+    --tp-muted: #93a1b1;
+    --tp-surface: rgba(255, 255, 255, 0.035);
+    --tp-surface-2: rgba(255, 255, 255, 0.07);
+    --tp-flow: #58a6ff;
+    --tp-back: #3fb950;
+    --tp-warn: #d29922;
+    --tp-danger: #f85149;
+    --tp-radius: 11px;
+
+    margin: 1.2em 0;
+    color: var(--tp-text);
+    font: 13px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ------------------------------------------------------------------ kepala */
+
+.tp-head {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 12px;
+}
+
+.tp-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 680;
+    letter-spacing: -0.2px;
+}
+
+.tp-count {
+    margin-left: auto;
+    padding: 2px 9px;
+    border: 1px solid var(--tp-line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--tp-muted);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------- papan */
+
+/* Papan adalah bingkai diagram. Tanpa ini, node melayang di ruang kosong. */
+.tp-board {
+    position: relative;
+    /* fit-content: bingkai mengikuti isi, tapi tidak pernah melebihi wadah. */
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 22px;
+    border: 1px solid var(--tp-line);
+    border-radius: 14px;
+    background:
+        radial-gradient(120% 120% at 50% 0%, rgba(88, 166, 255, 0.055) 0%, transparent 62%),
+        rgba(255, 255, 255, 0.014);
+    text-align: center;
+}
+
+.tp-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.tp-wires-g,
+.tp-labels-g { color: var(--tp-flow); }
+
+.tp-wire {
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tp-wire--flow { stroke: var(--tp-flow); color: var(--tp-flow); }
+.tp-wire--back { stroke: var(--tp-back); color: var(--tp-back); }
+
+.tp-wire-label text {
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.tp-wire-label .tp-wire-bg {
+    fill: #0d1117;
+    stroke-width: 1;
+}
+
+.tp-wire-label.tp-wire--flow .tp-wire-bg { stroke: rgba(88, 166, 255, 0.45); }
+.tp-wire-label.tp-wire--flow text { fill: #9dcbff; }
+.tp-wire-label.tp-wire--back .tp-wire-bg { stroke: rgba(63, 185, 80, 0.45); }
+.tp-wire-label.tp-wire--back text { fill: #7ee787; }
+
+/* -------------------------------------------------------------------- grid */
+
+/* align-items: center — tanpa ini kolom menempel kiri dan menyisakan rongga. */
+.tp-grid {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.tp--v .tp-grid {
+    flex-direction: column;
+    gap: 24px;
+    /* Lebar pasti: bingkai inline-block butuh ini, kalau tidak kolom menciut. */
+    width: 380px;
+    max-width: 100%;
+}
+
+.tp--h .tp-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+}
+
+.tp-col {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+    flex: 0 1 auto;
+}
+
+.tp--v .tp-col {
+    width: 100%;
+    max-width: 100%;
+}
+
+.tp--h .tp-col {
+    flex: 0 1 240px;
+}
+
+.tp-col--grid {
+    display: grid;
+    grid-template-columns: repeat(var(--tp-cols, 2), minmax(0, 1fr));
+    gap: 9px;
+}
+
+.tp-group {
+    grid-column: 1 / -1;
+    justify-self: start;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--tp-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+/* -------------------------------------------------------------------- node */
+
+.tp-node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--tp-line);
+    border-radius: var(--tp-radius);
+    background: var(--tp-surface);
+    color: var(--tp-text);
+    text-decoration: none;
+    text-align: left;
+    min-width: 0;
+    transition: border-color 0.14s ease, background 0.14s ease, transform 0.14s ease;
+}
+
+.tp-col--grid .tp-node { min-width: 0; gap: 8px; padding: 9px 10px; }
+.tp-col--grid .tp-icon-tile,
+.tp-col--grid .tp-icons { width: 26px; height: 26px; border-radius: 7px; }
+.tp-col--grid .tp-icon-tile .tp-icon { width: 16px; height: 16px; }
+.tp-col--grid .tp-icons .tp-icon { width: 13px; height: 13px; }
+.tp-col--grid .tp-node-label { font-size: 12px; }
+
+a.tp-node:hover,
+a.tp-node:focus-visible {
+    border-color: var(--tp-flow);
+    background: var(--tp-surface-2);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+/* Ikon duduk di ubin supaya sejajar dengan label di semua ukuran. */
+.tp-icon-tile {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(88, 166, 255, 0.1);
+}
+
+.tp-node .tp-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.tp-icons {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(88, 166, 255, 0.1);
+}
+
+.tp-icons .tp-icon { width: 15px; height: 15px; }
+.tp-icons .tp-icon + .tp-icon { margin-left: -6px; }
+
+.tp-node-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.tp-node-label {
+    font-size: 13px;
+    font-weight: 620;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.tp-node-sub {
+    font-size: 11px;
+    color: var(--tp-muted);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+/* Jenis node memberi aksen pada ikon, bukan kotak berwarna. */
+.tp-node--actor .tp-icon-tile { background: rgba(88, 166, 255, 0.12); color: var(--tp-flow); }
+.tp-node--client .tp-icon-tile { background: rgba(88, 166, 255, 0.12); color: var(--tp-flow); }
+.tp-node--process .tp-icon-tile { background: rgba(201, 166, 107, 0.12); color: #c9a66b; }
+.tp-node--database .tp-icon-tile { background: rgba(63, 185, 80, 0.12); color: var(--tp-back); }
+.tp-node--choice .tp-icon-tile { background: rgba(210, 153, 34, 0.12); color: var(--tp-warn); }
+.tp-node--security .tp-icon-tile { background: rgba(248, 81, 73, 0.12); color: var(--tp-danger); }
+.tp-node--tech .tp-icon-tile,
+.tp-node--out .tp-icon-tile { background: rgba(255, 255, 255, 0.06); color: var(--tp-muted); }
+
+/* -------------------------------------------------------------------- kaki */
+
+.tp-foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 11px;
+}
+
+.tp-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.tp-key-line {
+    width: 18px;
+    height: 0;
+    border-top: 2px solid var(--tp-flow);
+    border-radius: 2px;
+}
+
+.tp-key--back .tp-key-line { border-top-color: var(--tp-back); }
+
+.tp-key-label { font-weight: 650; }
+.tp-key-hint { color: var(--tp-muted); font-style: normal; }
+
+/* ---------------------------------------------------------------- responsif */
+
+@media (max-width: 700px) {
+    .tp-board { padding: 14px 12px; border-radius: 12px; }
+    .tp-grid { gap: 18px; }
+    .tp--v .tp-grid { gap: 18px; }
+    .tp--h .tp-grid { gap: 12px; }
+    .tp-col,
+    .tp--v .tp-col { max-width: 100%; }
+    .tp--h .tp-col { flex-basis: 100%; }
+    .tp-count { margin-left: 0; }
+    .tp-head { gap: 6px; }
+    .tp-node { padding: 9px 11px; }
+    .tp-node-label { font-size: 12.5px; }
+}

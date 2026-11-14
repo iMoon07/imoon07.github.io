@@ -264,7 +264,7 @@
                     return src.indexOf('```topology');
                 },
                 tokenizer(src) {
-                    const match = /^```topology[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    const match = /^```topology[ \t]*\r?\n([\s\S]*?)\r?\n```[ \t]*(?=\r?\n|$)/.exec(src);
                     if (!match) return;
                     return { type: 'topology', raw: match[0], spec: match[1].trim() };
                 },
@@ -283,7 +283,7 @@
                     return src.indexOf('```draw-tabs');
                 },
                 tokenizer(src) {
-                    const match = /^```draw-tabs[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    const match = /^```draw-tabs[ \t]*\r?\n([\s\S]*?)\r?\n```[ \t]*(?=\r?\n|$)/.exec(src);
                     if (!match) return;
                     return { type: 'drawTabs', raw: match[0], spec: match[1].trim() };
                 },
@@ -305,7 +305,7 @@
                     return Math.min(a, b);
                 },
                 tokenizer(src) {
-                    const match = /^```(?:draw|alur)[ \t]*\n([\s\S]*?)\n```(?:\n+|$)/.exec(src);
+                    const match = /^```(?:draw|alur)[ \t]*\r?\n([\s\S]*?)\r?\n```[ \t]*(?=\r?\n|$)/.exec(src);
                     if (!match) return;
                     return { type: 'draw', raw: match[0], spec: match[1].trim() };
                 },
