@@ -450,10 +450,15 @@
             gap: 8px;
         }
 
+        /* Ikon label memakai motion logo berwarna, bukan ikon stroke yang
+           mewarisi currentColor, jadi ukurannya diatur di sini.
+           The label icons use colored motion logos instead of stroke icons
+           that inherit currentColor, so their size is set here. */
+
         .fact-icon {
             flex: 0 0 auto;
-            color: #79c0ff;
-            opacity: 1;
+            width: 20px;
+            height: 20px;
         }
 
         .fact dd {
@@ -474,15 +479,15 @@
         .fact-list li {
             margin: 0;
             display: grid;
-            grid-template-columns: 14px minmax(0, 1fr);
+            grid-template-columns: 18px minmax(0, 1fr);
             align-items: start;
             gap: 10px;
         }
 
         .fact-item-icon {
-            margin-top: 5px;
-            color: #79c0ff;
-            opacity: 1;
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
         }
 
         /* ------------------------------------------------------------ experience
@@ -505,6 +510,116 @@
 
         .experience-entry:last-child {
             border-bottom: 0;
+        }
+
+        /* ------------------------------------------------------------ row logos
+           Perusahaan/komunitas punya logo sendiri. Dipasang lewat ::before
+           supaya markup baris tidak berubah; nama tetap dibaca screen reader.
+           Company and community logos ride on ::before so the row markup stays
+           as it is, and the name is still read out by assistive tech. */
+
+        .experience-entry[data-open-experience="merdeka"]::before,
+        .experience-entry[data-open-experience="xcode"]::before,
+        .experience-entry[data-open-experience="lpro"]::before,
+        .experience-entry[data-open-experience="recognition"]::before,
+        .experience-entry[data-open-community="debuglife"]::before,
+        .experience-entry[data-open-community="codelines"]::before,
+        .experience-entry[data-open-community="codingceria"]::before {
+            content: "";
+            flex: 0 0 auto;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background-color: #0e141a;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .experience-entry[data-open-experience="merdeka"]::before {
+            background-image: url("../assets/brand/merdeka-siber.jpg");
+        }
+
+        .experience-entry[data-open-experience="xcode"]::before {
+            background-image: url("../assets/brand/xcode.jpg");
+        }
+
+        /* LPRO tidak punya logo: pakai kunci beranimasi (motion) dari set
+           logo SVG, bukan lambang pemerintah.
+           LPRO has no logo of its own, so it uses the animated lock from the
+           motion set, not a government emblem. */
+
+        .experience-entry[data-open-experience="lpro"]::before {
+            background-image: url("../assets/brand/lpro.webp");
+            background-size: contain;
+        }
+
+        /* Baris pembuka daftar laporan juga memakai motion: perisai beranimasi
+           dari set motion, bukan lambang pemerintah.
+           The row that opens the report list uses motion too: an animated
+           shield from the motion set, not a government emblem. */
+
+        .experience-entry[data-open-experience="recognition"]::before {
+            border-radius: 11px;
+            background-color: #131b24;
+            background-size: 26px 26px;
+            background-image: url("../assets/brand/ack.svg");
+        }
+
+        .experience-entry[data-open-community="debuglife"]::before {
+            background-image: url("../assets/brand/debuglife.png");
+        }
+
+        .experience-entry[data-open-community="codelines"]::before {
+            background-color: #fff;
+            background-image: url("../assets/brand/codelines.png");
+            background-size: contain;
+        }
+
+        .experience-entry[data-open-community="codingceria"]::before {
+            background-image: url("../assets/brand/coding-ceria.jpg");
+        }
+
+        /* Dua baris motion tampil tanpa kotak: cukup gerakannya sendiri di atas
+           latar halaman. kotak 42px tetap dipakai supaya rata dengan baris
+           berlogo lain.
+           The two motion rows show no card: just the motion itself on the page
+           background. The 42px box is kept so they line up with the other
+           logo rows. */
+
+        .experience-entry[data-open-experience="lpro"]::before,
+        .experience-entry[data-open-experience="recognition"]::before {
+            border-color: transparent;
+            background-color: transparent;
+        }
+
+        /* Hanya baris berlogo yang dirapatkan: logo menempel ke nama dan
+           teksnya yang memuai. Baris tanpa logo memakai tata letak aslinya.
+           Only the rows that carry a logo are tightened: the logo sits next to
+           the name and the text stretches. Rows without a logo keep the
+           original layout. */
+
+        .experience-entry[data-open-experience="merdeka"],
+        .experience-entry[data-open-experience="xcode"],
+        .experience-entry[data-open-experience="lpro"],
+        .experience-entry[data-open-experience="recognition"],
+        .experience-entry[data-open-community="debuglife"],
+        .experience-entry[data-open-community="codelines"],
+        .experience-entry[data-open-community="codingceria"] {
+            justify-content: flex-start;
+            gap: 12px;
+        }
+
+        .experience-entry[data-open-experience="merdeka"] > span:first-of-type,
+        .experience-entry[data-open-experience="xcode"] > span:first-of-type,
+        .experience-entry[data-open-experience="lpro"] > span:first-of-type,
+        .experience-entry[data-open-experience="recognition"] > span:first-of-type,
+        .experience-entry[data-open-community="debuglife"] > span:first-of-type,
+        .experience-entry[data-open-community="codelines"] > span:first-of-type,
+        .experience-entry[data-open-community="codingceria"] > span:first-of-type {
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .experience-name {
@@ -614,6 +729,90 @@
             height: auto;
             aspect-ratio: 210 / 297;
             max-height: 80vh;
+        }
+
+        /* Kartu PDF: frame + keterangan + tombol buka.
+           PDF card: frame, caption, and an open button. */
+
+        .pdf-card {
+            margin: 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pdf-card .recognition-frame {
+            background: #fff;
+        }
+
+        .pdf-caption {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12.5px;
+            color: #b1bac4;
+        }
+
+        .pdf-name {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pdf-hint {
+            display: none;
+        }
+
+        .pdf-open {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--text);
+            font-size: 12.5px;
+            text-decoration: none;
+        }
+
+        .pdf-open:hover {
+            border-color: #3d444d;
+            background: #1b252d;
+        }
+
+        .pdf-card.is-empty .recognition-frame {
+            display: none;
+        }
+
+        .pdf-card.is-empty .pdf-hint {
+            display: inline;
+        }
+
+        @media (max-width: 700px) {
+            .recognition-preview {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            /* Di ponsel PDF setinggi 80vh menyisakan sedikit ruang untuk teks.
+               On a phone an 80vh PDF leaves no room for the text around it. */
+            .recognition-frame {
+                aspect-ratio: auto;
+                height: min(58vh, 440px);
+                max-height: none;
+            }
+
+            .recognition-preview img {
+                max-height: 58vh;
+            }
+
+            .pdf-caption {
+                font-size: 12px;
+            }
         }
 
         @media (max-width: 900px) {

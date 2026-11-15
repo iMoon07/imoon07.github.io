@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+<title>Rocket launch</title>
+  <g><animateTransform attributeName="transform" type="translate" values="0 1;0 -2;0 1" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+    <path d="M32 6c7 7 10 16 10 24l-10 8-10-8c0-8 3-17 10-24Z"
+          stroke="#58A6FF" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="32" cy="24" r="4.2" stroke="#24A8AF" stroke-width="3"/>
+    <path d="M22 30l-6 8 8-1M42 30l6 8-8-1" stroke="#58A6FF" stroke-width="3"
+          stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <path d="M27 41c0 5 5 13 5 13s5-8 5-13Z" fill="#E7B549" opacity=".9">
+    <animate attributeName="opacity" values=".9;.35;.9" dur=".45s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="scale" values="1 1;1 1.35;1 1"
+                      dur=".45s" repeatCount="indefinite" additive="sum"/>
+  </path>
+</svg>

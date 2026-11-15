@@ -1154,5 +1154,141 @@ if (name === 'home') {
                 }
             }
 
+            /* ------------------------------------------------------------ pdf previews
+               Sertifikat tetap PDF asli: iframe menunjuk langsung ke berkasnya.
+               Sebagian browser (terutama di ponsel) menolak merender PDF di
+               dalam frame dan menyisakan kotak kosong, jadi tiap frame dapat
+               keterangan + tombol "Open PDF", dan kalau tidak ada penampil yang
+               muncul, kartu mengakuinya alih-alih memampangkan kotak gelap.
+               The certificate stays the original PDF: the iframe points at the
+               file itself. Some browsers refuse to render a PDF in a frame and
+               leave an empty box, so every frame gets a caption with an
+               "Open PDF" link, and the card says so when no viewer appears. */
+
+            const pdfFrames = Array.from(
+                document.querySelectorAll('.recognition-frame')
+            );
+
+            function pdfViewerState(frame) {
+                try {
+                    const doc = frame.contentDocument;
+
+                    if (!doc || !doc.location) return 'unknown';
+
+                    const href = doc.location.href || '';
+
+                    /* Chrome/Edge render the PDF inside their own extension
+                       page and expose an <embed>; anything else (Firefox,
+                       Safari) is left alone. */
+                    if (href.indexOf('chrome-extension://') !== 0) return 'other';
+
+                    return doc.querySelector('embed') ? 'ok' : 'empty';
+                } catch (error) {
+                    return 'other';
+                }
+            }
+
+            pdfFrames.forEach(frame => {
+                if (frame.dataset.pdfCard) return;
+
+                const src = frame.getAttribute('src') || '';
+                const href = src.split('#')[0];
+
+                if (!href) return;
+
+                const card = document.createElement('figure');
+                card.className = 'pdf-card';
+
+                frame.parentNode.insertBefore(card, frame);
+                card.appendChild(frame);
+
+                const caption = document.createElement('figcaption');
+                caption.className = 'pdf-caption';
+
+                const name = document.createElement('span');
+                name.className = 'pdf-name';
+                name.textContent = (frame.getAttribute('title') || 'Certificate')
+                    .replace(/\s*\(\d+\)\s*$/, '')
+                    .replace(/\s*\(PDF\)\s*$/, '');
+
+                const open = document.createElement('a');
+                open.className = 'pdf-open';
+                open.href = href;
+                open.target = '_blank';
+                open.rel = 'noopener noreferrer';
+                open.textContent = 'Open PDF';
+                open.setAttribute(
+                    'aria-label',
+                    'Open ' + name.textContent + ' (PDF) in a new tab'
+                );
+
+                const hint = document.createElement('span');
+                hint.className = 'pdf-hint';
+                hint.textContent = 'No inline preview in this browser';
+
+                caption.append(name, hint, open);
+                card.appendChild(caption);
+
+                const check = () => {
+                    card.classList.toggle('is-empty', pdfViewerState(frame) === 'empty');
+                };
+
+                frame.addEventListener('load', () => setTimeout(check, 700));
+                frame.addEventListener('error', () => card.classList.add('is-empty'));
+
+                setTimeout(check, 2500);
+                setTimeout(check, 6000);
+
+                frame.dataset.pdfCard = '1';
+            });
+
+            /* ------------------------------------------------------------ scroll to view
+               Buka detail harus mendarat di judulnya, bukan di tengah panel:
+               di ponsel daftar ini panjang dan posisi gulir lama membuat tombol
+               kembali hilang di atas layar.
+               Opening a detail has to land on its title: on a phone the list is
+               long and the old scroll position leaves the back button off-screen. */
+
+            function revealView(view) {
+                if (!view || view.hidden) return;
+
+                const top = view.getBoundingClientRect().top + window.pageYOffset - 10;
+
+                window.scrollTo({
+                    top: Math.max(0, top),
+                    behavior: reducedMotion.matches ? 'auto' : 'smooth'
+                });
+            }
+
+            experienceButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const name = button.dataset.openExperience;
+                    const view = experienceViews[name];
+
+                    if (view) {
+                        window.requestAnimationFrame(() => revealView(view));
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-back-experience]').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (experienceOpener) {
+                        window.requestAnimationFrame(() => revealView(experienceOpener));
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-open-community]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const name = button.dataset.openCommunity;
+                    const view = communityViews[name];
+
+                    if (view) {
+                        window.requestAnimationFrame(() => revealView(view));
+                    }
+                });
+            });
+
             initialRoute();
         })();

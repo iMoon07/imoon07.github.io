@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+<title>Shield block</title>
+  <path d="M32 6 52 14v16c0 14-9 23-20 28-11-5-20-14-20-28V14Z"
+        stroke="#58A6FF" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#E7B549" stroke-width="3" stroke-linecap="round">
+    <path d="M32 20v14">
+      <animate attributeName="opacity" values="1;.25;1" dur="1.4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M22 40h20">
+      <animate attributeName="opacity" values=".25;1;.25" dur="1.4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <circle cx="32" cy="34" r="17" stroke="#24A8AF" stroke-width="2" opacity=".5">
+    <animate attributeName="r" values="15;24;15" dur="2.4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".5;0;.5" dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+</svg>

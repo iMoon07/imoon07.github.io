@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+<title>Data flow</title>
+  <g stroke="rgba(88,166,255,.45)" stroke-width="2.5">
+    <path d="M14 46 32 20 50 46"/><path d="M14 46h36"/>
+  </g>
+  <circle cx="14" cy="46" r="5" fill="none" stroke="#58A6FF" stroke-width="3"/>
+  <circle cx="32" cy="20" r="5" fill="none" stroke="#24A8AF" stroke-width="3"/>
+  <circle cx="50" cy="46" r="5" fill="none" stroke="#58A6FF" stroke-width="3"/>
+  <circle r="3.4" fill="#E7B549">
+    <animateMotion dur="2.4s" repeatCount="indefinite" path="M14 46 32 20 50 46 14 46"/>
+  </circle>
+  <circle r="3.4" fill="#24A8AF">
+    <animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite" path="M50 46 32 20 14 46 50 46"/>
+  </circle>
+</svg>
