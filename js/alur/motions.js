@@ -25,8 +25,22 @@
         return node;
     }
 
+    /* SMIL clock values wajib bersatuan ("3.2s", "900ms"); angka milidetik
+       telanjang dari canvas.js ditolak Chromium dan titiknya diam di
+       langit-langit. WAAPI menerima keduanya, jadi hanya efek SMIL yang
+       terlihat mati. SMIL clock values need a unit: a bare millisecond number
+       from canvas.js is rejected and the dot sits still, while WAAPI accepts
+       both forms, which is why only the SMIL effects looked dead. */
+    function clock(v) {
+        var s = String(v);
+        if (!/^\d*\.?\d+$/.test(s)) return v;
+        var n = parseFloat(s);
+        if (!(n > 0)) return v;
+        return (n >= 1000 ? (n / 1000) : n) + 's';
+    }
+
     function dur(opts, fallback) {
-        return (opts && opts.duration) ? opts.duration : fallback;
+        return clock((opts && opts.duration) ? opts.duration : fallback);
     }
 
     /* Satu titik mengikuti path. One dot follows the path. */
