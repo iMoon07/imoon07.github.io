@@ -318,7 +318,7 @@ lives there.
 - `css/` — `shell.css`, `home.css`, `style.css`, `article.css`, `docs.css`, `topology.css`, `alur.css`
 - `js/` — `home.js`, `blog-data.js`, `main.js`, `read.js`, `markdown.js`, `docs-references-data.js`, `references.js`, `topology.js`, `topology-icons.js`
 - `js/alur/` — visual explainer engine (`core.js`, `kit.js`, `cables.js`, `motions.js`, `draw-tabs.js`, `modules/*.js`)
-- `../ai-tools/tools/` — local-only generators (topology icon sprite, logo manifest)
+- `../ai-tools/generators/` — topology icon sprite, logo manifest (repo: iMoon07/ai-tools)
 - `../ai-tools/tools/icons/` — extra Lucide concept icons for the sprite builder
 - `docs/topology-guide.md` — full guide for authoring ` ```topology ` diagrams
 - `docs/alur-guide.md` — full guide for the Alur visual engine (cables, motions, modules, `draw-tabs` gallery)

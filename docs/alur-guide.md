@@ -227,9 +227,9 @@ draw.html?localLogos=1
 The generator lives outside the site:
 
 ```bash
-python3 /home/moon/Projects/ai-tools/generators/build_logo_manifest.py \
-  --site /home/moon/Projects/imoon07.github.io \
-  --logo-dir /home/moon/Projects/logo
+python3 ../ai-tools/generators/build_logo_manifest.py \
+  --site . \
+  --logo-dir ../logo
 ```
 
 It writes only `js/logo-manifest.js` and always points at the remote GitHub base.
@@ -1381,7 +1381,8 @@ imoon07.github.io/
   docs/alur-guide.md
 ```
 
-Local-only generators and probes live in `/home/moon/Projects/ai-tools/`:
+Generators and probes live in the `ai-tools` repo
+(<https://github.com/iMoon07/ai-tools>), cloned next to the site by default:
 
 ```text
 ai-tools/generators/build_logo_manifest.py
