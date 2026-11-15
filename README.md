@@ -19,7 +19,7 @@ content repository, so the site repo holds presentation only.
 | `index.html` | Home and About in one document, switched in place. About has tabbed panels (Profile, Experience, Community, License) and the logo digital-rain background. |
 | `blog.html` | Post listing: 25 posts, 8 categories, search, filter, pagination. |
 | `read.html` | Article reader: TOC (desktop/mobile/inline), code copy, lightbox, video, giscus comments, reading progress, math, footnotes, mermaid. |
-| `references.html` | Docs hub: 83 reference modules in 7 groups, filter, command search (`Ctrl+K`), language variants (en/id/ms/tl), mobile drawers. |
+| `references.html` | Docs hub: 83 reference modules in 7 groups, filter, command search (`Ctrl+K`), language variants (`?lang=`, en/id fallback), mobile drawers. |
 | `draw.html` | Alur playground: infinite canvas, sticky notes, tables, Rough.js strokes, laser pointer, 29 chart types. |
 | `topology.html` | Authoring page for ` ```topology ` blocks: live preview, presets, `Copy ```topology`. |
 | `about.html`, `alur.html`, `preview.html` | Redirect stubs (about → `index.html#about`, the other two → `draw.html`). |
@@ -45,7 +45,7 @@ flowchart LR
 | DOMPurify | 3.2.4 (jsDelivr) | `read.html`, `references.html` | Sanitize before insertion |
 | highlight.js | 11.11.1 (jsDelivr, lazy) | `read.js` | Code highlighting |
 | mermaid | 10.9.1 (jsDelivr, lazy) | `read.js` | ` ```mermaid ` blocks |
-| Rough.js | 4.6.6 (vendored) | `draw.html`, `read.html` | Hand-drawn strokes for Alur |
+| Rough.js | vendored, MIT (CDN fallback `roughjs@latest`) | `draw.html`, `read.html` | Hand-drawn strokes for Alur |
 
 `vendor/rough.js` is the only vendored library; it falls back to the unpkg CDN if the local
 file is missing. Everything else comes from a CDN at runtime.
