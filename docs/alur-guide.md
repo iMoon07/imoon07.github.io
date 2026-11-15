@@ -184,8 +184,18 @@ https://raw.githubusercontent.com/iMoon07/logo-svg/main/<category>/<file>.svg
 ```
 
 The site does **not** ship `assets/logos/`. It only loads the generated
-`js/logo-manifest.js` (587 entries), which contains the remote base URL. Logo
+`js/logo-manifest.js` (1285 entries), which contains the remote base URL. Logo
 images need access to `raw.githubusercontent.com`.
+
+Categories: `profession`, `programming`, `security`, `stack`, `brand`,
+`security-icons`, `security-3d`, `security-illustration`, `motion`. The
+`motion` set is the only animated one: 19 standalone SMIL SVGs (64x64) that
+keep animating when drawn as an `<image>` on the canvas.
+
+```js
+AlurLogos.resolve('motion:bell-ring')
+// { kind: 'file', href: '.../logo-svg/main/motion/bell-ring.svg', entry: { motion: true } }
+```
 
 ```js
 AlurLogos.resolve('stack:docker')

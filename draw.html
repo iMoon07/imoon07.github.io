@@ -2799,7 +2799,7 @@
   <span id="topStatus" class="top-status">0 nodes · 0 edges</span>
   <!-- Build stamp: always visible, so "nothing changed" can be told apart from
        "this page is a cached copy". Bump it whenever draw.html changes. -->
-  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15d</span>
+  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15g</span>
   <nav class="top-nav" aria-label="Site">
     <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
     <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
@@ -3169,17 +3169,15 @@
         <p class="code-status" id="codeStatus">Fenced block: paste it into a .md file as-is. Edit, then Apply (Ctrl+Enter).</p>
 
         <div class="row" style="margin-top:8px">
-          <button id="exportJson" class="ghost">Export JSON</button>
-          <button id="exportSvg" class="ghost">Export SVG</button>
+          <select id="exportFormat" aria-label="Export format">
+            <option value="json">JSON</option>
+            <option value="svg">SVG</option>
+            <option value="draw">draw block</option>
+          </select>
+          <button id="exportScene" class="ghost">Export</button>
+          <button id="reset" class="ghost" title="Reset scene">Reset</button>
         </div>
-        <div class="row">
-          <button id="exportDraw" class="ghost">Export draw</button>
-          <button id="copyDraw" class="ghost">Copy draw</button>
-        </div>
-        <div class="row">
-          <button id="reset" class="ghost">Reset scene</button>
-        </div>
-        <p class="hint">The block above is the canvas: it updates as you edit, and Apply pushes it back. Export writes the same text as a fenced <code>```draw</code> block that read.html can render.</p>
+        <p class="hint">The block above is the canvas: it updates as you edit, and Apply pushes it back. Export writes the same text as JSON, SVG, or a fenced <code>```draw</code> block that read.html can render.</p>
         <p class="hint">Scene saves to this browser automatically, so a refresh keeps your canvas. Reset clears it.</p>
         <p class="hint">Motion names follow the docs. Node motions (pulse, orbit, grow, spin) target the edge's target node.</p>
     </details>
@@ -3209,7 +3207,7 @@
 <button id="focusExit" class="focus-exit" title="Exit focus mode">Exit focus</button>
 
 <script src="js/topology-icons.js?v=4"></script>
-<script src="js/logo-manifest.js"></script>
+<script src="js/logo-manifest.js?v=2"></script>
 <script src="js/alur/logos.js?v=4"></script>
 <script src="vendor/rough.js?v=1"></script>
 <!-- Rough.js is vendored (pinned, offline). If that file is ever missing
@@ -3223,7 +3221,7 @@
 </script>
     <script src="js/alur/kit.js?v=13"></script>
 <script src="js/alur/cables.js?v=4"></script>
-<script src="js/alur/motions.js?v=5"></script>
+<script src="js/alur/motions.js?v=6"></script>
 <script src="js/alur/core.js?v=6"></script>
 <script src="js/alur/modules/canvas.js?v=17"></script>
 <script src="js/alur/modules/flow.js?v=4"></script>
@@ -6130,8 +6128,9 @@
     list.push({ label: 'Action · Zoom to fit', hint: '', run: function () { document.getElementById('zoomFit').click(); } });
     list.push({ label: 'Action · Undo', hint: 'Ctrl+Z', run: undo });
     list.push({ label: 'Action · Redo', hint: 'Ctrl+Shift+Z', run: redo });
-    list.push({ label: 'Action · Export JSON', hint: '', run: function () { document.getElementById('exportJson').click(); } });
-    list.push({ label: 'Action · Export SVG', hint: '', run: function () { document.getElementById('exportSvg').click(); } });
+    list.push({ label: 'Action · Export JSON', hint: '', run: function () { exportAs('json'); } });
+    list.push({ label: 'Action · Export SVG', hint: '', run: function () { exportAs('svg'); } });
+    list.push({ label: 'Action · Export draw block', hint: '', run: function () { exportAs('draw'); } });
     list.push({ label: 'Action · Focus mode', hint: 'Ctrl+.', run: function () { toggleFocus(); } });
     return list;
   }
@@ -10573,16 +10572,31 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
   }
 
-  document.getElementById('exportJson').addEventListener('click', function () {
-    download('alur-scene.json', JSON.stringify(state.spec, null, 2), 'application/json');
-  });
+  /* Satu tombol, satu pilihan format: tiga tombol terpisah dulu memakan
+     tempat di panel yang sudah sempit. One button plus a format picker, so the
+     narrow panel does not fill up with near-identical export buttons. */
+  function exportAs(fmt) {
+    var sel = document.getElementById('exportFormat');
+    if (sel) sel.value = fmt;
+    var btn = document.getElementById('exportScene');
+    if (btn) btn.click();
+  }
 
-  document.getElementById('exportSvg').addEventListener('click', function () {
-    var svg = stage.querySelector('svg');
-    if (!svg) return;
-    var clone = svg.cloneNode(true);
-    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    download('alur-scene.svg', new XMLSerializer().serializeToString(clone), 'image/svg+xml');
+  document.getElementById('exportScene').addEventListener('click', function () {
+    var fmt = (document.getElementById('exportFormat') || {}).value || 'json';
+    if (fmt === 'json') {
+      download('alur-scene.json', JSON.stringify(state.spec, null, 2), 'application/json');
+      return;
+    }
+    if (fmt === 'svg') {
+      var svg = stage.querySelector('svg');
+      if (!svg) return;
+      var clone = svg.cloneNode(true);
+      clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      download('alur-scene.svg', new XMLSerializer().serializeToString(clone), 'image/svg+xml');
+      return;
+    }
+    download('alur-scene.md', drawMarkdown(), 'text/markdown');
   });
 
   function drawBody() {
@@ -10788,17 +10802,6 @@
       if (codeBox.value.trim() === drawCode().trim()) syncDrawCode();
     });
   })();
-
-  document.getElementById('exportDraw').addEventListener('click', function () {
-    download('alur-scene.md', drawMarkdown(), 'text/markdown');
-  });
-
-  document.getElementById('copyDraw').addEventListener('click', function () {
-    var b = document.getElementById('copyDraw');
-    copyText(drawMarkdown(), function (okCopy) {
-      flashLabel(b, okCopy ? 'Copied' : 'Copy failed', 'Copy draw');
-    });
-  });
 
   function toggleShortcuts() {
     var card = document.getElementById('shortcutCard');

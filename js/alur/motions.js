@@ -25,12 +25,14 @@
         return node;
     }
 
-    /* SMIL clock values wajib bersatuan ("3.2s", "900ms"); angka milidetik
-       telanjang dari canvas.js ditolak Chromium dan titiknya diam di
-       langit-langit. WAAPI menerima keduanya, jadi hanya efek SMIL yang
-       terlihat mati. SMIL clock values need a unit: a bare millisecond number
-       from canvas.js is rejected and the dot sits still, while WAAPI accepts
-       both forms, which is why only the SMIL effects looked dead. */
+    /* Dua bentuk waktu, jangan sampai tertukar:
+       - WAAPI (effect.animate) hanya menerima angka milidetik; string seperti
+         "1.8s" membuatnya melempar "duration must be non-negative or auto" dan
+         render() berhenti di tengah jalan.
+       - Atribut SMIL (dur pada animateMotion/animate) wajib bersatuan; angka
+         telanjang dari canvas.js (mis. 2600) diabaikan Chromium dan titiknya
+         diam. SMIL clock values need a unit: a bare millisecond number from
+         canvas.js is ignored, so the dot sits still. */
     function clock(v) {
         var s = String(v);
         if (!/^\d*\.?\d+$/.test(s)) return v;
@@ -40,7 +42,13 @@
     }
 
     function dur(opts, fallback) {
-        return clock((opts && opts.duration) ? opts.duration : fallback);
+        return (opts && opts.duration) ? opts.duration : fallback;
+    }
+
+    /* Berapa detik, apa pun bentuknya: 2600 -> 2.6, "3.2s" -> 3.2. */
+    function secs(v) {
+        var n = parseFloat(clock(v));
+        return n > 0 ? n : 0;
     }
 
     /* Satu titik mengikuti path. One dot follows the path. */
@@ -50,7 +58,7 @@
             fill: o.color || 'currentColor'
         });
         var anim = kit.el('animateMotion', {
-            dur: dur(o, o.slow ? '6s' : '3.2s') + '',
+            dur: clock(dur(o, o.slow ? '6s' : '3.2s')),
             repeatCount: 'indefinite',
             path: d,
             rotate: 'auto',
@@ -69,7 +77,7 @@
         if (reduced()) return function () {};
         var o = opts || {};
         var n = o.count || 3;
-        var span = parseFloat(dur(o, '3.2s')) || 3.2;
+        var span = secs(dur(o, '3.2s')) || 3.2;
         var made = [];
         for (var i = 0; i < n; i++) {
             made.push(dot(parent, cable.main, cable.d, {
@@ -134,7 +142,7 @@
         if (reduced()) return function () {};
         var o = opts || {};
         var n = o.count || 4;
-        var span = parseFloat(dur(o, '3.6s')) || 3.6;
+        var span = secs(dur(o, '3.6s')) || 3.6;
         var made = [];
         for (var i = 0; i < n; i++) {
             var r = kit.rect(parent, -5, -3, 10, 6, 'alur-packet', {
