@@ -593,6 +593,204 @@
         });
     }
 
+    /* ------------------------------------------------------------------
+       Layering. One flat list holds the stacking order for every kind of
+       item, so a node, a cable and a pen stroke can sit in any order.
+       spec.order is front-to-back: index 0 is drawn last (frontmost).
+       Tokens are "node:<id>", "edge:<id>", "draw:<id>".
+       Edges and pen strokes get a stable id the first time they are seen,
+       because their array index moves whenever one is added or removed.
+       ------------------------------------------------------------------ */
+
+    var LAYER_KINDS = ['node', 'edge', 'draw'];
+    var LAYER_RANK = { node: 0, edge: 1, draw: 2 };
+
+    function layerToken(kind, id) { return kind + ':' + id; }
+
+    function parseLayerToken(token) {
+        if (typeof token !== 'string') return null;
+        var i = token.indexOf(':');
+        if (i <= 0 || i >= token.length - 1) return null;
+        var kind = token.slice(0, i);
+        if (LAYER_KINDS.indexOf(kind) < 0) return null;
+        return { kind: kind, id: token.slice(i + 1) };
+    }
+
+    function layerRank(token) {
+        var p = parseLayerToken(token);
+        return p ? LAYER_RANK[p.kind] : 0;
+    }
+
+    /* Give every edge and stroke an id that is unique inside its own kind.
+       Existing ids win; only gaps and duplicates are replaced. */
+    function stampLayerIds(spec) {
+        var edgeSeen = {}, drawSeen = {};
+        var edgeSeq = 0, drawSeq = 0;
+        var re = /^e(\d+)$/;
+        spec.edges.forEach(function (e) {
+            if (!e || typeof e !== 'object') return;
+            var m = e.id && re.exec(e.id);
+            if (m) edgeSeq = Math.max(edgeSeq, parseInt(m[1], 10));
+        });
+        var drawCount = {};
+        spec.drawings.forEach(function (d) {
+            if (!d || typeof d !== 'object' || !d.id) return;
+            drawCount[d.id] = (drawCount[d.id] || 0) + 1;
+        });
+        spec.edges.forEach(function (e) {
+            if (!e || typeof e !== 'object') return;
+            while (!e.id || edgeSeen[e.id]) e.id = 'e' + (++edgeSeq);
+            edgeSeen[e.id] = true;
+        });
+        spec.drawings.forEach(function (d) {
+            if (!d || typeof d !== 'object') return;
+            /* A lone drawing keeps its id; a duplicate or a missing one gets a
+               fresh one so a layer token always points at one stroke. */
+            if (d.id && drawCount[d.id] === 1) {
+                drawSeen[d.id] = true;
+                return;
+            }
+            var id;
+            do { id = 'd' + (++drawSeq) + 'x'; } while (drawSeen[id] || drawCount[id]);
+            d.id = id;
+            drawCount[id] = 1;
+            drawSeen[id] = true;
+        });
+        return { edges: edgeSeen, draws: drawSeen };
+    }
+
+    function ensureLayerOrder(spec) {
+        if (!spec || typeof spec !== 'object') return [];
+        if (!spec.nodes || typeof spec.nodes !== 'object') spec.nodes = {};
+        if (!Array.isArray(spec.edges)) spec.edges = [];
+        if (!Array.isArray(spec.drawings)) spec.drawings = [];
+        var seen = stampLayerIds(spec);
+        var edgeIds = seen.edges, drawIds = seen.draws;
+
+        function exists(kind, id) {
+            if (kind === 'node') return !!spec.nodes[id];
+            if (kind === 'edge') return !!edgeIds[id];
+            return !!drawIds[id];
+        }
+
+        var tokens = [], taken = {};
+        if (Array.isArray(spec.order)) {
+            spec.order.forEach(function (t) {
+                var p = parseLayerToken(t);
+                if (!p) return;
+                var token = layerToken(p.kind, p.id);
+                if (taken[token] || !exists(p.kind, p.id)) return;
+                taken[token] = true;
+                tokens.push(token);
+            });
+        }
+
+        /* Anything new goes to the front of its own kind, so the default
+           stack stays nodes over cables over strokes. */
+        function insertToken(list, token) {
+            var rank = layerRank(token), at = 0;
+            for (var i = 0; i < list.length; i++) {
+                if (layerRank(list[i]) <= rank) at = i + 1;
+            }
+            list.splice(at, 0, token);
+        }
+
+        LAYER_KINDS.forEach(function (kind) {
+            var items;
+            if (kind === 'node') {
+                items = Object.keys(spec.nodes);
+            } else if (kind === 'edge') {
+                items = spec.edges.map(function (e) { return e && e.id; });
+            } else {
+                items = spec.drawings.map(function (d) { return d && d.id; });
+            }
+            items.forEach(function (id) {
+                if (!id) return;
+                var token = layerToken(kind, id);
+                if (taken[token]) return;
+                taken[token] = true;
+                insertToken(tokens, token);
+            });
+        });
+
+        spec.order = tokens;
+        return tokens;
+    }
+
+    /* Front-to-back list of everything on the canvas, each with the index it
+       keeps in its own array (cables carry data-edge, so the editor can map a
+       click back to spec.edges). */
+    function layerTokens(spec) {
+        var tokens = ensureLayerOrder(spec);
+        var out = [];
+        tokens.forEach(function (token, depth) {
+            var p = parseLayerToken(token);
+            if (!p) return;
+            var item = null, index = -1, i;
+            if (p.kind === 'node') {
+                item = spec.nodes[p.id] || null;
+                if (!item) return;
+            } else if (p.kind === 'edge') {
+                for (i = 0; i < spec.edges.length; i++) {
+                    if (spec.edges[i] && spec.edges[i].id === p.id) { item = spec.edges[i]; index = i; break; }
+                }
+            } else {
+                for (i = 0; i < spec.drawings.length; i++) {
+                    if (spec.drawings[i] && spec.drawings[i].id === p.id) { item = spec.drawings[i]; index = i; break; }
+                }
+            }
+            if (!item) return;
+            out.push({
+                kind: p.kind, id: p.id, token: token,
+                item: item, index: index, depth: depth
+            });
+        });
+        return out;
+    }
+
+    function layerIndexOf(spec, kind, id) {
+        var tokens = ensureLayerOrder(spec);
+        return tokens.indexOf(layerToken(kind, id));
+    }
+
+    /* Drop one row onto another: the dragged row takes the target's place. */
+    function reorderLayerToken(spec, fromToken, toToken) {
+        if (!fromToken || !toToken || fromToken === toToken) return false;
+        var tokens = ensureLayerOrder(spec).slice();
+        var from = tokens.indexOf(fromToken);
+        var to = tokens.indexOf(toToken);
+        if (from < 0 || to < 0) return false;
+        tokens.splice(from, 1);
+        tokens.splice(to, 0, fromToken);
+        spec.order = tokens;
+        return true;
+    }
+
+    function moveLayerToken(spec, token, dir) {
+        var tokens = ensureLayerOrder(spec).slice();
+        var at = tokens.indexOf(token);
+        if (at < 0) return false;
+        if (dir === 'front') {
+            tokens.splice(at, 1);
+            tokens.unshift(token);
+        } else if (dir === 'back') {
+            tokens.splice(at, 1);
+            tokens.push(token);
+        } else if (dir === 'forward') {
+            if (at === 0) return false;
+            tokens.splice(at, 1);
+            tokens.splice(at - 1, 0, token);
+        } else if (dir === 'backward') {
+            if (at >= tokens.length - 1) return false;
+            tokens.splice(at, 1);
+            tokens.splice(at + 1, 0, token);
+        } else {
+            return false;
+        }
+        spec.order = tokens;
+        return true;
+    }
+
     global.AlurKit = {
         NS: NS,
         el: el,
@@ -624,6 +822,13 @@
         roughPath: roughPath,
         roughAmount: roughAmount,
         nodeSeed: nodeSeed,
-        nodeRough: nodeRough
+        nodeRough: nodeRough,
+        layerToken: layerToken,
+        parseLayerToken: parseLayerToken,
+        ensureLayerOrder: ensureLayerOrder,
+        layerTokens: layerTokens,
+        layerIndexOf: layerIndexOf,
+        reorderLayerToken: reorderLayerToken,
+        moveLayerToken: moveLayerToken
     };
 })(window);

@@ -286,6 +286,7 @@ auto-laid out.
 | `zoom`, `panX`, `panY` | View transform. |
 | `selected` | Node id or array of ids. |
 | `selectedEdge`, `selectedDrawing` | Edge index or drawing id. |
+| `order` | Stacking order, front-to-back: `"node:n1"`, `"edge:e1"`, `"draw:d1"`. |
 
 ### Hand-drawn strokes
 
@@ -472,6 +473,16 @@ the panels become full-width drawers and the tool rail becomes a bottom bar.
 
 - Top bar: title, counts, panel toggles, focus mode, build stamp.
 - Panels: Properties, Assets (logos), Layers, Scene.
+
+**Layers** are one flat stacking order, not one list per kind. Every row —
+node, cable, or pen stroke — can be dragged anywhere in the list, including in
+front of a node or behind a cable. The top row is frontmost, `Ctrl+]` /
+`Ctrl+[` move the selection one step, and `Ctrl+Shift+]` / `Ctrl+Shift+[`
+send it to the front or the back. The order lives in `spec.order` as
+`node:`/`edge:`/`draw:` tokens, so a saved diagram reopens exactly as it was
+stacked; a cable layered in front of a node is no longer clipped by that node,
+and a cable behind one still is.
+
 - Command palette: `Ctrl+/` or `Ctrl+Shift+P`; `/` quick insert.
 - Add a link to the selection: `Ctrl+K`.
 - Focus mode: `Ctrl+.`; `Esc` exits.

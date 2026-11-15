@@ -994,3 +994,33 @@
         flex: 0 0 auto;
     }
 }
+
+/* Edge selection handles.
+   These are editor chrome, but they live here rather than in draw.html so a
+   consumer that does draw them gets the same look: an SVG circle with no fill
+   attribute defaults to black. */
+.alur-edge-handle { cursor: grab; }
+.alur-edge-handle.is-mid { cursor: crosshair; }
+.alur-edge-hit {
+    fill: transparent;
+    stroke: none;
+    pointer-events: all;
+}
+.alur-edge-point {
+    fill: #0c1117;
+    stroke: var(--accent, #58a6ff);
+    stroke-width: 1.4;
+    cursor: grab;
+    pointer-events: none;
+    transition: fill 120ms ease, r 120ms ease;
+}
+.alur-edge-point:hover { fill: var(--accent, #58a6ff); }
+.alur-edge-point.is-end { fill: var(--accent, #58a6ff); }
+.alur-edge-point.is-mid {
+    fill: var(--accent, #58a6ff);
+    stroke: #0c1117;
+    cursor: crosshair;
+    r: 3.6;
+}
+.alur-edge-handle:hover .alur-edge-point { r: 6; fill: var(--accent, #58a6ff); }
+.alur-edge-handle.is-mid:hover .alur-edge-point { r: 6; }

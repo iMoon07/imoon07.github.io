@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alur Visual Lab — sketch canvas</title>
-<link rel="stylesheet" href="css/alur.css?v=8">
+<link rel="stylesheet" href="css/alur.css?v=9">
 <style>
   :root {
     --bg: #090c11;
@@ -2799,7 +2799,7 @@
   <span id="topStatus" class="top-status">0 nodes · 0 edges</span>
   <!-- Build stamp: always visible, so "nothing changed" can be told apart from
        "this page is a cached copy". Bump it whenever draw.html changes. -->
-  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15b</span>
+  <span id="buildStamp" class="top-status" title="Build stamp">b26.11.15c</span>
   <nav class="top-nav" aria-label="Site">
     <a class="top-link" href="index.html#home" title="Home"><span class="ico">⌂</span><span class="lbl">Home</span></a>
     <a class="top-link" href="references.html?ref=index" title="Docs"><span class="ico">▤</span><span class="lbl">Docs</span></a>
@@ -3009,7 +3009,7 @@
   </div>
     <span class="dock-resize" data-resize="layers" title="Drag to resize" aria-hidden="true"></span>
   <div class="dock-body">
-    <p class="layer-hint">Layers = stacking order. Drag rows up/down; the bottom row is frontmost. Edges always sit behind nodes.</p>
+    <p class="layer-hint">Layers = stacking order. Drag any row up or down — the top row is frontmost. Cables and pen strokes can be moved in front of nodes too.</p>
     <div id="layerList" class="layer-list"></div>
   </div>
 </aside>
@@ -3221,11 +3221,11 @@
     document.write('<script src="https://unpkg.com/roughjs@latest/bundled/rough.js"><\/script>');
   })();
 </script>
-    <script src="js/alur/kit.js?v=12"></script>
+    <script src="js/alur/kit.js?v=13"></script>
 <script src="js/alur/cables.js?v=4"></script>
 <script src="js/alur/motions.js?v=4"></script>
 <script src="js/alur/core.js?v=6"></script>
-<script src="js/alur/modules/canvas.js?v=15"></script>
+<script src="js/alur/modules/canvas.js?v=17"></script>
 <script src="js/alur/modules/flow.js?v=4"></script>
 <script src="js/alur/modules/reverse-proxy.js?v=4"></script>
 <script src="js/alur/modules/chart.js?v=4"></script>
@@ -4790,6 +4790,7 @@
       s.nodes = {};
       s.edges = [];
       s.drawings = [];
+      s.order = [];
       s.zoom = 1;
       s.panX = 0;
       s.panY = 0;
@@ -5919,6 +5920,9 @@
     if (document.activeElement !== input) input.value = state.spec.title || 'Untitled diagram';
   }
 
+  /* One list, one stacking order. Nodes, cables, and pen strokes are all
+     rows in the same list: any row can be dragged anywhere, including in
+     front of a node or behind a cable. */
   function renderLayers() {
     var host = document.getElementById('layerList');
     if (!host) return;
@@ -5934,11 +5938,8 @@
       return;
     }
     var s = state.spec;
-    var nodes = s.nodes || {};
-    var ids = Object.keys(nodes);
-    var edges = s.edges || [];
-    var drawings = s.drawings || [];
-    if (!ids.length && !edges.length && !drawings.length) {
+    var items = AlurKit.layerTokens(s);
+    if (!items.length) {
       var empty = document.createElement('p');
       empty.className = 'layer-empty';
       empty.textContent = 'Nothing on the canvas yet.';
@@ -5946,13 +5947,15 @@
       return;
     }
 
-    function addRow(label, sub, active, onClick, kind, id) {
+    function addRow(label, sub, active, onClick, token) {
       var b = document.createElement('button');
       b.type = 'button';
       b.draggable = true;
       b.className = 'layer-row' + (active ? ' is-on' : '');
-      b.dataset.kind = kind;
-      b.dataset.id = id;
+      var parts = AlurKit.parseLayerToken(token) || {};
+      b.dataset.token = token;
+      b.dataset.kind = parts.kind || '';
+      b.dataset.id = parts.id || '';
       b.title = 'Drag to reorder layer';
       b.textContent = label;
       if (sub) {
@@ -5962,11 +5965,11 @@
       }
       b.addEventListener('click', onClick);
       b.addEventListener('dragstart', function (ev) {
-        editor.layerDrag = { kind: kind, id: id };
+        editor.layerDrag = { token: token };
         b.classList.add('is-dragging');
         try {
           ev.dataTransfer.effectAllowed = 'move';
-          ev.dataTransfer.setData('text/plain', kind + ':' + id);
+          ev.dataTransfer.setData('text/plain', token);
         } catch (err) {}
       });
       b.addEventListener('dragend', function () {
@@ -5977,41 +5980,46 @@
         });
       });
       b.addEventListener('dragover', function (ev) {
-        if (!editor.layerDrag || editor.layerDrag.kind !== kind) return;
+        if (!editor.layerDrag || !editor.layerDrag.token) return;
         ev.preventDefault();
         ev.dataTransfer.dropEffect = 'move';
         b.classList.add('is-drop');
       });
       b.addEventListener('dragleave', function () { b.classList.remove('is-drop'); });
       b.addEventListener('drop', function (ev) {
-        if (!editor.layerDrag || editor.layerDrag.kind !== kind) return;
+        if (!editor.layerDrag || !editor.layerDrag.token) return;
         ev.preventDefault();
         b.classList.remove('is-drop');
         var drag = editor.layerDrag;
         editor.layerDrag = null;
-        reorderLayer(kind, drag.id, id);
+        reorderLayer(drag.token, token);
       });
       host.appendChild(b);
     }
 
     var sel = selectionIds();
-    ids.forEach(function (id) {
-      var n = nodes[id];
-      addRow(n.label || id, n.shape || 'box', sel.indexOf(id) >= 0, function () {
-        selectNode(id);
-      }, 'node', id);
-    });
-    edges.forEach(function (e, i) {
-      var label = e.points ? ('Arrow · ' + e.points.length + ' pt') :
-        ((e.from || '?') + ' → ' + (e.to || '?'));
-      addRow(label, e.cable || 'edge', edgeIsSelected(i), function () {
-        selectEdge(i);
-      }, 'edge', String(i));
-    });
-    drawings.forEach(function (d) {
-      addRow('Drawing', d.id || '', s.selectedDrawing === d.id, function () {
-        selectDrawing(d.id);
-      }, 'drawing', d.id || '');
+    items.forEach(function (t) {
+      var label, sub, active, onClick;
+      if (t.kind === 'node') {
+        var n = t.item;
+        label = n.label || t.id;
+        sub = n.shape || 'box';
+        active = sel.indexOf(t.id) >= 0;
+        onClick = function () { selectNode(t.id); };
+      } else if (t.kind === 'edge') {
+        var e = t.item;
+        label = e.points ? ('Arrow · ' + e.points.length + ' pt') :
+          ((e.from || '?') + ' → ' + (e.to || '?'));
+        sub = e.cable || 'edge';
+        active = edgeIsSelected(t.index);
+        onClick = function () { selectEdge(t.index); };
+      } else {
+        label = 'Drawing';
+        sub = t.id;
+        active = s.selectedDrawing === t.id;
+        onClick = function () { selectDrawing(t.id); };
+      }
+      addRow(label, sub, active, onClick, t.token);
     });
   }
 
@@ -6440,6 +6448,26 @@
     var s = state.spec;
     if (s.selectedEdge === i) return true;
     return !!(s.selectedEdges && s.selectedEdges.indexOf(i) >= 0);
+  }
+
+  /* Every selected row as a layer token, so layer commands work the same for
+     a node, a cable, a stroke, or a mixed selection. */
+  function selectionTokens() {
+    var s = state.spec;
+    AlurKit.ensureLayerOrder(s);
+    var out = [];
+    selectionIds().forEach(function (id) {
+      if (s.nodes && s.nodes[id]) out.push(AlurKit.layerToken('node', id));
+    });
+    var eidx = (s.selectedEdges && s.selectedEdges.length)
+      ? s.selectedEdges
+      : (s.selectedEdge != null ? [s.selectedEdge] : []);
+    eidx.forEach(function (i) {
+      var e = (s.edges || [])[i];
+      if (e && e.id) out.push(AlurKit.layerToken('edge', e.id));
+    });
+    if (s.selectedDrawing) out.push(AlurKit.layerToken('draw', s.selectedDrawing));
+    return out;
   }
 
   function setSelection(ids) {
@@ -7430,78 +7458,49 @@
     return wrap;
   }
 
-  function reorderLayer(kind, fromId, toId) {
+  /* Layer rows are tokens ("node:n1", "edge:e3", "draw:d2"), so a drag can
+     cross kinds: dropping a cable onto a node row puts the cable in front of
+     that node. The renderer paints spec.order front-to-back. */
+  function reorderLayer(fromToken, toToken) {
     var s = state.spec;
-    if (fromId === toId) return;
-    if (kind === 'edge') {
-      var ei = parseInt(fromId, 10);
-      var ti = parseInt(toId, 10);
-      if (isNaN(ei) || isNaN(ti) || !s.edges || !s.edges[ei]) return;
-      pushHistory();
-      var edge = s.edges.splice(ei, 1)[0];
-      s.edges.splice(ti, 0, edge);
-      var movedAt = s.edges.indexOf(edge);
-      s.selectedEdge = movedAt;
-      s.selectedEdges = [movedAt];
-      s.selected = null;
-      s.selectedDrawing = null;
-      touchSpec();
-      syncControls();
-      render();
-      return;
-    }
+    if (!fromToken || !toToken || fromToken === toToken) return;
+    var tokens = AlurKit.ensureLayerOrder(s);
+    if (tokens.indexOf(fromToken) < 0 || tokens.indexOf(toToken) < 0) return;
     pushHistory();
-    if (kind === 'node') {
-      var entries = Object.keys(s.nodes || {}).map(function (k) { return [k, s.nodes[k]]; });
-      var from = entries.findIndex(function (x) { return x[0] === fromId; });
-      var to = entries.findIndex(function (x) { return x[0] === toId; });
-      if (from < 0 || to < 0) return;
-      var moved = entries.splice(from, 1)[0];
-      entries.splice(to, 0, moved);
-      var copy = {};
-      entries.forEach(function (x) { copy[x[0]] = x[1]; });
-      s.nodes = copy;
-    } else if (kind === 'drawing') {
-      var arr = s.drawings || [];
-      var fi = arr.findIndex(function (d) { return d.id === fromId; });
-      var di = arr.findIndex(function (d) { return d.id === toId; });
-      if (fi < 0 || di < 0) return;
-      var drawing = arr.splice(fi, 1)[0];
-      arr.splice(di, 0, drawing);
-      s.drawings = arr;
-    }
+    AlurKit.reorderLayerToken(s, fromToken, toToken);
     touchSpec();
     syncControls();
     render();
   }
 
   function moveNodeLayer(id, dir) {
-    var nodes = state.spec.nodes || {};
-    if (!nodes[id]) return;
-    var copy = {};
-    var ids = Object.keys(nodes).filter(function (k) { return k !== id; });
-    if (dir === 'front') ids.push(id);
-    else ids.unshift(id);
-    ids.forEach(function (k) { copy[k] = nodes[k]; });
-    state.spec.nodes = copy;
+    return moveLayerByToken(AlurKit.layerToken('node', id), dir);
+  }
+
+  /* dir: 'front' | 'back' (panel buttons) or 'forward' | 'backward'. */
+  function moveLayerByToken(token, dir) {
+    var s = state.spec;
+    if (!token) return false;
+    var tokens = AlurKit.ensureLayerOrder(s);
+    var at = tokens.indexOf(token);
+    if (at < 0) return false;
+    /* Nothing to do: don't leave an empty undo step behind. */
+    if ((dir === 'front' || dir === 'forward') && at === 0) return false;
+    if ((dir === 'back' || dir === 'backward') && at === tokens.length - 1) return false;
     pushHistory();
+    AlurKit.moveLayerToken(s, token, dir);
     touchSpec();
     syncControls();
     render();
+    return true;
   }
 
   function moveEdgeLayer(index, dir) {
-    var edges = state.spec.edges || [];
-    if (!edges[index]) return;
-    var e = edges.splice(index, 1)[0];
-    if (dir === 'front') edges.push(e);
-    else edges.unshift(e);
-    state.spec.edges = edges;
-    state.spec.selectedEdge = edges.indexOf(e);
-    pushHistory();
-    touchSpec();
-    syncControls();
-    render();
+    var s = state.spec;
+    AlurKit.ensureLayerOrder(s);
+    var e = (s.edges || [])[index];
+    if (!e || !e.id) return false;
+    return moveLayerByToken(AlurKit.layerToken('edge', e.id), dir);
   }
 
   /* The panel owns the node it is showing. If the selection was cleared while
@@ -11068,16 +11067,15 @@
   }
 
   function layerSelection(dir) {
-    var ids = selectionIds();
-    if (!ids.length) return;
+    var s = state.spec;
+    var picked = selectionTokens();
+    if (!picked.length) return;
+    var tokens = AlurKit.ensureLayerOrder(s).slice();
+    var rest = tokens.filter(function (t) { return picked.indexOf(t) < 0; });
+    var next = (dir === 'front') ? picked.concat(rest) : rest.concat(picked);
+    if (next.join(',') === tokens.join(',')) return;
     pushHistory();
-    var nodes = state.spec.nodes;
-    var copy = {};
-    var rest = Object.keys(nodes).filter(function (k) { return ids.indexOf(k) < 0; });
-    if (dir === 'front') rest = rest.concat(ids);
-    else rest = ids.concat(rest);
-    rest.forEach(function (k) { copy[k] = nodes[k]; });
-    state.spec.nodes = copy;
+    s.order = next;
     touchSpec();
     syncControls();
     render();
@@ -11088,6 +11086,7 @@
     state.spec.nodes = {};
     state.spec.edges = [];
     state.spec.drawings = [];
+    state.spec.order = [];
     state.spec.selected = null;
     state.spec.selectedEdge = null;
     state.spec.selectedEdges = [];
@@ -11224,13 +11223,15 @@
     if ((ev.ctrlKey || ev.metaKey) && ev.key === '[') {
       ev.preventDefault();
       var idsB = selectionIds();
-      if (idsB.length === 1) moveNodeLayer(idsB[0], 'back');
+      if (idsB.length === 1) moveNodeLayer(idsB[0], 'backward');
+      else layerSelection('back');
       return;
     }
     if ((ev.ctrlKey || ev.metaKey) && ev.key === ']') {
       ev.preventDefault();
       var idsF = selectionIds();
-      if (idsF.length === 1) moveNodeLayer(idsF[0], 'front');
+      if (idsF.length === 1) moveNodeLayer(idsF[0], 'forward');
+      else layerSelection('front');
       return;
     }
     if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && ev.key === 'ArrowUp') { ev.preventDefault(); alignSelection('top'); return; }

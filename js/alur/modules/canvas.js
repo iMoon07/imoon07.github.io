@@ -1007,23 +1007,11 @@
         var speed = spec.speed || 1;
         var stops = [];
 
-        var drawLayer = kit.g(svg, 'alur-layer-draw');
-        (spec.drawings || []).forEach(function (dr) {
-            var dash = dr.strokeStyle === 'dashed' ? '7 5' :
-                (dr.strokeStyle === 'dotted' ? '2 4' : '');
-            var p = kit.path(drawLayer, dr.d, 'alur-drawing' + ((editing && spec.selectedDrawing === dr.id) ? ' is-selected' : ''), {
-                stroke: kit.color(dr.color || '#e6edf3'),
-                'stroke-width': dr.width || 2,
-                'stroke-dasharray': dash || null,
-                opacity: dr.opacity == null ? 1 : dr.opacity,
-                fill: 'none',
-                'stroke-linecap': 'round',
-                'stroke-linejoin': 'round'
-            });
-            if (dr.id) p.setAttribute('data-drawing', dr.id);
-        });
-
-        var edgeLayer = kit.g(svg, 'alur-layer-edges');
+        /* One ordered stack for every kind of item. Layering is a single
+           front-to-back list (spec.order), so a node, a cable and a pen
+           stroke can be stacked in any order — the editor's layer panel
+           reorders exactly that list, and nothing is locked to a band. */
+        var stackLayer = kit.g(svg, 'alur-layer-stack');
         var pointLayer = kit.g(svg, 'alur-layer-points');
         var nodeLayer = kit.g(svg, 'alur-layer-nodes');
         var nodes = spec.nodes || {};
@@ -1038,6 +1026,31 @@
             nodes[id].id = id;
             nodeEls[id] = drawNode(nodeLayer, nodes[id], selected.indexOf(id) >= 0);
         });
+
+        /* Nodes are staged above the stack while it is built: cables need the
+           finished node elements to hang their motion on. */
+        var layers = kit.layerTokens(spec);
+        var nodeDepth = {}, edgeDepth = {};
+        layers.forEach(function (t) {
+            if (t.kind === 'node') nodeDepth[t.id] = t.depth;
+            if (t.kind === 'edge') edgeDepth[t.id] = t.depth;
+        });
+
+        function drawStroke(parent, dr) {
+            var dash = dr.strokeStyle === 'dashed' ? '7 5' :
+                (dr.strokeStyle === 'dotted' ? '2 4' : '');
+            var p = kit.path(parent, dr.d, 'alur-drawing' + ((editing && spec.selectedDrawing === dr.id) ? ' is-selected' : ''), {
+                stroke: kit.color(dr.color || '#e6edf3'),
+                'stroke-width': dr.width || 2,
+                'stroke-dasharray': dash || null,
+                opacity: dr.opacity == null ? 1 : dr.opacity,
+                fill: 'none',
+                'stroke-linecap': 'round',
+                'stroke-linejoin': 'round'
+            });
+            if (dr.id) p.setAttribute('data-drawing', dr.id);
+            return p;
+        }
 
         /* Reading page only: shrink table boxes to their content, then frame
            the whole drawing so it fills the column. */
@@ -1067,7 +1080,7 @@
                 el.style.display = 'none';
             });
             var box = null;
-            [drawLayer, edgeLayer, pointLayer, nodeLayer].forEach(function (layer) {
+            [stackLayer, pointLayer].forEach(function (layer) {
                 if (!layer) return;
                 var b = null;
                 try { b = layer.getBBox(); } catch (err) { return; }
@@ -1122,7 +1135,16 @@
            width/height. Kalau area mask dibatasi 0..W x 0..H, setiap kabel di
            luar kotak itu ikut hitam (invisible) — itulah "arrow ada batas
            canvas". Hitung dari isi scene, lalu beri bantalan besar. */
-        var edgeMaskId = 'alur-edge-mask-' + (++uid);
+        /* Sembunyikan kabel di dalam node supaya tidak menimpa label/logo.
+           Node tetap transparan; hanya bagian kabel yang masuk area node yang
+           di-clip oleh mask.
+           PENTING: area mask harus mencakup seluruh dunia, bukan cuma
+           width/height. Kalau area mask dibatasi 0..W x 0..H, setiap kabel di
+           luar kotak itu ikut hitam (invisible) — itulah "arrow ada batas
+           canvas". Hitung dari isi scene, lalu beri bantuan besar.
+           Kabel yang di-layer di depan sebuah node harus tetap kelihatan di
+           atasnya, jadi tiap kabel hanya mem-mask node yang berada di
+           depannya. Kabel dengan gugus node depan yang sama berbagi mask. */
         var maskDefs = kit.el('defs', {}, svg);
         var sceneBox = sceneBounds(nodes, spec.edges || [], spec.drawings || []);
         var maskPad = 4000;
@@ -1130,33 +1152,45 @@
         var maskY = Math.floor(sceneBox.y - maskPad);
         var maskW = Math.ceil(sceneBox.w + maskPad * 2);
         var maskH = Math.ceil(sceneBox.h + maskPad * 2);
-        var edgeMask = kit.el('mask', {
-            id: edgeMaskId, maskUnits: 'userSpaceOnUse',
-            x: maskX, y: maskY, width: maskW, height: maskH
-        }, maskDefs);
-        kit.rect(edgeMask, maskX, maskY, maskW, maskH, '', { fill: '#fff' });
-        Object.keys(nodes).forEach(function (id) {
-            var n = nodes[id];
+        var maskCache = {};
+
+        function addNodeShape(mask, n) {
             var w = n.w || 160;
             var h = n.h || 60;
             var shape = n.shape || 'box';
             if (shape === 'circle') {
-                kit.circle(edgeMask, (n.x || 0) + w / 2, (n.y || 0) + h / 2,
+                kit.circle(mask, (n.x || 0) + w / 2, (n.y || 0) + h / 2,
                     Math.max(18, Math.min(w, h) / 2 - 2), '', { fill: '#000' });
             } else if (shape === 'diamond') {
                 var dd = 'M ' + (n.x || 0) + ' ' + ((n.y || 0) + h / 2) +
                     ' L ' + ((n.x || 0) + w) + ' ' + ((n.y || 0) + h / 2) +
                     ' L ' + ((n.x || 0) + w / 2) + ' ' + ((n.y || 0) + h) +
                     ' L ' + (n.x || 0) + ' ' + ((n.y || 0) + h / 2) + ' Z';
-                kit.path(edgeMask, dd, '', { fill: '#000' });
+                kit.path(mask, dd, '', { fill: '#000' });
             } else {
                 var rx = shape === 'pill' ? h / 2 : (n.edge === 'round' ? Math.min(14, h / 2) : 0);
-                kit.rect(edgeMask, n.x || 0, n.y || 0, w, h, '', {
+                kit.rect(mask, n.x || 0, n.y || 0, w, h, '', {
                     rx: rx, fill: '#000'
                 });
             }
-        });
-        edgeLayer.setAttribute('mask', 'url(#' + edgeMaskId + ')');
+        }
+
+        function maskFor(frontIds) {
+            var key = frontIds.join('|');
+            if (maskCache[key]) return maskCache[key];
+            if (!frontIds.length) return null;
+            var id = 'alur-edge-mask-' + (++uid);
+            var mask = kit.el('mask', {
+                id: id, maskUnits: 'userSpaceOnUse',
+                x: maskX, y: maskY, width: maskW, height: maskH
+            }, maskDefs);
+            kit.rect(mask, maskX, maskY, maskW, maskH, '', { fill: '#fff' });
+            frontIds.forEach(function (nid) {
+                if (nodes[nid]) addNodeShape(mask, nodes[nid]);
+            });
+            maskCache[key] = 'url(#' + id + ')';
+            return maskCache[key];
+        }
 
         /* Pegangan resize untuk node terpilih. Resize handles. */
         var handleLayer = kit.g(svg, 'alur-layer-handles');
@@ -1175,7 +1209,7 @@
             });
         }
 
-        (spec.edges || []).forEach(function (e, i) {
+        function drawEdge(parent, e, i) {
             var color = e.color || spec.color || palette.blue;
             var ends = edgeEnds(e, nodes);
             if (!ends) return;
@@ -1184,7 +1218,18 @@
                 : (e.elbow
                     ? elbowD(ends.points[0], ends.points[1])
                     : kit.curve(ends.points[0][0], ends.points[0][1], ends.points[1][0], ends.points[1][1]));
-            var cable = cables.draw(edgeLayer, d, {
+            /* Own group per cable: that is what lets it sit at its own depth
+               instead of being locked behind the whole node layer. */
+            var slot = kit.g(parent, 'alur-layer-edge');
+            var here = edgeDepth[e.id] || 0;
+            /* Depths run front-to-back, so a smaller depth is nearer the
+               front: only nodes in front of this cable may clip it. */
+            var front = Object.keys(nodeDepth).filter(function (nid) {
+                return nodeDepth[nid] < here;
+            });
+            var mask = maskFor(front);
+            if (mask) slot.setAttribute('mask', mask);
+            var cable = cables.draw(slot, d, {
                 style: e.strokeStyle || e.cable || spec.cable || 'solid',
                 color: color,
                 width: e.width || 2.4
@@ -1193,7 +1238,7 @@
             if (cable.main) {
                 cable.main.setAttribute('data-edge', String(i));
                 cable.main.classList.add('alur-canvas-edge');
-                if (spec.selectedEdge === i) cable.main.classList.add('is-selected');
+                if (editing && spec.selectedEdge === i) cable.main.classList.add('is-selected');
                 if ((e.from && selected.indexOf(e.from) >= 0) ||
                     (e.to && selected.indexOf(e.to) >= 0)) {
                     cable.main.classList.add('is-linked');
@@ -1202,25 +1247,46 @@
             var type = e.arrowType || 'arrow';
             var endOn = e.arrowEnd !== undefined ? e.arrowEnd :
                 (e.points && e.points.length >= 2 ? true : !!(e.from && e.to));
-            if (e.arrowStart) arrowHeadAt(edgeLayer, ends.points[0], ends.points[1], type, color, i);
+            if (e.arrowStart) arrowHeadAt(slot, ends.points[0], ends.points[1], type, color, i);
             if (endOn) {
                 var last = ends.points[ends.points.length - 1];
                 var prev = ends.points[ends.points.length - 2];
-                arrowHeadAt(edgeLayer, last, prev, type, color, i);
+                arrowHeadAt(slot, last, prev, type, color, i);
             }
-            if (spec.selectedEdge === i) drawEdgeHandles(pointLayer, cable.main, e, ends, i);
+            /* Selection handles are editor chrome: on a reading page the same spec
+               still carries selectedEdge, and drawing them there would put
+               three unstyled black dots on the arrow. */
+            if (editing && spec.selectedEdge === i) drawEdgeHandles(pointLayer, cable.main, e, ends, i);
             /* Centre label: where the arrow carries a word, that word rides the
                cable. Drawn before the motion layer so packets pass over it. */
-            if (e.label && cable.main) drawEdgeLabel(edgeLayer, cable.main, e, color, i);
+            if (e.label && cable.main) drawEdgeLabel(slot, cable.main, e, color, i);
             if (e.from && e.to && nodeEls[e.to]) {
-                stops.push(motions.apply(e.motion || spec.motion || 'flow', edgeLayer, cable,
+                stops.push(motions.apply(e.motion || spec.motion || 'flow', slot, cable,
                     nodeEls[e.to], {
                         color: color,
                         duration: (e.duration || 2600) / speed,
                         count: e.count || 3
                     }));
             }
+        }
+
+        /* Paint back-to-front: the first token in the list ends up on top. */
+        layers.slice().reverse().forEach(function (t) {
+            if (t.kind === 'node') {
+                if (nodeEls[t.id]) stackLayer.appendChild(nodeEls[t.id]);
+                return;
+            }
+            if (t.kind === 'draw') {
+                drawStroke(stackLayer, t.item);
+                return;
+            }
+            drawEdge(stackLayer, t.item, t.index);
         });
+
+        /* The staging layer only held nodes while the stack was assembled. */
+        if (nodeLayer.parentNode && !nodeLayer.childNodes.length) {
+            nodeLayer.parentNode.removeChild(nodeLayer);
+        }
 
         if (fit) fitView();
 
