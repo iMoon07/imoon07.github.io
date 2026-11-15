@@ -18,7 +18,8 @@ python3 -m http.server 8000
 ```
 
 The playground redraws automatically. It can switch modules, pick templates,
-edit the scene, draw a free-form canvas, and insert logos.
+edit the scene, draw a free-form canvas, drop sticky notes and tables, connect
+nodes, present with a laser pointer, and insert logos.
 
 ## Spec format
 
@@ -226,7 +227,7 @@ draw.html?localLogos=1
 The generator lives outside the site:
 
 ```bash
-python3 /home/moon/Projects/ai-tools/tools/build_logo_manifest.py \
+python3 /home/moon/Projects/ai-tools/generators/build_logo_manifest.py \
   --site /home/moon/Projects/imoon07.github.io \
   --logo-dir /home/moon/Projects/logo
 ```
@@ -263,13 +264,43 @@ auto-laid out.
 | Field | Meaning |
 | --- | --- |
 | `x/y`, `w/h` | Node position and size. |
-| `shape` | `box`, `pill`, `circle`, `plain`. |
+| `shape` | `box`, `pill`, `circle`, `diamond`, `plain`, `table`, `sticky`, `chart`, `module`. |
+| `label`, `sub` | Title and subtitle. |
+| `color` | Stroke colour: palette name or CSS colour. |
+| `fill` | Background colour; `transparent` for none. |
+| `fillStyle` | `solid`, `hachure`, `cross-hatch` (only when `fill` is set). |
+| `strokeWidth` | 1, 2, or 3 steps. |
+| `strokeStyle` | `solid`, `dashed`, `dotted`. |
+| `sloppiness` | `architect` (clean), `cartoonist`, `artist` (default). |
+| `opacity` | `0.1`–`1`. |
+| `edge` | `sharp` or `round` corners (ignored by `circle`). |
+| `angle` | Rotation in radians, about the node centre. |
+| `textColor` | Label colour (sticky ink). |
+| `fontSize`, `fontFamily`, `fontWeight` | Label typography. |
+| `textAlign` | `left`, `center`, `right`. |
+| `lineHeight` | Multiplier, default `1.32`. |
+| `link` | URL; rendered as a badge on the node. |
 | `edges[]` | Same cable/motion fields as `flow`. |
 | `drawings[]` | SVG path `d`, `color`, `width`. |
 | `grid` | Dot grid (default `true`). |
 | `zoom`, `panX`, `panY` | View transform. |
 | `selected` | Node id or array of ids. |
 | `selectedEdge`, `selectedDrawing` | Edge index or drawing id. |
+
+### Hand-drawn strokes
+
+Every node is drawn twice: once as a clean vector (the exact geometry used for
+hit testing) and once as a Rough.js sketch on top. `sloppiness` picks the
+sketch amplitude — `architect` draws the clean vector only, `cartoonist` is the
+middle, `artist` is the default. The stroke seed is derived from the node id, so
+a note keeps the same wobble until it is moved to a new id.
+
+The Roughness control in the properties panel writes `sloppiness` on the node;
+the renderer reads it back, so the setting is real and survives a save.
+
+```json
+{ "shape": "box", "sloppiness": "cartoonist", "strokeWidth": 2 }
+```
 
 ### Tables
 
@@ -309,6 +340,11 @@ The block is editable wherever it renders. Readers can type in any cell and use
 `+ Row`, `− Row`, `+ Col`, `− Col`; the editor mirrors the same edits back into
 `state.spec`, so the scene and the fence never disagree.
 
+A table has **no properties panel**: no stroke, background, roughness, edges,
+opacity, or link. It is written in its own cells, so the panel stays out of the
+way and the node behaves like any plain object — drag, resize, delete. The frame
+colour is `color`, set in the spec.
+
 When a ` ```draw ` block holds **only** tables (no edges, no drawings), the
 reading page drops the artboard and renders plain article tables: no dark card,
 no blue frame, no inner scroll. A reader who adds rows makes the table grow with
@@ -328,38 +364,104 @@ the page.
 }
 ```
 
+### Sticky notes
+
+A sticky note is a canvas node with `shape: "sticky"`. It is a coloured square
+with a folded corner, not a dark card: the paper and the ink are separate
+fields, and the label wraps to the note width.
+
+```json
+{
+  "module": "canvas",
+  "nodes": {
+    "n1": {
+      "shape": "sticky",
+      "x": 80, "y": 60, "w": 180, "h": 180,
+      "label": "Ship the guide",
+      "fill": "#ffec99",
+      "textColor": "#1971c2",
+      "fontSize": 16,
+      "textAlign": "center",
+      "sloppiness": "artist"
+    }
+  }
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `fill` | Paper colour; default `#ffec99`. |
+| `textColor` | Ink colour; default `#1971c2`. |
+| `fontSize` | Label size in px; default `16` for a note created in the editor. |
+| `textAlign` | `left`, `center`, `right`. |
+| `sloppiness` | Outline roughness, same values as any node. |
+| `link` | Optional URL, drawn as a badge in the corner. |
+
+The panel for a sticky has exactly these sections: **Paper**, **Ink**, **Text
+size**, **Align**, **Opacity**, **Roughness**, **Link**. Notes created before the
+ink default changed are re-inked once on load, so an old note does not keep a
+near-black label on a yellow square.
+
+### Links
+
+Any node can carry a link. Set it in the panel's **Link** section, or select a
+node and press `Ctrl+K`. The value is normalised: a bare host gets `https://`,
+and only `http`, `https`, `mailto`, and `tel` survive.
+
+```json
+{ "id": "n3", "shape": "box", "label": "Docs", "link": "example.com/docs" }
+```
+
+A node with a link draws a small badge in its top-right corner. The badge is a
+real `<a target="_blank" rel="noopener noreferrer">`, so it opens in a new tab
+and is keyboard-reachable; it hides while the node is selected so it does not
+cover the resize handles, and it comes back on deselect.
+
 ### Tools
 
 | Tool | Key | Action |
 | --- | --- | --- |
-| Select | `V` | Select, move, resize. |
-| Box | `B` | Drag to draw a box. |
-| Round | `R` | Rounded box. |
-| Circle | `O` | Circle. |
-| Text | `T` | Text object. |
-| Arrow | `A` | Click a source then a target, or drag node-to-node. |
-| Line | `L` | Click a source then a target, drag node-to-node, or draw a free line. |
-| Draw | `D` | Freehand stroke. |
+| Select | `V` / `1` | Select, move, resize. |
 | Pan | `H` | Drag to pan; wheel pans; `Ctrl`+wheel zooms. |
+| Box | `R` / `2` | Drag to draw a box. |
+| Diamond | `D` / `3` | Drag to draw a diamond. |
+| Circle | `O` / `4` | Drag to draw an ellipse. |
+| Arrow | `A` / `5` | Click a source then a target, or drag node-to-node. |
+| Line | `L` / `6` | Click a source then a target, drag node-to-node, or draw a free line. |
+| Draw | `P` / `7` | Freehand stroke. |
+| Text | `T` / `8` | Text object. |
+| Table | `9` | Editable table node. Has no properties panel. |
+| Sticky | `N` | Sticky note: paper, ink, size, and roughness in the panel. |
+| Fill | `F` | Bucket fill: applies the current fill colour and style to the selection. |
+| Lasso | `U` | Drag a loop; every node whose centre falls inside joins the selection. |
+| Eraser | `E` / `0` | Erase strokes and objects. |
+| Laser | `K` | Laser pointer for presenting; the beam fades out on release. |
 
 Edges attach to the visible shape border, including boxes, pills, circles,
 diamonds, rounded boxes, and nodes carrying one or more logos. Node-to-node
 edges get an arrowhead by default; free arrow strokes get heads at both ends.
+Edges route orthogonally with a small dogleg at each corner, and every edge has
+two endpoint handles plus a midpoint handle for the label.
 
 ### Editing
 
 | Action | How |
 | --- | --- |
-| Multi-select | `Shift`-click, or marquee on empty canvas. |
+| Multi-select | `Shift`-click, marquee on empty canvas, or lasso (`U`). |
 | Move group | Drag any selected node. |
 | Resize | Drag a handle on the primary selected node. |
-| Snap | 8 px grid; hold `Alt` to bypass. |
+| Snap | 22 px grid; hold `Alt` to bypass. |
 | Nudge | Arrow keys; `Shift`+arrows = 10 px. |
 | Duplicate | `Ctrl+D`. |
 | Copy/paste | `Ctrl+C`, `Ctrl+V`. |
-| Align | Inspector buttons. |
+| Copy/paste style | `Ctrl+Alt+C`, `Ctrl+Alt+V`. |
+| Align | Inspector buttons, or `Ctrl+Shift+arrows`. |
+| Bring to front / send to back | `Ctrl+Shift+]` / `Ctrl+Shift+[`. |
 | Delete | `Delete` / `Backspace`. |
 | Undo/redo | `Ctrl+Z`, `Ctrl+Shift+Z` / `Ctrl+Y`. |
+| Edit text | `Enter`; `Esc` finishes. |
+| Edit edge points | `Ctrl+Enter`. |
+| Keep tool active | `Q`. |
 | Shortcuts | `?`. |
 
 ### Workspace
@@ -368,12 +470,22 @@ edges get an arrowhead by default; free arrow strokes get heads at both ends.
 be dragged by their header; their positions persist in `localStorage`. On phones
 the panels become full-width drawers and the tool rail becomes a bottom bar.
 
-- Top bar: title, counts, panel toggles, focus mode.
+- Top bar: title, counts, panel toggles, focus mode, build stamp.
 - Panels: Properties, Assets (logos), Layers, Scene.
-- Command palette: `Ctrl+K`; `/` quick insert.
+- Command palette: `Ctrl+/` or `Ctrl+Shift+P`; `/` quick insert.
+- Add a link to the selection: `Ctrl+K`.
 - Focus mode: `Ctrl+.`; `Esc` exits.
 - Minimap follows the viewport.
 - The canvas never resizes when a panel opens.
+- Theme: `Alt+Shift+D`; the choice is kept in `localStorage`.
+
+The Properties panel is per shape: a box gets Stroke, Background, Roughness,
+Edges, Opacity, Link; a sticky gets Paper, Ink, Text size, Align, Opacity,
+Roughness, Link; a table gets nothing. While a connection is pending the panel
+hides on phones so the target stays visible.
+
+The laser pointer blends `multiply` on the light theme and `screen` on the dark
+one, so the beam stays visible on a white canvas instead of turning black.
 
 ## Chart types
 
@@ -1256,25 +1368,27 @@ Example:
 imoon07.github.io/
   js/alur/
     core.js            registry, mount, destroy
-    kit.js             SVG helpers, palette, paths, logo <image>
+    kit.js             SVG helpers, palette, paths, Rough.js strokes
     logos.js           remote logo resolver
     cables.js          cable styles + catalog
     motions.js         motion effects + catalog
     draw-tabs.js       button gallery for multiple draw specs
     modules/           canvas, flow, reverse-proxy, chart, pipeline, graph
   js/logo-manifest.js  generated remote manifest
+  vendor/rough.js      roughjs 4.6.6 (UMD), loaded before kit.js
   css/alur.css
   draw.html
   docs/alur-guide.md
 ```
 
-Local-only generators live in `/home/moon/Projects/ai-tools/tools/`:
+Local-only generators and probes live in `/home/moon/Projects/ai-tools/`:
 
 ```text
-ai-tools/tools/build_logo_manifest.py
-ai-tools/tools/build_topology_icons.py
-ai-tools/tools/icons/
-ai-tools/assets/logos/       local logo checkout copy (not served by the site)
+ai-tools/generators/build_logo_manifest.py
+ai-tools/generators/build_topology_icons.py
+ai-tools/icons/
+ai-tools/assets/logos/          local logo checkout copy (not served by the site)
+ai-tools/verify/canvas/         headless CDP probes for draw.html and topology.html
 ```
 
 ## Verification
@@ -1291,8 +1405,26 @@ node --check js/alur/modules/reverse-proxy.js
 node --check js/alur/modules/chart.js
 node --check js/alur/modules/pipeline.js
 node --check js/alur/modules/graph.js
+
+# the main inline editor script in draw.html
+python3 -c "import re;h=open('draw.html').read();open('/tmp/inline.js','w').write(max(re.findall(r'<script>\n(.*?)\n</script>',h,re.S),key=len))"
+node --check /tmp/inline.js
 ```
 
 Then check `draw.html` at desktop and phone widths: cables/motions render,
 flow has no overlaps, canvas selection/move/resize/undo works, panels fit and
 scroll, and the logo grid loads from GitHub.
+
+The headless probes live in `ai-tools/verify/canvas/`. They drive Chromium over
+CDP and read the **computed** style, not just the attribute, which is how a
+stylesheet override gets caught:
+
+```bash
+python3 ai-tools/verify/canvas/smoke1.py       # tools, pen, laser, panel recolour
+python3 ai-tools/verify/canvas/stickyfill.py   # sticky paper/ink, hex input
+python3 ai-tools/verify/canvas/tablepanel.py   # table has no properties panel
+python3 ai-tools/verify/canvas/final1.py       # desktop/tablet/phone overflow
+python3 ai-tools/verify/canvas/pages2.py       # every page and asset returns 200
+```
+
+They keep their scratch (Chromium profiles, screenshots) in `/tmp/alur-probes/`.
