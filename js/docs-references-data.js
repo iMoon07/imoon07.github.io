@@ -5,6 +5,6 @@
   var RAW =
     'https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/';
   window.REFERENCE_MODULES = [
-    { id: 'index', title: 'Overview', group: 'Start', src: RAW + 'index-en.md' },
+    { id: 'index', title: 'SOON update', group: 'Start', src: RAW + 'SOON.md' },
   ];
 })();
