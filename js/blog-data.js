@@ -3,6 +3,18 @@
 // Blog posts manifest (used by blog.html, read.html?post=). Add/edit entries here.
 const myProjects = [
   {
+    id: "authentication-vulnerabilities-portswigger",
+    title: "Authentication Vulnerabilities — PortSwigger Web Security Academy",
+    category: "web-security",
+    tags: [ "authentication", "portswigger", "web-security"],
+    publishedDate: "2026-11-17",
+    publishedTime: "08:30",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Port-Swigger/Web-Security-Academy/Authentication-Vulnerabilities/authentication-vulnerabilities-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/Authentication-Vulnerabilities",
+  },
+  {
     id: "sql-injection-portswigger",
     title: "SQL Injection — PortSwigger Web Security Academy",
     category: "web-security",
