@@ -670,6 +670,34 @@
             column-gap: 24px;
         }
 
+        /* Desktop: split main experience list into two columns on index.html. */
+        @media (min-width: 701px) {
+            #experienceList {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 24px;
+                align-content: start;
+            }
+            #experienceList > .panel-title,
+            #experienceList > .entry-meta {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* Desktop: prepare Speak & Share list for 2 columns (ready when 4th item added). */
+        @media (min-width: 701px) {
+            #communityList {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 24px;
+                align-content: start;
+            }
+            #communityList > .panel-title,
+            #communityList > .entry-meta {
+                grid-column: 1 / -1;
+            }
+        }
+
         #recognitionDetail .experience-name {
             font-size: 15px;
         }
