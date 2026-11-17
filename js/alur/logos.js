@@ -78,14 +78,26 @@
     }
 
     function categories() {
-        var labels = { 'security-icons': 'Security Icons', 'security-3d': 'Security 3D', 'security-illustration': 'Security Illustration' };
+        var labels = {
+            'security-icons': 'Security Icons',
+            'security-3d': 'Security 3D',
+            'security-illustration': 'Security Illustration',
+            'security-tools': 'Security Tools',
+            'security-enterprise': 'Security Enterprise',
+            'iot-electronics': 'IoT & Electronics',
+            'brand': 'Brand'
+        };
         return (data.categories || []).map(function (cat) {
+            var label = labels[cat];
+            if (!label) {
+                label = cat.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+            }
             return {
                 id: cat,
-                label: labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1),
+                label: label,
                 count: data.logos.filter(function (e) { return e.category === cat; }).length
             };
-        });
+        }).filter(function (c) { return c.count > 0; });
     }
 
     function list(cat) {
