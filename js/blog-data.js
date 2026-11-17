@@ -3,6 +3,20 @@
 // Blog posts manifest (used by blog.html, read.html?post=). Add/edit entries here.
 const myProjects = [
   {
+    id: "hackers-heroes-of-the-computer-revolution",
+    title: "Hackers: Heroes of the Computer Revolution",
+    category: "reference",
+    tags: ["ebooks", "computer-history", "hacker-culture"],
+    publishedDate: "2026-11-17",
+    publishedTime: "21:00",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/e-books/hackers-heroes-of-the-computer-revolution/hackers-heroes-of-the-computer-revolution-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/e-books/hackers-heroes-of-the-computer-revolution/hackers-heroes-of-the-computer-revolution-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/e-books/hackers-heroes-of-the-computer-revolution",
+  },
+  {
     id: "authentication-vulnerabilities-portswigger",
     title: "Authentication Vulnerabilities — PortSwigger Web Security Academy",
     category: "web-security",
