@@ -3,6 +3,20 @@
 // Blog posts manifest (used by blog.html, read.html?post=). Add/edit entries here.
 const myProjects = [
   {
+    id: "five-enemies-reminder",
+    title: "Know Thyself — Five Enemies",
+    category: "mindset",
+    tags: ["mindset", "reminder", "discipline"],
+    publishedDate: "2026-11-19",
+    publishedTime: "21:40",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Reminders/five-enemies/five-enemies-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Reminders/five-enemies/five-enemies-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Reminders/five-enemies",
+  },
+  {
     id: "authentication-vulnerabilities-portswigger",
     title: "Authentication Vulnerabilities — PortSwigger Web Security Academy",
     category: "web-security",
