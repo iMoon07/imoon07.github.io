@@ -3,6 +3,20 @@
 // Blog posts manifest (used by blog.html, read.html?post=). Add/edit entries here.
 const myProjects = [
   {
+    id: "google-vrp-writeups-index",
+    title: "Google & Alphabet VRP — Bug Bounty Writeup Index",
+    category: "reference",
+    tags: ["bug-bounty", "google-vrp", "writeups"],
+    publishedDate: "2026-11-21",
+    publishedTime: "10:00",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/google-vrp/google-vrp-writeups-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/google-vrp/google-vrp-writeups-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/google-vrp",
+  },
+  {
     id: "five-enemies-reminder",
     title: "Know Thyself — Five Enemies",
     category: "mindset",
