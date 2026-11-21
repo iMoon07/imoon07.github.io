@@ -3,6 +3,48 @@
 // Blog posts manifest (used by blog.html, read.html?post=). Add/edit entries here.
 const myProjects = [
   {
+    id: "mozilla-firefox-vrp-writeups-index",
+    title: "Mozilla / Firefox — Bug Bounty Writeup Index",
+    category: "reference",
+    tags: ["bug-bounty", "mozilla", "firefox", "writeups"],
+    publishedDate: "2026-11-21",
+    publishedTime: "10:10",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/mozilla-firefox/mozilla-firefox-vrp-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/mozilla-firefox/mozilla-firefox-vrp-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/mozilla-firefox",
+  },
+  {
+    id: "opera-vrp-writeups-index",
+    title: "Opera — Bug Bounty Writeup Index",
+    category: "reference",
+    tags: ["bug-bounty", "opera", "browser", "writeups"],
+    publishedDate: "2026-11-21",
+    publishedTime: "10:20",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/opera/opera-vrp-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/opera/opera-vrp-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/opera",
+  },
+  {
+    id: "microsoft-msrc-vrp-writeups-index",
+    title: "Microsoft / MSRC — Bug Bounty Writeup Index",
+    category: "reference",
+    tags: ["bug-bounty", "microsoft", "msrc", "writeups"],
+    publishedDate: "2026-11-21",
+    publishedTime: "10:30",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/microsoft-msrc/microsoft-msrc-vrp-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/microsoft-msrc/microsoft-msrc-vrp-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/microsoft-msrc",
+  },
+  {
     id: "google-vrp-writeups-index",
     title: "Google & Alphabet VRP — Bug Bounty Writeup Index",
     category: "reference",
