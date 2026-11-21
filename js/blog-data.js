@@ -59,6 +59,34 @@ const myProjects = [
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/google-vrp",
   },
   {
+    id: "apple-vrp-writeups-index",
+    title: "Apple Security Bounty — Bug Bounty Writeup Index",
+    category: "reference",
+    tags: ["bug-bounty", "apple", "safari", "ios", "writeups"],
+    publishedDate: "2026-11-21",
+    publishedTime: "11:30",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/apple/apple-vrp-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/apple/apple-vrp-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/apple",
+  },
+  {
+    id: "vdp-programs-2026",
+    title: "Program VDP & Bug Bounty Aktif (2026)",
+    category: "reference",
+    tags: ["bug-bounty", "vdp", "hall-of-fame", "reference"],
+    publishedDate: "2026-11-21",
+    publishedTime: "11:35",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/vdp-2026/vdp-programs-id.md",
+    rawUrlEn:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/References/bug-bounty/vdp-2026/vdp-programs-en.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/References/bug-bounty/vdp-2026",
+  },
+  {
     id: "five-enemies-reminder",
     title: "Know Thyself — Five Enemies",
     category: "mindset",
