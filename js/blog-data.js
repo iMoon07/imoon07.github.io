@@ -15,6 +15,18 @@ const myProjects = [
       "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/Authentication-Vulnerabilities",
   },
   {
+    id: "access-control-portswigger",
+    title: "Access Control — PortSwigger Web Security Academy",
+    category: "web-security",
+    tags: ["access-control", "privilege-escalation", "portswigger", "web-security"],
+    publishedDate: "2026-11-25",
+    publishedTime: "13:40",
+    rawUrl:
+      "https://raw.githubusercontent.com/iMoon07/Penjelajah-CyberSecurity/main/Port-Swigger/Web-Security-Academy/Access-Control/access-control-id.md",
+    repoUrl:
+      "https://github.com/iMoon07/Penjelajah-CyberSecurity/tree/main/Port-Swigger/Web-Security-Academy/Access-Control",
+  },
+  {
     id: "sql-injection-portswigger",
     title: "SQL Injection — PortSwigger Web Security Academy",
     category: "web-security",
